@@ -1,0 +1,12 @@
+.vs/
+.idea/
+time_sucks/obj/
+time_sucks/bin/
+Natasha_TimeSystem/StudentTimeSheet/StudentTimeSheet/obj/Debug/StudentTimeSheet.csproj.CoreCompileInputs.cache
+*.ide
+*.cache
+*.dll
+*.pdb
+time_sucks/Properties/PublishProfiles/cstimesheet - Web Deploy.pubxml
+time_sucks/Properties/PublishProfiles/cstimesheet - Web Deploy.pubxml.user
+time_sucks/time_sucks.csproj.user

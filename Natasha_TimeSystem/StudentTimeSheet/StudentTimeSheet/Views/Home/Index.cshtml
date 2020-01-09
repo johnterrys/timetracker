@@ -1,0 +1,91 @@
+﻿@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using WebMatrix.Data;
+
+@{
+    //Returns all users in database(for testing reasons ONLY)
+    var db = Database.Open("DBConnection");
+    var allPeople = db.Query("Select * FROM dbo.People");
+    var email = "";
+    var password = "";
+    var role = "";
+    var error = "Email or password incorrect.";
+
+
+    //Runs after user clicks login
+    if (IsPost)
+    {
+        //Sets cookie email
+        email = Request.Form["email"];
+        password = Request.Form["password"];
+        role = Request.Form["role"];
+
+        //TODO: Check if credientials match database
+
+
+        var validCredentials = "SELECT EmailAddress FROM dbo.People WHERE EmailAddress = @0";
+        var emailQuery = db.Query(validCredentials, email);
+
+        var validCredentials2 = "SELECT Password FROM dbo.People WHERE Password = @0";
+        var passwordQuery = db.Query(validCredentials2, password);
+
+        if (emailQuery.Count() == 0 || passwordQuery.Count() == 0 || email == null || password == null)
+        {
+            @error;
+            return;
+        }
+        else
+        {
+            Response.Cookies.Clear();
+            Response.Cookies["email"].Value = email;
+            Response.Redirect("/Home/UserDashboard");
+        }
+    }
+}
+
+
+<div class="loginBox box">
+    <h2>Login</h2>
+
+    <form method="post">
+        <p>Email</p>
+        <input type="text" name="email" class="input-account" placeholder="Enter email..." value="@Request.Form["email"]">
+        <p>Password</p>
+        <input type="password" name="password" class="input-account" placeholder="Enter password..." value="@Request.Form["password"]">
+        <br /><br />
+
+        <input type="submit" name="login" class="btn submit" value="Login">
+        <br />
+
+
+
+        @Html.ActionLink("Create Account", "Create", "Home", null, null)
+    </form>
+</div>
+
+@*Prints out all users in database- for testing reasons ONLY*@
+
+@*<div style="position:absolute; bottom: 0px;">
+        <p>**Note- For testing only will be removed soon**</p>
+        <table border="1">
+            <tr>
+                <td>Email</td>
+                <td>First</td>
+                <td>Password</td>
+
+            </tr>
+            @foreach (var row in allPeople) {
+                <tr>
+                    <td>@row.EmailAddress</td>
+                    <td>@row.FirstName</td>
+                    <td>@row.Password</td>
+
+                </tr>
+            }
+        </table>
+    </div>*@
+
+
