@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace time_sucks.Models
+namespace TimeCats.Models
 {
     public class EmptyEval
     {

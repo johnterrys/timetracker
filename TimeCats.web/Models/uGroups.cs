@@ -1,4 +1,4 @@
-﻿namespace time_sucks.Models
+﻿namespace TimeCats.Models
 {
     public class uGroups
     {

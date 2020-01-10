@@ -5,10 +5,10 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using time_sucks.Models;
-using time_sucks.Session;
+using TimeCats.Session;
+using TimeCats.Models;
 
-namespace time_sucks.Controllers
+namespace TimeCats.Controllers
 {
     public class HomeController : Controller
     {
