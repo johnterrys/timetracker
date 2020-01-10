@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TimeCats.Models
 {
+    [Table("UserCourses")]
     public class UserCourse
     {
         [Required]

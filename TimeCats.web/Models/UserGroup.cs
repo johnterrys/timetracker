@@ -1,5 +1,8 @@
-﻿namespace TimeCats.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace TimeCats.Models
 {
+    [Table("UserGroups")]
     public class UserGroup
     {
         public int userID { get; set; }

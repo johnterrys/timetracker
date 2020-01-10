@@ -12,6 +12,12 @@ namespace TimeCats.Utils
                 ug.userID,
                 ug.groupID
             });
+            
+            modelBuilder.Entity<UserCourse>().HasKey(uc => new
+            {
+                uc.userID,
+                uc.courseID
+            });
         }
         
         public static void ConfigureRelationships(this TimeTrackerContext ctx, ModelBuilder modelBuilder)
@@ -71,12 +77,6 @@ namespace TimeCats.Utils
             //     etqc.evalTemplateQuestionCategoryID
             // });
             //
-            // modelBuilder.Entity<UserCourse>().HasKey(uc => new
-            // {
-            //     uc.courseID,
-            //     uc.userID,
-            //     uc.uCourseID
-            // });
             //
         }
 
