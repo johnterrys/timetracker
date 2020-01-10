@@ -20,7 +20,7 @@ namespace TimeCats
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<TimeTrackerContext>(options =>
-                options.UseMySql(Configuration["ConnectionString:TimeTrackerDB"]));
+                options.UseNpgsql(Configuration["ConnectionString:TimeTrackerDB"]));
             services.AddMvc(options => { options.EnableEndpointRouting = false; });
             services.AddSession(options => { options.IdleTimeout = TimeSpan.FromHours(1); });
         }

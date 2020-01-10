@@ -10,3 +10,4 @@ Natasha_TimeSystem/StudentTimeSheet/StudentTimeSheet/obj/Debug/StudentTimeSheet.
 time_sucks/Properties/PublishProfiles/cstimesheet - Web Deploy.pubxml
 time_sucks/Properties/PublishProfiles/cstimesheet - Web Deploy.pubxml.user
 time_sucks/time_sucks.csproj.user
+.env
