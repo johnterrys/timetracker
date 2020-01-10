@@ -7,32 +7,6 @@ namespace TimeCats.Utils
     {
         private static void ConfigureCoreRelationships(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasKey(u => new
-            {
-                u.userID
-            });
-            
-            modelBuilder.Entity<Course>().HasKey(c => new
-            {
-                c.courseID,
-                c.instructorID
-            });
-
-            modelBuilder.Entity<Group>().HasKey(g => new
-            {
-                g.groupID
-            });
-
-            modelBuilder.Entity<Project>().HasKey(p => new
-            {
-                p.projectID
-            });
-
-            modelBuilder.Entity<TimeCard>().HasKey(tc => new
-            {
-                tc.timeslotID
-            });
-            
             modelBuilder.Entity<UserGroup>().HasKey(ug => new
             {
                 ug.userID,
