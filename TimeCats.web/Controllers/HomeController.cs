@@ -515,7 +515,7 @@ namespace TimeCats.Controllers
         public IActionResult DeleteUserCourse([FromBody] object json)
         {
             var JsonString = json.ToString();
-            var uCourse = JsonConvert.DeserializeObject<uCourse>(JsonString);
+            var uCourse = JsonConvert.DeserializeObject<UserCourse>(JsonString);
             if (IsAdmin() || IsInstructorForCourse(uCourse.courseID))
             {
                 if (DBHelper.DeleteUserCourse(uCourse.userID, uCourse.courseID)) return Ok();
@@ -740,7 +740,7 @@ namespace TimeCats.Controllers
         public IActionResult SaveUserInCourse([FromBody] object json)
         {
             var JsonString = json.ToString();
-            var uCourse = JsonConvert.DeserializeObject<uCourse>(JsonString);
+            var uCourse = JsonConvert.DeserializeObject<UserCourse>(JsonString);
 
             if ((IsAdmin() || IsInstructorForCourse(uCourse.courseID)) &&
                 UserIsStudentInCourse(uCourse.userID, uCourse.courseID))
@@ -756,7 +756,7 @@ namespace TimeCats.Controllers
         public IActionResult DeleteUserFromCourse([FromBody] object json)
         {
             var JsonString = json.ToString();
-            var uCourse = JsonConvert.DeserializeObject<uCourse>(JsonString);
+            var uCourse = JsonConvert.DeserializeObject<UserCourse>(JsonString);
 
             if ((IsAdmin() || IsInstructorForCourse(uCourse.courseID)) &&
                 UserIsStudentInCourse(uCourse.userID, uCourse.courseID))
@@ -772,7 +772,7 @@ namespace TimeCats.Controllers
         public IActionResult JoinGroup([FromBody] object json)
         {
             var JsonString = json.ToString();
-            var uGroups = JsonConvert.DeserializeObject<uGroups>(JsonString);
+            var uGroups = JsonConvert.DeserializeObject<UserGroup>(JsonString);
 
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
 
@@ -1205,7 +1205,7 @@ namespace TimeCats.Controllers
         {
             var JsonString = json.ToString();
 
-            var group = JsonConvert.DeserializeObject<uGroups>(JsonString);
+            var group = JsonConvert.DeserializeObject<UserGroup>(JsonString);
 
             if (IsActiveStudentInGroup(group.groupID))
                 //Use logged in users ID if they are a student

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TimeCats.Models
 {
@@ -13,7 +14,9 @@ namespace TimeCats.Models
         public List<User> users { get; set; }
 
         public int projectID { get; set; }
+        public Project Project { get; set; }
 
+        [NotMapped]
         public int evalID { get; set; }
     }
 }

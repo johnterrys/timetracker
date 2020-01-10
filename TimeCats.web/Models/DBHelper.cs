@@ -1820,7 +1820,7 @@ namespace TimeCats.Models
             }
         }
 
-        public static bool SaveUserInCourse(uCourse uCourse)
+        public static bool SaveUserInCourse(UserCourse userCourse)
         {
             using (var conn = new MySqlConnection(ConnString.ToString()))
             {
@@ -1829,9 +1829,9 @@ namespace TimeCats.Models
                 {
                     cmd.CommandText =
                         "UPDATE uCourses SET isActive = @isActive WHERE courseID = @courseID AND userID = @userID";
-                    cmd.Parameters.AddWithValue("@userID", uCourse.userID);
-                    cmd.Parameters.AddWithValue("@courseID", uCourse.courseID);
-                    cmd.Parameters.AddWithValue("@isActive", uCourse.isActive);
+                    cmd.Parameters.AddWithValue("@userID", userCourse.userID);
+                    cmd.Parameters.AddWithValue("@courseID", userCourse.courseID);
+                    cmd.Parameters.AddWithValue("@isActive", userCourse.isActive);
                     if (cmd.ExecuteNonQuery() > 0) return true;
                     return false;
                 }

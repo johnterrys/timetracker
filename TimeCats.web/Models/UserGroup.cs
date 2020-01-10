@@ -1,10 +1,11 @@
 ﻿namespace TimeCats.Models
 {
-    public class uGroups
+    public class UserGroup
     {
-        public int uGroupsID { get; set; }
         public int userID { get; set; }
+        public User User { get; set; }
+        
         public int groupID { get; set; }
-        public int isActive { get; set; }
+        public Group Group { get; set; }
     }
 }
