@@ -11,15 +11,21 @@ namespace TimeCats.Models
     public class DBHelper
     {
         //TODO Make this a better system user 
-        private static readonly MySqlConnectionStringBuilder ConnString = new MySqlConnectionStringBuilder("" +
-                                                                                                           "Server=cs4450.cj7o28wmyp47.us-east-2.rds.amazonaws.com;" +
-                                                                                                           "UID=Logan;" +
-                                                                                                           "password=password;" +
-                                                                                                           "database=cs4450");
-
+        private static readonly MySqlConnectionStringBuilder ConnString = 
+            new MySqlConnectionStringBuilder("" +
+                                               "Server=cs4450.cj7o28wmyp47.us-east-2.rds.amazonaws.com;" +
+                                               "UID=Logan;" +
+                                               "password=password;" +
+                                               "database=cs4450");
+        
         public static long AddUser(User user)
         {
-            if (user.username != null) user.username = user.username.ToLower();
+            if (user.username != null)
+            {
+                user.username = user.username.ToLower();
+            }
+            
+            
             using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
@@ -851,6 +857,7 @@ namespace TimeCats.Models
                     {
                         //Runs once per record retrieved
                         while (reader.Read())
+                        {
                             user = new User
                             {
                                 userID = reader.GetInt32("userID"),
@@ -860,6 +867,7 @@ namespace TimeCats.Models
                                 type = reader.GetChar("type"),
                                 isActive = reader.GetBoolean("isActive")
                             };
+                        }
                     }
                 }
             }

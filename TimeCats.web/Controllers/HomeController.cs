@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using TimeCats.Session;
 using TimeCats.Models;
@@ -12,6 +13,13 @@ namespace TimeCats.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly StudentTimeTrackerService _timeTrackerService;
+
+        public HomeController(IServiceProvider serviceProvider)
+        {
+            _timeTrackerService = serviceProvider.GetRequiredService<StudentTimeTrackerService>();
+        }
+        
         public IActionResult Error()
         {
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
@@ -828,35 +836,24 @@ namespace TimeCats.Controllers
         {
             var JsonString = json.ToString();
             //Username and Password must be here, everything else can be empty
-            var user = JsonConvert.DeserializeObject<User>(JsonString);
+            var loginUser = JsonConvert.DeserializeObject<User>(JsonString);
 
             //Check database for User and create a session
+            var user = _timeTrackerService.GetUserWithPasswordHash(loginUser.username, GenerateHash(loginUser.password));
 
-            //Check if the user exists
-            User DBUser = null;
-            if (DBHelper.GetUser(user.username) != null)
+            //return Unauthorized (401) if the username or password is wrong
+            if (user == null)
             {
-                user.password = GenerateHash(user.password);
-                DBUser = DBHelper.GetUser(user.username, user.password);
-            }
-            else
-            {
-                //return No Content (204) if there isn't a user
-                return NoContent();
-            }
-
-            //return Unauthorized (401) if the password is wrong
-            if (DBUser == null)
                 return Unauthorized();
+            }
 
             //return Forbidden (403) if the user's account isn't active
-            if (!DBUser.isActive)
-                return StatusCode(403);
+            if (!user.isActive) return StatusCode(403);
 
-            if (user.username.ToLower() == DBUser.username)
+            if (loginUser.username.ToLower() == user.username)
             {
                 // We found a user! Send them to the Dashboard and save their Session
-                HttpContext.Session.SetObjectAsJson("user", DBUser);
+                HttpContext.Session.SetObjectAsJson("user", user);
                 return Ok();
             }
 
@@ -888,21 +885,13 @@ namespace TimeCats.Controllers
         {
             var JsonString = json.ToString();
             var user = JsonConvert.DeserializeObject<User>(JsonString);
-
-            //Check if user already exists
-            if (DBHelper.GetUser(user.username) != null) return NoContent();
-
             user.password = GenerateHash(user.password);
-
-            //put the User in the Database, set the userID to be the returned value
-            user.userID = (int) DBHelper.AddUser(user);
-
-            //If the userID is 0, the query must have failed throw an error to the front end
-            if (user.userID == 0) return Error();
+            
+            _timeTrackerService.AddUser(user);
 
             //Store Session information for this user using Username
             HttpContext.Session.SetObjectAsJson("user", user);
-
+            
             return Ok();
         }
 

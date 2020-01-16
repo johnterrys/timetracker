@@ -23,6 +23,7 @@ namespace TimeCats
                 options.UseNpgsql(Configuration["ConnectionString:TimeTrackerDB"]));
             services.AddMvc(options => { options.EnableEndpointRouting = false; });
             services.AddSession(options => { options.IdleTimeout = TimeSpan.FromHours(1); });
+            services.AddScoped<StudentTimeTrackerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
