@@ -227,10 +227,18 @@ namespace TimeCats.Controllers
         {
             var JsonString = json.ToString();
 
+            //TODO: Umm what? How can a user be both admin and 'I'
             if (GetUserType() == 'I' || IsAdmin())
             {
-                var courseID = (int) DBHelper.CreateCourse(GetUserID());
-                if (courseID > 0) return Ok(courseID);
+                var courseId = _timeTrackerService.AddCourse(new Course()
+                {
+                    instructorID = GetUserID(),
+                    courseName = "New Course",
+                    isActive = true,
+                    description = ""
+                });
+
+                if (courseId > 0) return Ok(courseId);
                 return StatusCode(500); //Query Error
             }
 
@@ -414,6 +422,8 @@ namespace TimeCats.Controllers
             var groupID = 0;
             var project = JsonConvert.DeserializeObject<Project>(JsonString);
             var courseID = GetCourseForProject(project.projectID);
+            
+            
 
             if (IsAdmin() || IsInstructorForCourse(courseID) || IsStudentInCourse(courseID))
             {

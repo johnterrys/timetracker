@@ -150,6 +150,7 @@ namespace TimeCats.Models
 
         public static long CreateCourse(int instructorID)
         {
+
             using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();

@@ -31,5 +31,13 @@ namespace TimeCats
                                      u.password.Equals(hash));
             return user;
         }
+
+        public int AddCourse(Course course)
+        {
+            var c = _timeTrackerContext.Courses.Add(course);
+            _timeTrackerContext.SaveChanges();
+
+            return c.Entity.courseID;
+        }
     }
 }
