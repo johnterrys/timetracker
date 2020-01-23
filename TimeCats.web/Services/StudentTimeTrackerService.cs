@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using TimeCats.Models;
 
 namespace TimeCats
@@ -30,6 +33,11 @@ namespace TimeCats
                 .FirstOrDefault(u => u.username.Equals(username) && 
                                      u.password.Equals(hash));
             return user;
+        }
+
+        public ICollection<Dashboard> GetDashboardsForUser()
+        {
+            throw new NotImplementedException();
         }
     }
 }
