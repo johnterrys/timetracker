@@ -1,17 +1,38 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace time_sucks.Models
+namespace TimeCats.Models
 {
     public class User
     {
+        [Key]
         public int userID { get; set; }
+        
+        [Required]
         public string username { get; set; }
-        public string password { get; set; }
+        
+        [Required]
+        public string password { get; set; } //TODO: This should be a hash we also need a salt
+        
+        [NotMapped]
         public string newPassword { get; set; }
+        
+        [Required]
         public string firstName { get; set; }
+        
+        [Required]
         public string lastName { get; set; }
-        public char type { get; set; }
+        
+        [Required]
+        public char type { get; set; } //TODO: Update this to use an ENUMERABLE
+        
         public bool isActive { get; set; }
+        
         public List<TimeCard> timecards { get; set; }
+        
+        public List<UserGroup> UserGroups { get; set; }
+
+        public List<UserCourse> UserCourses { get; set; }
     }
 }

@@ -4,14 +4,22 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using time_sucks.Models;
-using time_sucks.Session;
+using TimeCats.Session;
+using TimeCats.Models;
 
-namespace time_sucks.Controllers
+namespace TimeCats.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly StudentTimeTrackerService _timeTrackerService;
+
+        public HomeController(IServiceProvider serviceProvider)
+        {
+            _timeTrackerService = serviceProvider.GetRequiredService<StudentTimeTrackerService>();
+        }
+        
         public IActionResult Error()
         {
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
@@ -219,10 +227,18 @@ namespace time_sucks.Controllers
         {
             var JsonString = json.ToString();
 
+            //TODO: Umm what? How can a user be both admin and 'I'
             if (GetUserType() == 'I' || IsAdmin())
             {
-                var courseID = (int) DBHelper.CreateCourse(GetUserID());
-                if (courseID > 0) return Ok(courseID);
+                var courseId = _timeTrackerService.AddCourse(new Course()
+                {
+                    instructorID = GetUserID(),
+                    courseName = "New Course",
+                    isActive = true,
+                    description = ""
+                });
+
+                if (courseId > 0) return Ok(courseId);
                 return StatusCode(500); //Query Error
             }
 
@@ -406,6 +422,8 @@ namespace time_sucks.Controllers
             var groupID = 0;
             var project = JsonConvert.DeserializeObject<Project>(JsonString);
             var courseID = GetCourseForProject(project.projectID);
+            
+            
 
             if (IsAdmin() || IsInstructorForCourse(courseID) || IsStudentInCourse(courseID))
             {
@@ -515,7 +533,7 @@ namespace time_sucks.Controllers
         public IActionResult DeleteUserCourse([FromBody] object json)
         {
             var JsonString = json.ToString();
-            var uCourse = JsonConvert.DeserializeObject<uCourse>(JsonString);
+            var uCourse = JsonConvert.DeserializeObject<UserCourse>(JsonString);
             if (IsAdmin() || IsInstructorForCourse(uCourse.courseID))
             {
                 if (DBHelper.DeleteUserCourse(uCourse.userID, uCourse.courseID)) return Ok();
@@ -740,7 +758,7 @@ namespace time_sucks.Controllers
         public IActionResult SaveUserInCourse([FromBody] object json)
         {
             var JsonString = json.ToString();
-            var uCourse = JsonConvert.DeserializeObject<uCourse>(JsonString);
+            var uCourse = JsonConvert.DeserializeObject<UserCourse>(JsonString);
 
             if ((IsAdmin() || IsInstructorForCourse(uCourse.courseID)) &&
                 UserIsStudentInCourse(uCourse.userID, uCourse.courseID))
@@ -756,7 +774,7 @@ namespace time_sucks.Controllers
         public IActionResult DeleteUserFromCourse([FromBody] object json)
         {
             var JsonString = json.ToString();
-            var uCourse = JsonConvert.DeserializeObject<uCourse>(JsonString);
+            var uCourse = JsonConvert.DeserializeObject<UserCourse>(JsonString);
 
             if ((IsAdmin() || IsInstructorForCourse(uCourse.courseID)) &&
                 UserIsStudentInCourse(uCourse.userID, uCourse.courseID))
@@ -772,7 +790,7 @@ namespace time_sucks.Controllers
         public IActionResult JoinGroup([FromBody] object json)
         {
             var JsonString = json.ToString();
-            var uGroups = JsonConvert.DeserializeObject<uGroups>(JsonString);
+            var uGroups = JsonConvert.DeserializeObject<UserGroup>(JsonString);
 
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
 
@@ -828,35 +846,24 @@ namespace time_sucks.Controllers
         {
             var JsonString = json.ToString();
             //Username and Password must be here, everything else can be empty
-            var user = JsonConvert.DeserializeObject<User>(JsonString);
+            var loginUser = JsonConvert.DeserializeObject<User>(JsonString);
 
             //Check database for User and create a session
+            var user = _timeTrackerService.GetUserWithPasswordHash(loginUser.username, GenerateHash(loginUser.password));
 
-            //Check if the user exists
-            User DBUser = null;
-            if (DBHelper.GetUser(user.username) != null)
+            //return Unauthorized (401) if the username or password is wrong
+            if (user == null)
             {
-                user.password = GenerateHash(user.password);
-                DBUser = DBHelper.GetUser(user.username, user.password);
-            }
-            else
-            {
-                //return No Content (204) if there isn't a user
-                return NoContent();
-            }
-
-            //return Unauthorized (401) if the password is wrong
-            if (DBUser == null)
                 return Unauthorized();
+            }
 
             //return Forbidden (403) if the user's account isn't active
-            if (!DBUser.isActive)
-                return StatusCode(403);
+            if (!user.isActive) return StatusCode(403);
 
-            if (user.username.ToLower() == DBUser.username)
+            if (loginUser.username.ToLower() == user.username)
             {
                 // We found a user! Send them to the Dashboard and save their Session
-                HttpContext.Session.SetObjectAsJson("user", DBUser);
+                HttpContext.Session.SetObjectAsJson("user", user);
                 return Ok();
             }
 
@@ -888,21 +895,13 @@ namespace time_sucks.Controllers
         {
             var JsonString = json.ToString();
             var user = JsonConvert.DeserializeObject<User>(JsonString);
-
-            //Check if user already exists
-            if (DBHelper.GetUser(user.username) != null) return NoContent();
-
             user.password = GenerateHash(user.password);
-
-            //put the User in the Database, set the userID to be the returned value
-            user.userID = (int) DBHelper.AddUser(user);
-
-            //If the userID is 0, the query must have failed throw an error to the front end
-            if (user.userID == 0) return Error();
+            
+            _timeTrackerService.AddUser(user);
 
             //Store Session information for this user using Username
             HttpContext.Session.SetObjectAsJson("user", user);
-
+            
             return Ok();
         }
 
@@ -1205,7 +1204,7 @@ namespace time_sucks.Controllers
         {
             var JsonString = json.ToString();
 
-            var group = JsonConvert.DeserializeObject<uGroups>(JsonString);
+            var group = JsonConvert.DeserializeObject<UserGroup>(JsonString);
 
             if (IsActiveStudentInGroup(group.groupID))
                 //Use logged in users ID if they are a student

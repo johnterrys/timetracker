@@ -1,22 +1,32 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
-using MySql.Data.MySqlClient;
 
-namespace time_sucks.Models
+namespace TimeCats.Models
 {
+    ///
+    /// THIS PROJECT WAS USING NUGET PACKAGE
+    /// MySql.Data : 8.0.18
+    /// 
     public class DBHelper
     {
         //TODO Make this a better system user 
-        private static readonly MySqlConnectionStringBuilder connstring = new MySqlConnectionStringBuilder("" +
-                                                                                                           "Server=cs4450.cj7o28wmyp47.us-east-2.rds.amazonaws.com;" +
-                                                                                                           "UID=Logan;" +
-                                                                                                           "password=password;" +
-                                                                                                           "database=cs4450");
-
+        private static readonly MySqlConnectionStringBuilder ConnString = 
+            new MySqlConnectionStringBuilder("" +
+                                               "Server=cs4450.cj7o28wmyp47.us-east-2.rds.amazonaws.com;" +
+                                               "UID=Logan;" +
+                                               "password=password;" +
+                                               "database=cs4450");
+        
         public static long AddUser(User user)
         {
-            if (user.username != null) user.username = user.username.ToLower();
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            if (user.username != null)
+            {
+                user.username = user.username.ToLower();
+            }
+            
+            
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -41,7 +51,7 @@ namespace time_sucks.Models
         public static bool ChangePassword(User user)
         {
             var password = "";
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -74,7 +84,7 @@ namespace time_sucks.Models
         //Admin version doesn't require the current password to be passed
         public static bool ChangePasswordA(User user)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -93,7 +103,7 @@ namespace time_sucks.Models
         public static bool ChangeUser(User user)
         {
             if (user.username != null) user.username = user.username.ToLower();
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -116,7 +126,7 @@ namespace time_sucks.Models
         public static bool ChangeUserA(User user)
         {
             if (user.username != null) user.username = user.username.ToLower();
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -140,7 +150,8 @@ namespace time_sucks.Models
 
         public static long CreateCourse(int instructorID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -160,7 +171,7 @@ namespace time_sucks.Models
 
         public static long CreateProject(int courseID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -180,7 +191,7 @@ namespace time_sucks.Models
 
         public static long CreateGroup(int projectID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -200,7 +211,7 @@ namespace time_sucks.Models
 
         public static long CreateTimeCard(TimeCard timeCard)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -233,7 +244,7 @@ namespace time_sucks.Models
 
         public static long DeleteTimeCard(TimeCard timeCard)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -265,7 +276,7 @@ namespace time_sucks.Models
 
         public static bool DeleteUserCourse(int userID, int courseID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -288,7 +299,7 @@ namespace time_sucks.Models
                 projects = new List<Project>()
             };
 
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -352,7 +363,7 @@ namespace time_sucks.Models
                 groups = new List<Group>()
             };
 
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -497,7 +508,7 @@ namespace time_sucks.Models
         public static int GetCourseForGroup(int groupID)
         {
             var courseID = 0;
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -522,7 +533,7 @@ namespace time_sucks.Models
         public static int GetCourseForProject(int projectID)
         {
             var courseID = 0;
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -545,7 +556,7 @@ namespace time_sucks.Models
         public static List<Course> GetCourses()
         {
             var course = new List<Course>();
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -578,7 +589,7 @@ namespace time_sucks.Models
         public static List<Course> GetCoursesForInstructor(int instructorID)
         {
             var course = new List<Course>();
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -613,7 +624,7 @@ namespace time_sucks.Models
             group.users = new List<User>();
             var foundUser = false;
 
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -701,7 +712,7 @@ namespace time_sucks.Models
 
         public static long CreateCategory(int evalTemplateID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -721,7 +732,7 @@ namespace time_sucks.Models
         public static int GetInstructorForCourse(int courseID)
         {
             var instructorID = 0;
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -745,7 +756,7 @@ namespace time_sucks.Models
         public static int GetInstructorForEval(int evalTemplateID)
         {
             var instructorID = 0;
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -766,7 +777,7 @@ namespace time_sucks.Models
 
         public static long CreateTemplateQuestion(int evalTemplateQuestionCategoryID, int evalTemplateID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -788,7 +799,7 @@ namespace time_sucks.Models
         public static List<Dashboard> GetDashboard(int userID)
         {
             var dashboard = new List<Dashboard>();
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -834,7 +845,7 @@ namespace time_sucks.Models
         {
             username = username.ToLower();
             User user = null;
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -847,6 +858,7 @@ namespace time_sucks.Models
                     {
                         //Runs once per record retrieved
                         while (reader.Read())
+                        {
                             user = new User
                             {
                                 userID = reader.GetInt32("userID"),
@@ -856,6 +868,7 @@ namespace time_sucks.Models
                                 type = reader.GetChar("type"),
                                 isActive = reader.GetBoolean("isActive")
                             };
+                        }
                     }
                 }
             }
@@ -866,7 +879,7 @@ namespace time_sucks.Models
         public static List<AdminEval> GetAllEvals()
         {
             var evals = new List<AdminEval>();
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -916,7 +929,7 @@ namespace time_sucks.Models
         {
             var evals = new List<Eval>();
 
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1079,7 +1092,7 @@ namespace time_sucks.Models
         {
             var evals = new List<Eval>();
 
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1241,7 +1254,7 @@ namespace time_sucks.Models
         //  Helper function that will assist with total a score per each teammate
         private static void TeammateStats(ref List<Eval> eval)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 foreach (var e in eval)
                 foreach (var r in e.responses)
@@ -1279,7 +1292,7 @@ namespace time_sucks.Models
         {
             username = username.ToLower();
             User user = null;
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1312,7 +1325,7 @@ namespace time_sucks.Models
         public static User GetUserByID(int ID)
         {
             User user = null;
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1344,7 +1357,7 @@ namespace time_sucks.Models
 
         public static long CreateTemplate(int userID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1363,7 +1376,7 @@ namespace time_sucks.Models
 
         public static bool SaveTemplateName(EvalTemplate evalTemplate)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1381,7 +1394,7 @@ namespace time_sucks.Models
 
         public static bool SaveEval(AdminEval eval)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1403,7 +1416,7 @@ namespace time_sucks.Models
             var catName = "";
             var temp = "";
 
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1473,7 +1486,7 @@ namespace time_sucks.Models
 
         public static bool SaveResponse(int userID, int evalID, int evalTemplateQuestionID, string response)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1495,7 +1508,7 @@ namespace time_sucks.Models
 
         public static bool CompleteEval(int evalID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1514,7 +1527,7 @@ namespace time_sucks.Models
         public static List<User> GetUsers()
         {
             var user = new List<User>();
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1545,7 +1558,7 @@ namespace time_sucks.Models
         public static List<User> GetUsersForGroup(int groupID)
         {
             var users = new List<User>();
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1575,7 +1588,7 @@ namespace time_sucks.Models
         public static List<User> GetInactiveUsersForCourse(int courseID)
         {
             var users = new List<User>();
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1603,7 +1616,7 @@ namespace time_sucks.Models
         public static bool IsUserInGroup(int userID, int groupID)
         {
             var isInGroup = false;
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1629,7 +1642,7 @@ namespace time_sucks.Models
         public static bool IsActiveUserInGroup(int userID, int groupID)
         {
             var isInGroup = false;
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1656,7 +1669,7 @@ namespace time_sucks.Models
         public static bool IsUserInOtherGroup(int userID, int groupID)
         {
             var isInGroup = false;
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1685,7 +1698,7 @@ namespace time_sucks.Models
         public static bool IsUserInGroupForProject(int userID, int projectID)
         {
             var isInGroup = false;
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1714,7 +1727,7 @@ namespace time_sucks.Models
         public static bool UserHasTimeInGroup(int userID, int groupID)
         {
             var hasTimeInGroup = false;
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1739,7 +1752,7 @@ namespace time_sucks.Models
 
         public static bool JoinCourse(int courseID, int userID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1757,7 +1770,7 @@ namespace time_sucks.Models
 
         public static long JoinGroup(int userID, int groupID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1778,7 +1791,7 @@ namespace time_sucks.Models
 
         public static bool ReJoinGroup(int userID, int groupID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1797,7 +1810,7 @@ namespace time_sucks.Models
 
         public static bool LeaveCourse(int courseID, int userID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1816,18 +1829,18 @@ namespace time_sucks.Models
             }
         }
 
-        public static bool SaveUserInCourse(uCourse uCourse)
+        public static bool SaveUserInCourse(UserCourse userCourse)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText =
                         "UPDATE uCourses SET isActive = @isActive WHERE courseID = @courseID AND userID = @userID";
-                    cmd.Parameters.AddWithValue("@userID", uCourse.userID);
-                    cmd.Parameters.AddWithValue("@courseID", uCourse.courseID);
-                    cmd.Parameters.AddWithValue("@isActive", uCourse.isActive);
+                    cmd.Parameters.AddWithValue("@userID", userCourse.userID);
+                    cmd.Parameters.AddWithValue("@courseID", userCourse.courseID);
+                    cmd.Parameters.AddWithValue("@isActive", userCourse.isActive);
                     if (cmd.ExecuteNonQuery() > 0) return true;
                     return false;
                 }
@@ -1836,7 +1849,7 @@ namespace time_sucks.Models
 
         public static bool DeleteFromCourse(int courseID, int userID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1856,7 +1869,7 @@ namespace time_sucks.Models
 
         public static bool SaveCourse(Course course)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1878,7 +1891,7 @@ namespace time_sucks.Models
 
         public static bool SaveGroup(Group group)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1900,7 +1913,7 @@ namespace time_sucks.Models
 
         public static bool DeleteFromGroup(int userID, int groupID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1917,7 +1930,7 @@ namespace time_sucks.Models
 
         public static bool LeaveGroup(int userID, int groupID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1934,7 +1947,7 @@ namespace time_sucks.Models
 
         public static bool SaveProject(Project project)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1955,7 +1968,7 @@ namespace time_sucks.Models
 
         public static bool SaveCategory(EvalTemplateQuestionCategory category)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -1976,7 +1989,7 @@ namespace time_sucks.Models
 
         public static bool DeleteCategory(int evalTemplateQuestionCategoryID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -2001,7 +2014,7 @@ namespace time_sucks.Models
 
         public static bool SaveQuestion(EvalTemplateQuestion question)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -2027,7 +2040,7 @@ namespace time_sucks.Models
 
         public static bool DeleteQuestion(int evalTemplateQuestionID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -2048,7 +2061,7 @@ namespace time_sucks.Models
             DateTime before;
             DateTime after;
 
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -2106,7 +2119,7 @@ namespace time_sucks.Models
         public static bool UserIsInCourse(int courseID, int userID)
         {
             var isInCourse = false;
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -2134,7 +2147,7 @@ namespace time_sucks.Models
         {
             var projects = new List<Project>();
 
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -2163,7 +2176,7 @@ namespace time_sucks.Models
         {
             var templates = new List<EvalTemplate>();
 
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -2194,7 +2207,7 @@ namespace time_sucks.Models
         public static List<EvalTemplate> GetFullTemplatesForInstructor(int instructorID)
         {
             var templates = new List<EvalTemplate>();
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -2270,7 +2283,7 @@ namespace time_sucks.Models
             {
                 var tempGroup = new Group();
 
-                using (var conn = new MySqlConnection(connstring.ToString()))
+                using (var conn = new MySqlConnection(ConnString.ToString()))
                 {
                     conn.Open();
                     using (var cmd = conn.CreateCommand())
@@ -2312,7 +2325,7 @@ namespace time_sucks.Models
                 var userID = user.userID;
                 var groupID = group.groupID;
 
-                using (var conn = new MySqlConnection(connstring.ToString()))
+                using (var conn = new MySqlConnection(ConnString.ToString()))
                 {
                     conn.Open();
                     using (var cmd = conn.CreateCommand())
@@ -2338,7 +2351,7 @@ namespace time_sucks.Models
         public static int GetLastEvalNumber(int groupID)
         {
             var number = 0;
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -2363,7 +2376,7 @@ namespace time_sucks.Models
 
         public static bool SetInUse(int evalTemplateID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -2384,7 +2397,7 @@ namespace time_sucks.Models
         public static int GetLatestIncompleteEvaluationID(int groupID, int userID)
         {
             var evalID = 0;
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
@@ -2414,7 +2427,7 @@ namespace time_sucks.Models
 
         public static Eval GetEvaluation(int evalID)
         {
-            using (var conn = new MySqlConnection(connstring.ToString()))
+            using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 var eval = new Eval();
                 eval.templateQuestions = new List<EvalTemplateQuestion>();
