@@ -25,16 +25,48 @@ namespace TimeCats.Utils
                 uc.userID,
                 uc.courseID
             });
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.username)
+                .IsUnique();
+        }
+
+        public static void ConfigureManyToManyRelationships(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserCourse>()
+                .HasOne(uc => uc.User)
+                .WithMany(u => u.UserCourses)
+                .HasForeignKey(uc => uc.userID);
+            
+            modelBuilder.Entity<UserCourse>()
+                .HasOne(uc => uc.Course)
+                .WithMany(c => c.UserCourses)
+                .HasForeignKey(uc => uc.courseID);
+
+            modelBuilder.Entity<UserGroup>()
+                .HasOne(ug => ug.User)
+                .WithMany(u => u.UserGroups)
+                .HasForeignKey(ug => ug.userID);
+
+            modelBuilder.Entity<UserGroup>()
+                .HasOne(ug => ug.Group)
+                .WithMany(g => g.UserGroups)
+                .HasForeignKey(ug => ug.groupID);
         }
         
         public static void ConfigureRelationships(this TimeTrackerContext ctx, ModelBuilder modelBuilder)
         {
             ConfigureCoreRelationships(modelBuilder);
+            ConfigureManyToManyRelationships(modelBuilder);
         }
 
         public static void SeedData(this TimeTrackerContext ctx, ModelBuilder modelBuilder)
         {
-            var users = new List<User>() {
+            var crypto = new CryptographyService();
+            var testSalt = crypto.GenerateSalt();
+            var testPasswordHash = crypto.CalculateHash(testSalt, "Password!");
+            
+            modelBuilder.Entity<User>().HasData(
                 new User()
                 {
                     userID = 1,
@@ -43,7 +75,8 @@ namespace TimeCats.Utils
                     lastName = "Admin",
                     type = 'A',
                     isActive = true,
-                    password = HomeController.GenerateHash("Password!")
+                    password = testPasswordHash,
+                    Salt = testSalt
                 },
                 new User()
                 {
@@ -53,7 +86,8 @@ namespace TimeCats.Utils
                     lastName = "Jobs",
                     type = 'I',
                     isActive = true,
-                    password = HomeController.GenerateHash("Password!")
+                    password = testPasswordHash,
+                    Salt = testSalt
                 },
                 new User()
                 {
@@ -63,34 +97,18 @@ namespace TimeCats.Utils
                     lastName = "User",
                     type = 'S',
                     isActive = true,
-                    password = HomeController.GenerateHash("Password!")
-                }
-            };
-            var userCourses = new List<UserCourse>() {
-                new UserCourse()
-                {
-                    isActive = true,
-                    userID = 2,
-                    courseID = 0
-                }
-            };
-            var userGroups = new List<UserGroup>() {
-                new UserGroup()
-                {
-                    userID = 2,
-                    groupID = 0
-                }
-            };
-            var groups = new List<Group>() {
+                    password = testPasswordHash,
+                    Salt = testSalt
+                });
+            modelBuilder.Entity<Group>().HasData(                
                 new Group()
                 {
                     groupID = 1,
                     groupName = "Test Group 1",
                     projectID = 1,
                     isActive = true
-                }
-            };
-            var projects = new List<Project>() {
+                });
+            modelBuilder.Entity<Project>().HasData(
                 new Project()
                 {
                     projectID = 1,
@@ -98,26 +116,21 @@ namespace TimeCats.Utils
                     description = "This is the first test project",
                     CourseID = 1,
                     isActive = true
-                }
-            };
-            var courses = new List<Course>() {
+                });
+            modelBuilder.Entity<Course>().HasData(
                 new Course()
                 {
                     courseID = 1,
                     courseName = "Test Course",
                     description = "This is a test course for testing.",
-                    instructorName = users[1].firstName,
-                    instructorID = users[1].userID,
+                    InstructorId = 2,
                     isActive = true
-                }
-            };
-            
-            modelBuilder.Entity<User>().HasData(users);
-            modelBuilder.Entity<UserCourse>().HasData(userCourses);
-            modelBuilder.Entity<UserGroup>().HasData(userGroups);
-            modelBuilder.Entity<Group>().HasData(groups);
-            modelBuilder.Entity<Project>().HasData(projects);
-            modelBuilder.Entity<Course>().HasData(courses);
+                });
+
+            modelBuilder.Entity<UserGroup>()
+                .HasData(new UserGroup() {userID = 3, groupID = 1});
+            modelBuilder.Entity<UserCourse>()
+                .HasData(new UserCourse() {userID = 3, courseID = 1});
         }
     }
 }

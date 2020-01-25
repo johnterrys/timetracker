@@ -23,15 +23,7 @@ namespace TimeCats
 
         public User GetUserByUsername(string username)
         {
-            var user = _timeTrackerContext.Users.FirstOrDefault(u => u.username.Equals(username));
-            return user;
-        }
-
-        public User GetUserWithPasswordHash(string username, string hash)
-        {
-            var user = _timeTrackerContext.Users
-                .FirstOrDefault(u => u.username.Equals(username) && 
-                                     u.password.Equals(hash));
+            var user = _timeTrackerContext.Users.FirstOrDefault(u => u.username.ToLower().Equals(username.ToLower()));
             return user;
         }
 

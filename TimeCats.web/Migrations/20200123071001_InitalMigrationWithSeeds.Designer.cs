@@ -10,8 +10,8 @@ using TimeCats;
 namespace TimeCats.Migrations
 {
     [DbContext(typeof(TimeTrackerContext))]
-    [Migration("20200110054631_UpdateTableNames")]
-    partial class UpdateTableNames
+    [Migration("20200123071001_InitalMigrationWithSeeds")]
+    partial class InitalMigrationWithSeeds
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,6 +28,9 @@ namespace TimeCats.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<int>("InstructorId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("courseName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -41,7 +44,19 @@ namespace TimeCats.Migrations
 
                     b.HasKey("courseID");
 
+                    b.HasIndex("InstructorId");
+
                     b.ToTable("Courses");
+
+                    b.HasData(
+                        new
+                        {
+                            courseID = 1,
+                            InstructorId = 2,
+                            courseName = "Test Course",
+                            description = "This is a test course for testing.",
+                            isActive = true
+                        });
                 });
 
             modelBuilder.Entity("TimeCats.Models.Group", b =>
@@ -66,6 +81,15 @@ namespace TimeCats.Migrations
                     b.HasIndex("projectID");
 
                     b.ToTable("Groups");
+
+                    b.HasData(
+                        new
+                        {
+                            groupID = 1,
+                            groupName = "Test Group 1",
+                            isActive = true,
+                            projectID = 1
+                        });
                 });
 
             modelBuilder.Entity("TimeCats.Models.Project", b =>
@@ -94,6 +118,16 @@ namespace TimeCats.Migrations
                     b.HasIndex("CourseID");
 
                     b.ToTable("Projects");
+
+                    b.HasData(
+                        new
+                        {
+                            projectID = 1,
+                            CourseID = 1,
+                            description = "This is the first test project",
+                            isActive = true,
+                            projectName = "Test Project 1"
+                        });
                 });
 
             modelBuilder.Entity("TimeCats.Models.TimeCard", b =>
@@ -141,12 +175,13 @@ namespace TimeCats.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<byte[]>("Salt")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
                     b.Property<string>("firstName")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int?>("groupID")
-                        .HasColumnType("integer");
 
                     b.Property<bool>("isActive")
                         .HasColumnType("boolean");
@@ -168,9 +203,45 @@ namespace TimeCats.Migrations
 
                     b.HasKey("userID");
 
-                    b.HasIndex("groupID");
+                    b.HasIndex("username")
+                        .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            userID = 1,
+                            Salt = new byte[] { 190, 176, 135, 224, 169, 56, 102, 7, 176, 216, 51, 210, 173, 9, 127, 133, 175, 162, 0, 106, 109, 47, 104, 193, 19, 15, 16, 119, 247, 150, 198, 151 },
+                            firstName = "Adam",
+                            isActive = true,
+                            lastName = "Admin",
+                            password = "bSr2t3bUhq39QdFZvwPwG1diG4sRMS92KJz0wzcRQqE=",
+                            type = 'A',
+                            username = "Admin"
+                        },
+                        new
+                        {
+                            userID = 2,
+                            Salt = new byte[] { 190, 176, 135, 224, 169, 56, 102, 7, 176, 216, 51, 210, 173, 9, 127, 133, 175, 162, 0, 106, 109, 47, 104, 193, 19, 15, 16, 119, 247, 150, 198, 151 },
+                            firstName = "Steve",
+                            isActive = true,
+                            lastName = "Jobs",
+                            password = "bSr2t3bUhq39QdFZvwPwG1diG4sRMS92KJz0wzcRQqE=",
+                            type = 'I',
+                            username = "Instructor"
+                        },
+                        new
+                        {
+                            userID = 3,
+                            Salt = new byte[] { 190, 176, 135, 224, 169, 56, 102, 7, 176, 216, 51, 210, 173, 9, 127, 133, 175, 162, 0, 106, 109, 47, 104, 193, 19, 15, 16, 119, 247, 150, 198, 151 },
+                            firstName = "Normal",
+                            isActive = true,
+                            lastName = "User",
+                            password = "bSr2t3bUhq39QdFZvwPwG1diG4sRMS92KJz0wzcRQqE=",
+                            type = 'S',
+                            username = "User"
+                        });
                 });
 
             modelBuilder.Entity("TimeCats.Models.UserCourse", b =>
@@ -186,6 +257,13 @@ namespace TimeCats.Migrations
                     b.HasIndex("courseID");
 
                     b.ToTable("UserCourses");
+
+                    b.HasData(
+                        new
+                        {
+                            userID = 3,
+                            courseID = 1
+                        });
                 });
 
             modelBuilder.Entity("TimeCats.Models.UserGroup", b =>
@@ -196,22 +274,33 @@ namespace TimeCats.Migrations
                     b.Property<int>("groupID")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("projectID")
-                        .HasColumnType("integer");
-
                     b.HasKey("userID", "groupID");
 
                     b.HasIndex("groupID");
 
-                    b.HasIndex("projectID");
-
                     b.ToTable("UserGroups");
+
+                    b.HasData(
+                        new
+                        {
+                            userID = 3,
+                            groupID = 1
+                        });
+                });
+
+            modelBuilder.Entity("TimeCats.Models.Course", b =>
+                {
+                    b.HasOne("TimeCats.Models.User", "Instructor")
+                        .WithMany()
+                        .HasForeignKey("InstructorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("TimeCats.Models.Group", b =>
                 {
                     b.HasOne("TimeCats.Models.Project", "Project")
-                        .WithMany()
+                        .WithMany("groups")
                         .HasForeignKey("projectID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -241,13 +330,6 @@ namespace TimeCats.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TimeCats.Models.User", b =>
-                {
-                    b.HasOne("TimeCats.Models.Group", null)
-                        .WithMany("users")
-                        .HasForeignKey("groupID");
-                });
-
             modelBuilder.Entity("TimeCats.Models.UserCourse", b =>
                 {
                     b.HasOne("TimeCats.Models.Course", "Course")
@@ -266,14 +348,10 @@ namespace TimeCats.Migrations
             modelBuilder.Entity("TimeCats.Models.UserGroup", b =>
                 {
                     b.HasOne("TimeCats.Models.Group", "Group")
-                        .WithMany()
+                        .WithMany("UserGroups")
                         .HasForeignKey("groupID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("TimeCats.Models.Project", null)
-                        .WithMany("UserGroups")
-                        .HasForeignKey("projectID");
 
                     b.HasOne("TimeCats.Models.User", "User")
                         .WithMany("UserGroups")

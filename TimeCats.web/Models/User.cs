@@ -15,6 +15,9 @@ namespace TimeCats.Models
         [Required]
         public string password { get; set; } //TODO: This should be a hash we also need a salt
         
+        [Required]
+        public byte[] Salt { get; set; }
+        
         [NotMapped]
         public string newPassword { get; set; }
         

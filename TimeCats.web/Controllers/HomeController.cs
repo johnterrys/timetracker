@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -839,25 +840,20 @@ namespace TimeCats.Controllers
             var loginUser = JsonConvert.DeserializeObject<User>(JsonString);
 
             //Check database for User and create a session
-            var user = _timeTrackerService.GetUserWithPasswordHash(loginUser.username, GenerateHash(loginUser.password));
+            var user = _timeTrackerService.GetUserByUsername(loginUser.username);
+            var crypto = new CryptographyService();
 
-            //return Unauthorized (401) if the username or password is wrong
-            if (user == null)
+            if (crypto.Verify(user.password, user.Salt, loginUser.password))
             {
-                return Unauthorized();
-            }
-
-            //return Forbidden (403) if the user's account isn't active
-            if (!user.isActive) return StatusCode(403);
-
-            if (loginUser.username.ToLower() == user.username)
-            {
+                if (!user.isActive) return StatusCode(403); //return Forbidden (403) if the user's account isn't active
+                
                 // We found a user! Send them to the Dashboard and save their Session
                 HttpContext.Session.SetObjectAsJson("user", user);
                 return Ok();
             }
 
-            return null;
+            //return Unauthorized (401) if the username or password is wrong
+            return Unauthorized();
         }
 
         /// <summary>
