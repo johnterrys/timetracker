@@ -891,8 +891,7 @@ namespace TimeCats.Controllers
         {
             var JsonString = json.ToString();
             var user = JsonConvert.DeserializeObject<User>(JsonString);
-            user.password = GenerateHash(user.password);
-            
+
             _timeTrackerService.AddUser(user);
 
             //Store Session information for this user using Username

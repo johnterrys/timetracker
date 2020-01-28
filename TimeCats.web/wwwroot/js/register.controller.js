@@ -25,7 +25,7 @@
                 return;
             }
 
-            $scope.user.password = CryptoJS.SHA256($scope.password).toString(CryptoJS.enc.Hex);
+            $scope.user.password = $scope.password;
 
             usSpinnerService.spin('spinner');
             $http.post("/Home/RegisterUser", $scope.user)
