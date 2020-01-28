@@ -65,8 +65,8 @@
                 userID: $scope.viewUser.userID
             };
 
-            tempuser.password = CryptoJS.SHA256($scope.viewUser.currentPassword).toString(CryptoJS.enc.Hex);
-            tempuser.newPassword = CryptoJS.SHA256($scope.viewUser.newPassword).toString(CryptoJS.enc.Hex);
+            tempuser.password = $scope.viewUser.currentPassword;
+            tempuser.newPassword = $scope.viewUser.newPassword;
 
             $http.post("/Home/ChangePassword", tempuser)
                 .then(function (response) {
