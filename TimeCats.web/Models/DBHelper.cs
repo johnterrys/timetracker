@@ -799,44 +799,18 @@ namespace TimeCats.Models
         public static List<Dashboard> GetDashboard(int userID)
         {
             var dashboard = new List<Dashboard>();
-            using (var conn = new MySqlConnection(ConnString.ToString()))
+            
+            dashboard.Add(new Dashboard
             {
-                conn.Open();
-                using (var cmd = conn.CreateCommand())
-                {
-                    //SQL and Parameters
-                    cmd.CommandText =
-                        "SELECT g.groupID, g.groupName, p.projectID, p.projectName, c.courseID, c.courseName, " +
-                        "u.userID AS 'instructorID', CONCAT(u.firstName, ' ',u.lastName) as instructorName FROM uGroups uG " +
-                        "LEFT JOIN cs4450.groups g ON g.groupID = uG.groupID " +
-                        "LEFT JOIN projects p ON g.projectID = p.projectID " +
-                        "LEFT JOIN courses c on p.courseID = c.courseID " +
-                        "LEFT JOIN users u ON c.instructorID = u.userID " +
-                        "WHERE uG.userID = @userID " +
-                        "AND uG.isActive = 1 " +
-                        "AND g.isActive = 1 " +
-                        "AND p.isActive = 1 " +
-                        "AND c.isActive = 1 ";
-                    cmd.Parameters.AddWithValue("@userID", userID);
-
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        //Runs once per record retrieved
-                        while (reader.Read())
-                            dashboard.Add(new Dashboard
-                            {
-                                groupID = reader.GetInt32("groupID"),
-                                groupName = reader.GetString("groupName"),
-                                projectID = reader.GetInt32("projectID"),
-                                projectName = reader.GetString("projectName"),
-                                courseID = reader.GetInt32("courseID"),
-                                courseName = reader.GetString("courseName"),
-                                instructorID = reader.GetInt32("instructorID"),
-                                instructorName = reader.GetString("instructorName")
-                            });
-                    }
-                }
-            }
+                groupID = 1,
+                groupName = "Super Duper Group Thing",
+                projectID = 1,
+                projectName = "Project Name HERE",
+                courseID = 1,
+                courseName = "Course2345",
+                instructorID = 1,
+                instructorName = "Instructor Man!"
+            });
 
             return dashboard;
         }

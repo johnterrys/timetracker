@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using TimeCats.Models;
 
 namespace TimeCats
@@ -20,16 +23,13 @@ namespace TimeCats
 
         public User GetUserByUsername(string username)
         {
-            var user = _timeTrackerContext.Users.FirstOrDefault(u => u.username.Equals(username));
+            var user = _timeTrackerContext.Users.FirstOrDefault(u => u.username.ToLower().Equals(username.ToLower()));
             return user;
         }
 
-        public User GetUserWithPasswordHash(string username, string hash)
+        public ICollection<Dashboard> GetDashboardsForUser()
         {
-            var user = _timeTrackerContext.Users
-                .FirstOrDefault(u => u.username.Equals(username) && 
-                                     u.password.Equals(hash));
-            return user;
+            throw new NotImplementedException();
         }
 
         public int AddCourse(Course course)
