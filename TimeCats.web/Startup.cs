@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TimeCats.Services;
 
 namespace TimeCats
 {
@@ -24,6 +25,7 @@ namespace TimeCats
             services.AddMvc(options => { options.EnableEndpointRouting = false; });
             services.AddSession(options => { options.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddScoped<StudentTimeTrackerService>();
+            services.AddScoped<CourseService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -9,16 +9,19 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using TimeCats.Session;
 using TimeCats.Models;
+using TimeCats.Services;
 
 namespace TimeCats.Controllers
 {
     public class HomeController : Controller
     {
         private readonly StudentTimeTrackerService _timeTrackerService;
+        private readonly CourseService _courseService;
 
         public HomeController(IServiceProvider serviceProvider)
         {
             _timeTrackerService = serviceProvider.GetRequiredService<StudentTimeTrackerService>();
+            _courseService = serviceProvider.GetRequiredService<CourseService>();
         }
         
         public IActionResult Error()
@@ -227,22 +230,23 @@ namespace TimeCats.Controllers
         public IActionResult AddCourse([FromBody] object json)
         {
             var JsonString = json.ToString();
-
-            //TODO: Umm what? How can a user be both admin and 'I'
+            
             if (GetUserType() == 'I' || IsAdmin())
             {
-                var courseId = _timeTrackerService.AddCourse(new Course()
+                var course = _courseService.AddCourse(new Course()
                 {
-                    instructorID = GetUserID(),
                     courseName = "New Course",
+                    InstructorId = 2,
                     isActive = true,
                     description = ""
                 });
-
-                if (courseId > 0) return Ok(courseId);
-                return StatusCode(500); //Query Error
+    
+                if (course.courseID > 0)
+                    return Ok(course.courseID);
+                else
+                    return StatusCode(500);
             }
-
+            
             return Unauthorized();
         }
 
@@ -589,7 +593,7 @@ namespace TimeCats.Controllers
         [HttpGet]
         public IActionResult GetCourses()
         {
-            var allCourses = DBHelper.GetCourses();
+            var allCourses = _courseService.GetCourses();
             return Ok(allCourses);
         }
 
@@ -600,7 +604,7 @@ namespace TimeCats.Controllers
         [HttpPost]
         public IActionResult GetInstructorCourses()
         {
-            var allCourses = DBHelper.GetCourses();
+            var allCourses = _courseService.GetCourses();
             var userCourses = new List<Course>();
 
             foreach (var c in allCourses)
@@ -1124,7 +1128,7 @@ namespace TimeCats.Controllers
 
             if (IsAdmin() || GetUserID() == user.userID)
             {
-                var courses = DBHelper.GetCoursesForInstructor(user.userID);
+                var courses = _courseService.GetCoursesByUser(user);
                 return Ok(courses);
             }
 
