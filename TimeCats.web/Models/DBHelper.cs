@@ -320,7 +320,7 @@ namespace TimeCats.Models
                             {
                                 course.courseID = reader.GetInt32("courseId");
                                 course.courseName = reader.GetString("courseName");
-                                course.instructorID = reader.GetInt32("instructorId");
+                                course.InstructorId = reader.GetInt32("instructorId");
                                 course.isActive = reader.GetBoolean("isActive");
                                 course.description = reader.GetString("description");
                             }
@@ -553,39 +553,6 @@ namespace TimeCats.Models
             return courseID;
         }
 
-        public static List<Course> GetCourses()
-        {
-            var course = new List<Course>();
-            using (var conn = new MySqlConnection(ConnString.ToString()))
-            {
-                conn.Open();
-                using (var cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = "Select c.*, CONCAT(u.firstName, ' ',u.lastName) as instructorName " +
-                                      "FROM courses c " +
-                                      "LEFT JOIN users u ON (c.instructorID = u.userID) " +
-                                      "ORDER BY courseName DESC";
-
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        //Runs once per record retrieved
-                        while (reader.Read())
-                            course.Add(new Course
-                            {
-                                courseID = reader.GetInt32("courseID"),
-                                courseName = reader.GetString("courseName"),
-                                instructorID = reader.GetInt32("instructorID"),
-                                isActive = reader.GetBoolean("isActive"),
-                                description = reader.GetString("description"),
-                                instructorName = reader.GetString("instructorName")
-                            });
-                    }
-                }
-            }
-
-            return course;
-        }
-
         public static List<Course> GetCoursesForInstructor(int instructorID)
         {
             var course = new List<Course>();
@@ -606,7 +573,7 @@ namespace TimeCats.Models
                             {
                                 courseID = reader.GetInt32("courseID"),
                                 courseName = reader.GetString("courseName"),
-                                instructorID = reader.GetInt32("instructorID"),
+                                InstructorId = reader.GetInt32("instructorID"),
                                 isActive = reader.GetBoolean("isActive"),
                                 description = reader.GetString("description"),
                                 instructorName = reader.GetString("instructorName")
@@ -1852,7 +1819,7 @@ namespace TimeCats.Models
                     cmd.CommandText = "UPDATE courses SET courseName = @courseName, instructorID = @instructorID, " +
                                       "isActive = @isActive, description = @description WHERE courseID = @courseID";
                     cmd.Parameters.AddWithValue("@courseName", course.courseName);
-                    cmd.Parameters.AddWithValue("@instructorID", course.instructorID);
+                    cmd.Parameters.AddWithValue("@instructorID", course.InstructorId);
                     cmd.Parameters.AddWithValue("@isActive", course.isActive);
                     cmd.Parameters.AddWithValue("@description", course.description);
                     cmd.Parameters.AddWithValue("@courseID", course.courseID);
