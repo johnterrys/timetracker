@@ -21,6 +21,13 @@ namespace TimeCats.Services
             return course;
         }
 
+        public Course GetCourse(int id)
+        {
+            return _context.Courses
+                .Include(c => c.Instructor)
+                .FirstOrDefault(c => c.courseID == id);
+        }
+
         public IEnumerable<Course> GetCoursesByUser(User user)
         {
             var courses = _context.Courses

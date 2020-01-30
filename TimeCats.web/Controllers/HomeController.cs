@@ -581,7 +581,7 @@ namespace TimeCats.Controllers
             var JsonString = json.ToString();
             var course = JsonConvert.DeserializeObject<Course>(JsonString);
 
-            var retreivedCourse = DBHelper.GetCourse(course.courseID);
+            var retreivedCourse = _courseService.GetCourse(course.courseID);
 
             return Ok(retreivedCourse);
         }
