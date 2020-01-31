@@ -15,11 +15,8 @@
         $http.post("/Home/GetCourse", { courseID: $scope.courseID })
             .then(function (response) {
                 usSpinnerService.stop('spinner');
-                $scope.course.courseID = response.data.courseID;
-                $scope.course.courseName = response.data.courseName;
-                $scope.course.description = response.data.description;
-                $scope.course.instructorID = response.data.instructorID;
-                $scope.course.isActive = response.data.isActive;
+                $scope.course = response.data;
+                
                 $.each(response.data.users, function (index, user) {
                     $scope.course.users[user.userID] = user;
                 });

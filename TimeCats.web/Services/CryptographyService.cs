@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
-namespace TimeCats
+namespace TimeCats.Services
 {
     // Based on https://docs.microsoft.com/en-us/aspnet/core/security/data-protection/consumer-apis/password-hashing?view=aspnetcore-3.1
     public sealed class CryptographyService
