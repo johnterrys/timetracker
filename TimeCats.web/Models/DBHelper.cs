@@ -699,6 +699,7 @@ namespace TimeCats.Models
         public static int GetInstructorForCourse(int courseID)
         {
             var instructorID = 0;
+
             using (var conn = new MySqlConnection(ConnString.ToString()))
             {
                 conn.Open();

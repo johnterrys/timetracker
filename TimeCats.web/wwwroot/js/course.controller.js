@@ -2,7 +2,7 @@
     $scope.loaded = false;
     $scope.course = {};
     $scope.course.users = {};
-    $scope.course.projects = {};
+    $scope.course.projects = Array();
     $scope.config = {};
     $scope.config.showInactiveProjects = false;
 
@@ -12,6 +12,7 @@
         if (!$scope.courseID) $location.path('/courses');
 
         usSpinnerService.spin('spinner');
+        
         $http.post("/Home/GetCourse", { courseID: $scope.courseID })
             .then(function (response) {
                 usSpinnerService.stop('spinner');
@@ -20,15 +21,27 @@
                 $.each(response.data.users, function (index, user) {
                     $scope.course.users[user.userID] = user;
                 });
-                $.each(response.data.projects, function (index, project) {
-                    $scope.course.projects[project.projectID] = project;
-                });
+
+                $scope.getProjectsForCourse();
+                
                 if (!$scope.course.users) $scope.course.users = null;
                 if (!$scope.course.projects) $scope.course.projects = null;
             }, function () {
                 usSpinnerService.stop('spinner');
                 toastr["error"]("Failed retrieving course.");
             });
+        
+        $scope.getProjectsForCourse = function () {
+            $http.post("/Home/GetProjects/", { courseID: $scope.courseID })
+                .then(function (response) {
+                    $scope.course.projects = [];
+                    $.each(response.data, function (index, project) {
+                        $scope.course.projects.push(project);
+                    });
+                }, function (response) {
+                    toastr["error"]("Course has no projects");
+                });
+        };
 
         $scope.createProject = function () {
             usSpinnerService.spin('spinner');

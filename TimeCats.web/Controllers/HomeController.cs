@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
@@ -17,11 +18,13 @@ namespace TimeCats.Controllers
     {
         private readonly StudentTimeTrackerService _timeTrackerService;
         private readonly CourseService _courseService;
+        private readonly ProjectService _projectService;
 
         public HomeController(IServiceProvider serviceProvider)
         {
             _timeTrackerService = serviceProvider.GetRequiredService<StudentTimeTrackerService>();
             _courseService = serviceProvider.GetRequiredService<CourseService>();
+            _projectService = serviceProvider.GetRequiredService<ProjectService>();
         }
         
         public IActionResult Error()
@@ -63,7 +66,8 @@ namespace TimeCats.Controllers
         /// <returns></returns>
         public int GetCourseForProject(int projectID)
         {
-            return DBHelper.GetCourseForProject(projectID);
+            var courseId = _projectService.GetProjectById(projectID).CourseID;
+            return courseId;
         }
 
         /// <summary>
@@ -112,8 +116,12 @@ namespace TimeCats.Controllers
         public bool IsInstructorForCourse(int courseID)
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
+            var courses = _courseService.GetCoursesByUser(user);
 
-            if (user != null) return user.userID == DBHelper.GetInstructorForCourse(courseID);
+            if (courses.Any(c => c.courseID == courseID))
+            {
+                return true;
+            }
 
             return false;
         }
@@ -138,10 +146,10 @@ namespace TimeCats.Controllers
         public bool IsStudentInCourse(int courseID)
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
+            var courses = _courseService.GetCourses();
 
-            if (user != null) return DBHelper.UserIsInCourse(courseID, user.userID);
-
-            return false;
+            return courses.Select(c => c.users)
+                .Any(u => u.Any(u => u.userID == user.userID));
         }
 
         /// <summary>
@@ -263,8 +271,16 @@ namespace TimeCats.Controllers
 
             if (IsInstructorForCourse(course.courseID) || IsAdmin())
             {
-                var projectID = (int) DBHelper.CreateProject(course.courseID);
-                if (projectID > 0) return Ok(projectID);
+                var project = new Project()
+                {
+                    projectName = "Default Project",
+                    description = "This is the default project template.",
+                    isActive = true,
+                    CourseID = course.courseID
+                };
+
+                var p = _projectService.AddProject(project);
+                if (project.projectID > 0) return Ok(project.projectID);
                 return StatusCode(500); //Query Error
             }
 
@@ -581,9 +597,9 @@ namespace TimeCats.Controllers
             var JsonString = json.ToString();
             var course = JsonConvert.DeserializeObject<Course>(JsonString);
 
-            var retreivedCourse = _courseService.GetCourse(course.courseID);
+            var retrievedCourse = _courseService.GetCourse(course.courseID);
 
-            return Ok(retreivedCourse);
+            return Ok(retrievedCourse);
         }
 
         /// <summary>
@@ -653,13 +669,12 @@ namespace TimeCats.Controllers
         public IActionResult GetProject([FromBody] object json)
         {
             var JsonString = json.ToString();
-
             var project = JsonConvert.DeserializeObject<Project>(JsonString);
             var courseID = GetCourseForProject(project.projectID);
 
             if (IsAdmin() || IsInstructorForCourse(courseID) || IsStudentInCourse(courseID))
             {
-                project = DBHelper.GetProject(project.projectID);
+                project = _projectService.GetProjectById(project.projectID);
                 return Ok(project);
             }
 
@@ -1081,16 +1096,14 @@ namespace TimeCats.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetProjects([FromBody] object json)
+        public IEnumerable<Project> GetProjects([FromBody] object json)
         {
             var JsonString = json.ToString();
-
             var course = JsonConvert.DeserializeObject<Course>(JsonString);
 
-            var projects = DBHelper.GetProjects(course.courseID);
+            var projects = _projectService.GetProjectsByCourseId(course.courseID);
 
-            if (projects.Count > 0) return Ok(projects);
-            return NoContent();
+            return projects;
         }
 
         [HttpPost]
