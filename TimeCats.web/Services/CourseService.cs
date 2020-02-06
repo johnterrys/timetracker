@@ -14,6 +14,11 @@ namespace TimeCats.Services
             _context = context;
         }
 
+        /// <summary>
+        /// Adds a course to the database.
+        /// </summary>
+        /// <param name="course"></param>
+        /// <returns></returns>
         public Course AddCourse(Course course)
         {
             _context.Courses.Add(course);
