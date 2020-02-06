@@ -275,7 +275,7 @@ namespace TimeCats.Controllers
                 {
                     projectName = "Default Project",
                     description = "This is the default project template.",
-                    isActive = true,
+                                                        isActive = true,
                     CourseID = course.courseID
                 };
 
@@ -452,7 +452,7 @@ namespace TimeCats.Controllers
                 {
                     if (!IsStudentInGroupForProject(project.projectID))
                     {
-                        groupID = (int) DBHelper.CreateGroup(project.projectID);
+                        groupID = (int) DBHelper.CreateGroup(new Group());
                         if (groupID > 0) DBHelper.JoinGroup(GetUserID(), groupID);
                     }
                     else
@@ -462,7 +462,7 @@ namespace TimeCats.Controllers
                 }
                 else
                 {
-                    groupID = (int) DBHelper.CreateGroup(project.projectID);
+                    groupID = (int) DBHelper.CreateGroup(new Group());
                 }
 
                 if (groupID > 0) return Ok(groupID);
