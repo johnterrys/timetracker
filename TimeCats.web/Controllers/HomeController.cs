@@ -724,7 +724,7 @@ namespace TimeCats.Controllers
             //checks if user is admin
             if (IsAdmin())
             {
-                var users = DBHelper.GetUsers();
+                var users = _timeTrackerService.GetUsers();
                 return Ok(users);
             }
 

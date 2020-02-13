@@ -31,6 +31,11 @@ namespace TimeCats.Services
             return user;
         }
 
+        public IEnumerable<User> GetUsers()
+        {
+            return _timeTrackerContext.Users;
+        }
+
         public ICollection<Dashboard> GetDashboardsForUser()
         {
             throw new NotImplementedException();
