@@ -17,11 +17,8 @@
             .then(function (response) {
                 usSpinnerService.stop('spinner');
                 $scope.course = response.data;
-                
-                $.each(response.data.users, function (index, user) {
-                    $scope.course.users[user.userID] = user;
-                });
 
+                $scope.getUsersForCourse();
                 $scope.getProjectsForCourse();
                 
                 if (!$scope.course.users) $scope.course.users = null;
@@ -30,6 +27,21 @@
                 usSpinnerService.stop('spinner');
                 toastr["error"]("Failed retrieving course.");
             });
+        
+        $scope.getUsersForCourse = function () {
+          $http.post("/Home/GetUsersForCourse", { courseID: $scope.courseID })
+              .then(function (response) {
+                  $scope.course.users = {};
+                  
+                  $.each(response.data, function (index, user) {
+                      $scope.course.users[user.userID] = user;
+                  });
+                  
+                  console.log($scope.course.users);
+              }, function () {
+                 toastr["error"]("Failed retrieving users."); 
+              });
+        };
         
         $scope.getProjectsForCourse = function () {
             $http.post("/Home/GetProjects/", { courseID: $scope.courseID })
