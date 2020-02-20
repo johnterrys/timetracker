@@ -65,6 +65,8 @@ namespace TimeCats.Models
             return true;
         }
 
+
+
         public static long CreateCourse(Course course)
         {
             _TimeTrackerContext.Courses.Add(course);
@@ -126,13 +128,31 @@ namespace TimeCats.Models
 
         public static int GetCourseForGroup(int groupID)
         {
+            //TODO
+            //var groups = _TimeTrackerContext.Groups
+            //                .Where(g => g.groupID == groupID)
+            //                .Select(g => g.projectID)
+            //                .ToList();
+
+            //var projects = _TimeTrackerContext.Projects
+            //                .Where(p => groups.Contains(p.projectID))
+            //                .Select(p => p.CourseID)
+            //                .ToList();
+
+            //var courses = _TimeTrackerContext.Courses
+            //                .Where(c => projects.Contains(c.courseID))
+            //                .Select(c => c.courseID)
+            //                .FirstOrDefault();
+
+            //return courses;
+
             var names = (from c in _TimeTrackerContext.Courses
                         join p in _TimeTrackerContext.Projects on c.courseID equals p.CourseID
                         join g in _TimeTrackerContext.Groups on p.projectID equals g.projectID
                         where (g.groupID == groupID)
                         select (c.courseID))
                         .FirstOrDefault();
-
+            
             return names;
         }
 
@@ -147,9 +167,7 @@ namespace TimeCats.Models
 
         public static Group GetGroup(int groupID)
         {
-
             return _TimeTrackerContext.Groups
-                   .Include(g => g.users)
                    .FirstOrDefault(g => g.groupID == groupID);
         }
             
@@ -274,9 +292,9 @@ namespace TimeCats.Models
             throw new NotImplementedException();
 
             //return _TimeTrackerContext.evalTemplates
-            //            .Where(u => u.evalTemplateID == evalTemplateID)
-            //            .Select(u => u.instructorID)
-            //            .FirstOrDefault();
+            //          .Where(u => u.evalTemplateID == evalTemplateID)
+            //          .Select(u => u.instructorID)
+            //          .FirstOrDefault();
         }
 
 
@@ -307,7 +325,7 @@ namespace TimeCats.Models
                 groupID = 1,
                 groupName = "Super Duper Group Thing",
                 projectID = 1,
-                projectName = "Project Name HERE",
+                projectName = "Super Project Name",
                 courseID = 1,
                 courseName = "Course2345",
                 instructorID = 1,
@@ -322,8 +340,19 @@ namespace TimeCats.Models
         {
             username = username.ToLower();
 
-            return _TimeTrackerContext.Users
-                .FirstOrDefault(u => u.username == username);
+            var names = _TimeTrackerContext.Users
+                            .Where(u => u.username == username)
+                            .Select(u => new User
+                            {
+                                userID = u.userID,
+                                username = u.username,
+                                firstName = u.firstName,
+                                lastName = u.lastName,
+                                type = u.type,
+                                isActive = u.isActive
+                            })
+                            .FirstOrDefault();
+            return names;
         }
 
        
@@ -331,15 +360,37 @@ namespace TimeCats.Models
         {
             username = username.ToLower();
 
-            return _TimeTrackerContext.Users
-                    .FirstOrDefault(u => u.username == username && u.password == password);
+            var names = _TimeTrackerContext.Users
+                            .Where(u => u.username == username && u.password == password)
+                            .Select(u => new User
+                            {
+                                userID = u.userID,
+                                username = u.username,
+                                firstName = u.firstName,
+                                lastName = u.lastName,
+                                type = u.type,
+                                isActive = u.isActive
+                            })
+                            .FirstOrDefault();
+            return names;
         }   
         
 
         public static User GetUserByID(int ID)
         {
-            return _TimeTrackerContext.Users
-                .FirstOrDefault(u => u.userID == ID);
+            var names = _TimeTrackerContext.Users
+                            .Where(u => u.userID == ID)
+                            .Select(u => new User
+                            {
+                                userID = u.userID,
+                                username = u.username,
+                                firstName = u.firstName,
+                                lastName = u.lastName,
+                                type = u.type,
+                                isActive = u.isActive
+                            })
+                            .FirstOrDefault();
+            return names;
         }
 
 
@@ -376,16 +427,13 @@ namespace TimeCats.Models
             //return true;
         }
 
-       
-
-
 
         public static bool CompleteEval(int evalID)
         {
             throw new NotImplementedException();
 
             //var names = _TimeTrackerContext.evals
-            //    .FirstOrDefault(u => u.evalID == evalID);
+            //              .FirstOrDefault(u => u.evalID == evalID);
 
             //names.isComplete = 1;
             //_TimeTrackerContext.evals.Update(names);
@@ -393,90 +441,59 @@ namespace TimeCats.Models
             //return true;
         }
 
-        // Return a list of users
+        // Return a list of all users
         public static List<User> GetUsers()
         {
-            return _TimeTrackerContext.Users
-                     .ToList();
+            var list = new List<User>();
+
+            var users = _TimeTrackerContext.Users
+                            .Select(u => new User
+                            {
+                                userID = u.userID,
+                                firstName = u.firstName,
+                                lastName = u.lastName
+                            })
+                            .ToList();
+            return users;
         }
 
+        // Return a list of users within a group
         public static List<User> GetUsersForGroup(int groupID)
         {     
-            var names = (from ug in _TimeTrackerContext.UserGroups
-                        join u in _TimeTrackerContext.Users on ug.userID equals u.userID
-                        where (ug.groupID == groupID)
-                        select new User())
-                        .ToList();
-            
+            var userGroups = _TimeTrackerContext.UserGroups
+                                .Where(ug => ug.groupID == groupID)
+                                .Select(ug=> ug.userID)
+                                .ToList();
+
+            var names = _TimeTrackerContext.Users
+                            .Where(u => userGroups.Contains(u.userID))
+                            .Select( u=> new User { 
+                                userID = u.userID,
+                                firstName = u.firstName,
+                                lastName = u.lastName
+                            })
+                            .ToList();
+
             return names;
         }
 
-        //    var users = new List<User>();
-        //    using (var conn = new MySqlConnection(ConnString.ToString()))
-        //    {
-        //        conn.Open();
-        //        using (var cmd = conn.CreateCommand())
-        //        {
-        //            //SQL and Parameters
-        //            cmd.CommandText =
-        //                "SELECT * FROM uGroups ug LEFT JOIN users u ON ug.userID = u.userID WHERE ug.groupID = @groupID";
-        //            cmd.Parameters.AddWithValue("@groupID", groupID);
-
-        //            using (var reader = cmd.ExecuteReader())
-        //            {
-        //                //Runs once per record retrieved
-        //                while (reader.Read())
-        //                    users.Add(new User
-        //                    {
-        //                        userID = reader.GetInt32("userID"),
-        //                        firstName = reader.GetString("firstName"),
-        //                        lastName = reader.GetString("lastName")
-        //                    });
-        //            }
-        //        }
-        //    }
-
-        //    return users;
-        //}
-
         public static List<User> GetInactiveUsersForCourse(int courseID)
         {
-            //var users = new List<User>();
-            return _TimeTrackerContext.UserCourses
-                .Select(uc => uc.User)
-                .ToList();
-               //TODO if breaks
-            //var names = (from uc in _TimeTrackerContext.UserCourses
-            //            join u in _TimeTrackerContext.Users on uc.userID equals u.userID
-            //            where (uc.courseID == courseID && uc.isActive == false)
-            //            select new { u.userID, u.firstName, u.lastName })
-            //            .ToList();
-            //return names;
+            var courses = _TimeTrackerContext.UserCourses
+                    .Where(uc => uc.courseID == courseID && uc.isActive == false)
+                    .Select(uc => uc.userID)
+                    .ToList();
+
+            var names = _TimeTrackerContext.Users
+                            .Where(u => courses.Contains(u.userID))
+                            .Select (u => new User { 
+                                userID = u.userID,
+                                firstName = u.firstName,
+                                lastName = u.lastName
+                            })
+                            .ToList();
+            return names;
         }
-        //    using (var conn = new MySqlConnection(ConnString.ToString()))
-        //    {
-        //        conn.Open();
-        //        using (var cmd = conn.CreateCommand())
-        //        {
-        //            cmd.CommandText =
-        //                "SELECT * FROM uCourses uc INNER JOIN users u ON uc.userID = u.userID WHERE uc.courseID = @courseID AND uc.isActive = 0";
-        //            cmd.Parameters.Add("@courseID", MySqlDbType.Int32).Value = courseID;
-
-        //            using (var reader = cmd.ExecuteReader())
-        //            {
-        //                while (reader.Read())
-        //                    users.Add(new User
-        //                    {
-        //                        userID = reader.GetInt32("userID"),
-        //                        firstName = reader.GetString("firstName"),
-        //                        lastName = reader.GetString("lastName")
-        //                    });
-        //            }
-        //        }
-        //    }
-
-        //    return users;
-        //}
 
 
         public static bool IsUserInGroup(int userID, int groupID)
@@ -495,6 +512,9 @@ namespace TimeCats.Models
 
         public static bool IsUserInOtherGroup(int userID, int groupID)
         {
+            
+            
+            
             var groupNumber = _TimeTrackerContext.Groups
                             .FirstOrDefault(u => u.groupID == groupID);
 
@@ -537,6 +557,13 @@ namespace TimeCats.Models
 
         public static bool IsUserInGroupForProject(int userID, int projectID)
         {
+            var project = _TimeTrackerContext.Projects
+                            .Where(p => p.projectID == projectID)
+                            .Select(p => p.groups)
+                            .ToList();
+
+                            
+            
             var names = (from u in _TimeTrackerContext.Users
                         join ug in _TimeTrackerContext.UserGroups on u.userID equals ug.userID
                         join g in _TimeTrackerContext.Groups on ug.groupID equals g.groupID
@@ -590,6 +617,7 @@ namespace TimeCats.Models
             
             _TimeTrackerContext.UserCourses.Add(newuser);
             _TimeTrackerContext.SaveChanges();
+            
             return true;
         }
  
@@ -603,6 +631,7 @@ namespace TimeCats.Models
 
             _TimeTrackerContext.UserGroups.Add(newUser);
             _TimeTrackerContext.SaveChanges();
+            
             return 0;
         }
         
@@ -611,7 +640,8 @@ namespace TimeCats.Models
         {
             var names = _TimeTrackerContext.UserGroups
                 .FirstOrDefault(u => u.userID == userID && u.groupID == groupID);
-            
+
+            //names.isActive = true;
 
             _TimeTrackerContext.UserGroups.Update(names);
             _TimeTrackerContext.SaveChanges();
@@ -621,7 +651,6 @@ namespace TimeCats.Models
 
         public static bool LeaveCourse(int courseID, int userID)
         {
-
             var names = _TimeTrackerContext.UserCourses
                 .FirstOrDefault(u => u.userID == userID && u.courseID == courseID);
 
@@ -636,6 +665,7 @@ namespace TimeCats.Models
         public static bool SaveUserInCourse(UserCourse userCourse)
         {
             userCourse.isActive = true;
+            
             _TimeTrackerContext.UserCourses.Update(userCourse);
             _TimeTrackerContext.SaveChanges();
             return false;
@@ -658,14 +688,15 @@ namespace TimeCats.Models
         {
             _TimeTrackerContext.Courses.Update(course);
             _TimeTrackerContext.SaveChanges();
+            
             return false;
         }
 
-        //Added this to compile
         public static Project GetProject(int projectID)
         {
-            var project = new Project();
-            return project;
+            return _TimeTrackerContext.Projects
+                    .Where(p => p.projectID == projectID)
+                    .FirstOrDefault();
         }
 
 
@@ -692,6 +723,8 @@ namespace TimeCats.Models
         {
             var names = _TimeTrackerContext.UserGroups
                 .FirstOrDefault(u => u.userID == user && u.groupID == group);
+
+            //names.isActive = false;
 
             _TimeTrackerContext.UserGroups.Update(names);
             _TimeTrackerContext.SaveChanges();
@@ -775,54 +808,29 @@ namespace TimeCats.Models
                 _TimeTrackerContext.SaveChanges();
             }
 
-            return false;         
+            return timecard.isEdited;         
         }
 
         public static bool UserIsInCourse(int courseID, int userID)
         {
-            //throw new NotImplementedException();
             return _TimeTrackerContext.UserCourses
                         .Any(u => u.courseID == courseID && u.userID == userID);
         }
 
         public static List<Project> GetProjects(int courseID)
         {
-
-            //throw new NotImplementedException();
-
-
-            var projects = new List<Project>();
-
             var names = _TimeTrackerContext.Projects
-                            .Where(u => u.CourseID == courseID)
+                            .Where(p => p.CourseID == courseID)
+                            .Select( p => new Project
+                            {
+                                projectID = p.projectID,
+                                projectName = p.projectName
+                            })
                             .ToList();
 
             return names;
         }
 
-        //using (var conn = new MySqlConnection(ConnString.ToString()))
-        //{
-        //    conn.Open();
-        //    using (var cmd = conn.CreateCommand())
-        //    {
-        //        //SQL and Parameters
-        //        cmd.CommandText = "SELECT * FROM projects WHERE courseID = @courseID AND isActive = true";
-        //        cmd.Parameters.AddWithValue("@courseID", courseID);
-
-        //        using (var reader = cmd.ExecuteReader())
-        //        {
-        //            //Runs once per record retrieved
-        //            while (reader.Read())
-        //                projects.Add(new Project
-        //                {
-        //                    projectID = reader.GetInt32("projectID"),
-        //                    projectName = reader.GetString("projectName")
-        //                });
-        //        }
-        //    }
-        //}
-
-        //return projects;
 
 
 
