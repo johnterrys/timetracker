@@ -19,12 +19,14 @@ namespace TimeCats.Controllers
         private readonly StudentTimeTrackerService _timeTrackerService;
         private readonly CourseService _courseService;
         private readonly ProjectService _projectService;
+        private readonly UserService _userService;
 
         public HomeController(IServiceProvider serviceProvider)
         {
             _timeTrackerService = serviceProvider.GetRequiredService<StudentTimeTrackerService>();
             _courseService = serviceProvider.GetRequiredService<CourseService>();
             _projectService = serviceProvider.GetRequiredService<ProjectService>();
+            _userService = serviceProvider.GetRequiredService<UserService>();
         }
         
         public IActionResult Error()
@@ -724,7 +726,7 @@ namespace TimeCats.Controllers
             //checks if user is admin
             if (IsAdmin())
             {
-                var users = DBHelper.GetUsers();
+                var users = _timeTrackerService.GetUsers();
                 return Ok(users);
             }
 
@@ -750,12 +752,28 @@ namespace TimeCats.Controllers
         }
 
         [HttpPost]
+        public IActionResult GetUsersForCourse([FromBody] object json)
+        {
+            var JsonString = json.ToString();
+            var course = JsonConvert.DeserializeObject<Course>(JsonString);
+
+            var users = _userService.GetUsersForCourse(course.courseID);
+            return Ok(users);
+        }
+
+        [HttpPost]
         public IActionResult JoinCourse([FromBody] object json)
         {
             var JsonString = json.ToString();
             var course = JsonConvert.DeserializeObject<Course>(JsonString);
 
-            if (DBHelper.JoinCourse(course.courseID, GetUserID())) return Ok();
+            var recordsUpdated = _courseService.RequestJoinCourse(GetUserID(), course.courseID);
+
+            if (recordsUpdated > 0)
+            {
+                return Ok();
+            }
+            
             return StatusCode(500); //Query failed
         }
 

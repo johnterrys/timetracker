@@ -48,5 +48,16 @@ namespace TimeCats.Services
 
             return courses;
         }
+
+        public int RequestJoinCourse(int userId, int courseId)
+        {
+            _context.UserCourses.Add(new UserCourse
+            {
+                userID = userId,
+                courseID = courseId, 
+                isActive = false
+            });
+            return _context.SaveChanges();
+        }
     }
 }
