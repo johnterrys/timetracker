@@ -14,11 +14,9 @@ namespace TimeCats.Models
 
         public bool isActive { get; set; }
 
-        [Required]
-        public List<UserGroup> UserGroups { get; set; }
-        
         [NotMapped]
         public List<User> users { get; set; }
+        public List<UserGroup> UserGroups { get; set; }
 
         [Required]
         public int projectID { get; set; }

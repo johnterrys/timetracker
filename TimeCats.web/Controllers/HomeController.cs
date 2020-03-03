@@ -19,14 +19,16 @@ namespace TimeCats.Controllers
         private readonly StudentTimeTrackerService _timeTrackerService;
         private readonly CourseService _courseService;
         private readonly ProjectService _projectService;
+        private readonly GroupService _groupService;
 
         public HomeController(IServiceProvider serviceProvider)
         {
             _timeTrackerService = serviceProvider.GetRequiredService<StudentTimeTrackerService>();
             _courseService = serviceProvider.GetRequiredService<CourseService>();
             _projectService = serviceProvider.GetRequiredService<ProjectService>();
+            _groupService = serviceProvider.GetRequiredService<GroupService>();
         }
-        
+
         public IActionResult Error()
         {
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
@@ -116,8 +118,13 @@ namespace TimeCats.Controllers
         public bool IsInstructorForCourse(int courseID)
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
-            var courses = _courseService.GetCoursesByUser(user);
+            // make sure the user is an instructor
+            if (user.type != 'I')
+            {
+                return false;
+            }
 
+            var courses = _courseService.GetCoursesByUser(user);
             if (courses.Any(c => c.courseID == courseID))
             {
                 return true;
@@ -146,10 +153,9 @@ namespace TimeCats.Controllers
         public bool IsStudentInCourse(int courseID)
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
-            var courses = _courseService.GetCourses();
+            var courses = _courseService.GetCoursesByUser(user);
 
-            return courses.Select(c => c.users)
-                .Any(u => u.Any(u => u.userID == user.userID));
+            return courses.Any(c => c.courseID == courseID);
         }
 
         /// <summary>
@@ -238,7 +244,7 @@ namespace TimeCats.Controllers
         public IActionResult AddCourse([FromBody] object json)
         {
             var JsonString = json.ToString();
-            
+
             if (GetUserType() == 'I' || IsAdmin())
             {
                 var course = _courseService.AddCourse(new Course()
@@ -248,13 +254,13 @@ namespace TimeCats.Controllers
                     isActive = true,
                     description = ""
                 });
-    
+
                 if (course.courseID > 0)
                     return Ok(course.courseID);
                 else
                     return StatusCode(500);
             }
-            
+
             return Unauthorized();
         }
 
@@ -440,38 +446,44 @@ namespace TimeCats.Controllers
         {
             var JsonString = json.ToString();
 
-            var groupID = 0;
+            Group group;
             var project = JsonConvert.DeserializeObject<Project>(JsonString);
             var courseID = GetCourseForProject(project.projectID);
-            
-            
 
-            if (IsAdmin() || IsInstructorForCourse(courseID) || IsStudentInCourse(courseID))
+            // admins and instructors can create groups. Students can create
+            // groups if they are in the course and not already in a group for
+            // the project
+            if (IsAdmin() || IsInstructorForCourse(courseID) ||
+                (IsStudentInCourse(courseID) &&
+                 !IsStudentInGroupForProject(project.projectID)))
             {
+                // create the group
+                group = _groupService.AddGroup(new Group()
+                {
+                    groupName = "New Group",
+                    projectID = project.projectID,
+                    evalID = 0,
+                    isActive = true
+                });
+
+                // if a student is creating the group, add them to it
                 if (GetUserType() == 'S')
                 {
-                    if (!IsStudentInGroupForProject(project.projectID))
-                    {
-                        groupID = (int) DBHelper.CreateGroup(project.projectID);
-                        if (groupID > 0) DBHelper.JoinGroup(GetUserID(), groupID);
-                    }
-                    else
-                    {
-                        return StatusCode(403); //Student already part of group, unable to create a new one.
-                    }
-                }
-                else
-                {
-                    groupID = (int) DBHelper.CreateGroup(project.projectID);
+                    int userID = GetUserID();
+                    User user = _timeTrackerService.GetUserByID(userID);
+                    _groupService.AddUserToGroup(user, group);
                 }
 
-                if (groupID > 0) return Ok(groupID);
+                if (group.groupID > 0)
+                {
+                    return Ok(group.groupID);
+                }
+
                 return StatusCode(500); //Failed Query
             }
 
             return Unauthorized();
         }
-
 
         /// <summary>
         ///     Creates a TimeCard and returns the timeSlotID
@@ -639,23 +651,23 @@ namespace TimeCats.Controllers
         }
 
         /// <summary>
+        ///   Get a group
         /// </summary>
-        /// <param name="userID"></param>
-        /// <returns></returns>
+        /// <param name="json">A JSON string containing the groupID</param>
         [HttpPost]
         public IActionResult GetGroup([FromBody] object json)
         {
             var JsonString = json.ToString();
-            var requestedGroup = JsonConvert.DeserializeObject<Group>(JsonString);
-            //Group requestedGroup = new Group();
-            //requestedGroup.groupID = Int32.Parse(requestedGroupStr);
+            var groupID = JsonConvert.DeserializeObject<Group>(JsonString).groupID;
+            var group = _groupService.GetGroupByID(groupID);
 
-            //Make sure that the user is part of the groups course
-            var courseID = GetCourseForGroup(requestedGroup.groupID);
-            if (IsStudentInCourse(courseID) || IsAdmin() || IsInstructorForCourse(courseID))
+            // Make sure that the user is part of the group's course
+            var courseID = group.Project.CourseID;
+            if (IsStudentInCourse(courseID) ||
+                IsAdmin() ||
+                IsInstructorForCourse(courseID))
             {
-                requestedGroup = DBHelper.GetGroup(requestedGroup.groupID);
-                return Ok(requestedGroup);
+                return Ok(group);
             }
 
             return Unauthorized(); //Not allowed to view the group.
@@ -875,7 +887,7 @@ namespace TimeCats.Controllers
             if (crypto.Verify(user.password, user.Salt, loginUser.password))
             {
                 if (!user.isActive) return StatusCode(403); //return Forbidden (403) if the user's account isn't active
-                
+
                 // We found a user! Send them to the Dashboard and save their Session
                 HttpContext.Session.SetObjectAsJson("user", user);
                 return Ok();
@@ -915,7 +927,7 @@ namespace TimeCats.Controllers
 
             //Store Session information for this user using Username
             HttpContext.Session.SetObjectAsJson("user", user);
-            
+
             return Ok();
         }
 
@@ -1078,7 +1090,7 @@ namespace TimeCats.Controllers
             DateTime timeIn, timeOut;
 
             //  Is time in a date?,  is time out a date?
-            //  are hours negative?, is time out a future date?     
+            //  are hours negative?, is time out a future date?
             if (!DateTime.TryParse(timecard.timeIn, out timeIn) || !DateTime.TryParse(timecard.timeOut, out timeOut) ||
                 timeOut.CompareTo(timeIn) < 0 || timeOut > DateTime.Now || timeIn > DateTime.Now)
             {
@@ -1155,7 +1167,7 @@ namespace TimeCats.Controllers
 
             var assignEvals = JsonConvert.DeserializeObject<AssignEvals>(JsonString);
 
-            //call and set the inUse flag with another query 
+            //call and set the inUse flag with another query
 
             if (DBHelper.AssignEvals(assignEvals.projectIDs, assignEvals.evalTemplateID))
             {

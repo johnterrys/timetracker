@@ -16,7 +16,8 @@ namespace TimeCats.Models
 
         [Required]
         public string description { get; set; }
-        
+
+        [NotMapped]
         public List<Group> groups { get; set; }
 
         [Required]

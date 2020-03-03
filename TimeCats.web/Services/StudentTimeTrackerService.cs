@@ -8,7 +8,7 @@ namespace TimeCats.Services
     public class StudentTimeTrackerService
     {
         private readonly TimeTrackerContext _timeTrackerContext;
-        
+
         public StudentTimeTrackerService(TimeTrackerContext studentCtx)
         {
             _timeTrackerContext = studentCtx;
@@ -23,6 +23,12 @@ namespace TimeCats.Services
             user.isActive = true;
             _timeTrackerContext.Users.Add(user);
             _timeTrackerContext.SaveChanges();
+        }
+
+        public User GetUserByID(int userID)
+        {
+            return _timeTrackerContext.Users.
+                FirstOrDefault(u => u.userID == userID);
         }
 
         public User GetUserByUsername(string username)

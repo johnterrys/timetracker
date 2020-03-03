@@ -11,7 +11,7 @@ namespace TimeCats.Models
 
         [Required]
         public string courseName { get; set; }
-        
+
         [Required]
         public int InstructorId { get; set; }
         public User Instructor { get; set; }

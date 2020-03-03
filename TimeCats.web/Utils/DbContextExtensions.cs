@@ -20,7 +20,7 @@ namespace TimeCats.Utils
                 ug.userID,
                 ug.groupID
             });
-            
+
             modelBuilder.Entity<UserCourse>().HasKey(uc => new
             {
                 uc.userID,
@@ -38,7 +38,7 @@ namespace TimeCats.Utils
                 .HasOne(uc => uc.User)
                 .WithMany(u => u.UserCourses)
                 .HasForeignKey(uc => uc.userID);
-            
+
             modelBuilder.Entity<UserCourse>()
                 .HasOne(uc => uc.Course)
                 .WithMany(c => c.UserCourses)
@@ -54,7 +54,7 @@ namespace TimeCats.Utils
                 .WithMany(g => g.UserGroups)
                 .HasForeignKey(ug => ug.groupID);
         }
-        
+
         public static void ConfigureRelationships(this TimeTrackerContext ctx, ModelBuilder modelBuilder)
         {
             ConfigureCoreRelationships(modelBuilder);
@@ -66,7 +66,7 @@ namespace TimeCats.Utils
             var crypto = new CryptographyService();
             var testSalt = crypto.GenerateSalt();
             var testPasswordHash = crypto.CalculateHash(testSalt, "Password!");
-            
+
             modelBuilder.Entity<User>().HasData(
                 new User()
                 {
@@ -101,7 +101,7 @@ namespace TimeCats.Utils
                     password = testPasswordHash,
                     Salt = testSalt
                 });
-            modelBuilder.Entity<Group>().HasData(                
+            modelBuilder.Entity<Group>().HasData(
                 new Group()
                 {
                     groupID = 1,

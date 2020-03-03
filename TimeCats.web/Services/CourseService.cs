@@ -28,18 +28,22 @@ namespace TimeCats.Services
                 .FirstOrDefault(c => c.courseID == id);
         }
 
-        public IEnumerable<Course> GetCoursesByUser(User user)
+        public List<Course> GetCoursesByUser(User user)
         {
             var courses = _context.Courses
-                .Where(c => c.InstructorId == user.userID);
+                .Where(c => _context.UserCourses.Any(
+                       uc => uc.courseID == c.courseID &&
+                             uc.userID == user.userID))
+                .ToList();
 
             return courses;
         }
 
-        public IEnumerable<Course> GetCourses()
+        public List<Course> GetCourses()
         {
             var courses = _context.Courses
-                .Include(c => c.Instructor).ToList();
+                .Include(c => c.Instructor)
+                .ToList();
 
             return courses;
         }
