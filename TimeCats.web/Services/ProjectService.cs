@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using TimeCats.Models;
 
 namespace TimeCats.Services
@@ -22,7 +23,9 @@ namespace TimeCats.Services
 
         public Project GetProjectById(int projectId)
         {
-            return _context.Projects.FirstOrDefault(p => p.projectID == projectId);
+            return _context.Projects
+                .Include(p => p.groups)
+                .FirstOrDefault(p => p.projectID == projectId);
         }
 
         public IEnumerable<Project> GetProjects()

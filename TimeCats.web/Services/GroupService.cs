@@ -36,5 +36,16 @@ namespace TimeCats.Services
             _context.SaveChanges();
             return group;
         }
+
+        public bool IsActiveUserInGroup(int userID, int groupID)
+        {
+            return _context.UserGroups.Any(ug =>
+                ug.userID == userID && ug.groupID == groupID);
+        }
+
+        public void Save()
+        {
+            _context.SaveChanges();
+        }
     }
 }

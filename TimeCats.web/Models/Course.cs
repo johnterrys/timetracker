@@ -28,6 +28,7 @@ namespace TimeCats.Models
         public List<User> users { get; set; }
         public List<UserCourse> UserCourses { get; set; }
 
+        [NotMapped]
         public List<Project> projects { get; set; }
     }
 }

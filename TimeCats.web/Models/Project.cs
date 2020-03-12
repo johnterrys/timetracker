@@ -22,6 +22,8 @@ namespace TimeCats.Models
 
         [Required]
         public int CourseID { get; set; }
+
+        [NotMapped]
         public Course Course { get; set; }
     }
 }

@@ -59,7 +59,8 @@ namespace TimeCats.Controllers
         /// <returns></returns>
         public int GetCourseForGroup(int groupID)
         {
-            return DBHelper.GetCourseForGroup(groupID);
+            var group = _groupService.GetGroupByID(groupID);
+            return group.Project.CourseID;
         }
 
         /// <summary>
@@ -190,7 +191,10 @@ namespace TimeCats.Controllers
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
 
-            if (user != null) return DBHelper.IsActiveUserInGroup(user.userID, groupID);
+            if (user != null)
+            {
+                return _groupService.IsActiveUserInGroup(user.userID, groupID);
+            }
             return false;
         }
 
@@ -687,6 +691,14 @@ namespace TimeCats.Controllers
             if (IsAdmin() || IsInstructorForCourse(courseID) || IsStudentInCourse(courseID))
             {
                 project = _projectService.GetProjectById(project.projectID);
+
+                Console.WriteLine(JsonConvert.SerializeObject(project,
+                    Formatting.None,
+                    new JsonSerializerSettings()
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    }));
+
                 return Ok(project);
             }
 
@@ -962,13 +974,28 @@ namespace TimeCats.Controllers
         {
             var JsonString = json.ToString();
 
-            var group = JsonConvert.DeserializeObject<Group>(JsonString);
-            var courseID = GetCourseForGroup(group.groupID);
+            var groupData = JsonConvert.DeserializeObject<Group>(JsonString);
+            var courseID = GetCourseForGroup(groupData.groupID);
 
-            if (IsAdmin() || IsInstructorForCourse(courseID) || IsActiveStudentInGroup(group.groupID))
+            if (IsAdmin() || IsInstructorForCourse(courseID) ||
+                IsActiveStudentInGroup(groupData.groupID))
             {
-                if (DBHelper.SaveGroup(group)) return Ok();
-                return StatusCode(500); // Query failed
+                try
+                {
+                    var group = _groupService.GetGroupByID(groupData.groupID);
+                    group.groupName = groupData.groupName;
+                    group.isActive = groupData.isActive;
+                    group.evalID = groupData.evalID;
+                    group.projectID = groupData.projectID;
+
+                    _groupService.Save();
+
+                    return Ok();
+                }
+                catch (Exception e)
+                {
+                    return StatusCode(500); // Query failed
+                }
             }
 
             return
