@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using TimeCats.Session;
 using TimeCats.Models;
 using TimeCats.Services;
+using TimeCats.DTOs;
 
 namespace TimeCats.Controllers
 {
@@ -671,7 +672,7 @@ namespace TimeCats.Controllers
                 IsAdmin() ||
                 IsInstructorForCourse(courseID))
             {
-                return Ok(group);
+                return Ok(new GroupDTO(group));
             }
 
             return Unauthorized(); //Not allowed to view the group.
@@ -699,7 +700,7 @@ namespace TimeCats.Controllers
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                     }));
 
-                return Ok(project);
+                return Ok(new ProjectDTO(project).WithGroups());
             }
 
             return Unauthorized();

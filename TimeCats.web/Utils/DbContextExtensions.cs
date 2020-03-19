@@ -34,10 +34,6 @@ namespace TimeCats.Utils
             modelBuilder.Entity<Project>()
                 .HasMany(p => p.groups)
                 .WithOne(g => g.Project);
-
-            modelBuilder.Entity<Group>()
-                .HasOne(g => g.Project)
-                .WithMany(p => p.groups);
         }
 
         public static void ConfigureManyToManyRelationships(ModelBuilder modelBuilder)
