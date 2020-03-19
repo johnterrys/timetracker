@@ -18,14 +18,20 @@ namespace TimeCats.Controllers
     {
         private readonly StudentTimeTrackerService _timeTrackerService;
         private readonly CourseService _courseService;
+        private readonly EvalService _evalService;
+        private readonly GroupService _groupService;
         private readonly ProjectService _projectService;
+        private readonly TimeService _timeService;
         private readonly UserService _userService;
 
         public HomeController(IServiceProvider serviceProvider)
         {
             _timeTrackerService = serviceProvider.GetRequiredService<StudentTimeTrackerService>();
             _courseService = serviceProvider.GetRequiredService<CourseService>();
+            _evalService = serviceProvider.GetRequiredService<EvalService>();
+            _groupService = serviceProvider.GetRequiredService<GroupService>();
             _projectService = serviceProvider.GetRequiredService<ProjectService>();
+            _timeService = serviceProvider.GetRequiredService<TimeService>();
             _userService = serviceProvider.GetRequiredService<UserService>();
         }
         
@@ -59,7 +65,7 @@ namespace TimeCats.Controllers
         /// <returns></returns>
         public int GetCourseForGroup(int groupID)
         {
-            return DBHelper.GetCourseForGroup(groupID);
+            return _courseService.GetCourseForGroup(groupID);
         }
 
         /// <summary>
@@ -136,7 +142,7 @@ namespace TimeCats.Controllers
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
 
-            if (user != null) return user.userID == DBHelper.GetInstructorForEval(evalTemplateID);
+            if (user != null) return user.userID == _evalService.GetInstructorForEval(evalTemplateID);
 
             return false;
         }
@@ -149,7 +155,7 @@ namespace TimeCats.Controllers
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
             var courses = _courseService.GetCourses();
-
+            
             return courses.Select(c => c.users)
                 .Any(u => u.Any(u => u.userID == user.userID));
         }
@@ -161,7 +167,7 @@ namespace TimeCats.Controllers
         /// <returns></returns>
         public bool UserIsStudentInCourse(int userID, int courseID)
         {
-            if (userID != 0 && courseID != 0) return DBHelper.UserIsInCourse(courseID, userID);
+            if (userID != 0 && courseID != 0) return _userService.UserIsInCourse(courseID, userID);
 
             return false;
         }
@@ -174,7 +180,7 @@ namespace TimeCats.Controllers
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
 
-            if (user != null) return DBHelper.IsUserInGroup(user.userID, groupID);
+            if (user != null) return _userService.IsUserInGroup(user.userID, groupID);
             return false;
         }
 
@@ -186,7 +192,7 @@ namespace TimeCats.Controllers
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
 
-            if (user != null) return DBHelper.IsActiveUserInGroup(user.userID, groupID);
+            if (user != null) return _userService.IsActiveUserInGroup(user.userID, groupID);
             return false;
         }
 
@@ -198,7 +204,7 @@ namespace TimeCats.Controllers
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
 
-            if (user != null) return DBHelper.IsUserInOtherGroup(user.userID, groupID);
+            if (user != null) return _groupService.IsUserInOtherGroup(user.userID, groupID);
             return false;
         }
 
@@ -210,7 +216,7 @@ namespace TimeCats.Controllers
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
 
-            if (user != null) return DBHelper.IsUserInGroupForProject(user.userID, projectID);
+            if (user != null) return _groupService.IsUserInGroupForProject(user.userID, projectID);
             return false;
         }
 
@@ -222,7 +228,7 @@ namespace TimeCats.Controllers
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
 
-            if (user != null) return DBHelper.UserHasTimeInGroup(user.userID, groupID);
+            if (user != null) return _timeService.UserHasTimeInGroup(user.userID, groupID);
 
             return false;
         }
@@ -290,14 +296,14 @@ namespace TimeCats.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateTemplateQuestion([FromBody] object json)
+        public IActionResult CreateTemplateQuestion([FromBody] EvalTemplateQuestionCategory json)
         {
             var JsonString = json.ToString();
             var evalTemplateQuestionCategory = JsonConvert.DeserializeObject<EvalTemplateQuestionCategory>(JsonString);
 
             if (IsInstructorForEval(evalTemplateQuestionCategory.evalTemplateID) || IsAdmin())
             {
-                var questionID = DBHelper.CreateTemplateQuestion(
+                var questionID = _evalService.CreateTemplateQuestion(
                     evalTemplateQuestionCategory.evalTemplateQuestionCategoryID,
                     evalTemplateQuestionCategory.evalTemplateID);
                 if (questionID > 0) return Ok(questionID);
@@ -317,13 +323,13 @@ namespace TimeCats.Controllers
 
             if (IsAdmin())
             {
-                if (DBHelper.ChangePasswordA(user)) return Ok();
+                if (_userService.ChangePasswordA(user)) return Ok();
                 return StatusCode(500); //Query failed
             }
 
             if (user.userID == GetUserID())
             {
-                if (DBHelper.ChangePassword(user)) return Ok();
+                if (_userService.ChangePassword(user)) return Ok();
                 return StatusCode(500); //Query failed
             }
 
@@ -342,19 +348,19 @@ namespace TimeCats.Controllers
             if (user.username == null || user.username.Length < 1)
                 return StatusCode(400); //Didn't pass a valid username, Bad Request (400)
             user.username = user.username.ToLower();
-            var checkUser = DBHelper.GetUser(user.username);
+            var checkUser = _userService.GetUser(user.username);
             if (checkUser != null && checkUser.userID != user.userID)
                 return StatusCode(403); //Username already exists, Forbidden (403)
 
             if (IsAdmin())
             {
-                if (DBHelper.ChangeUserA(user)) return Ok();
+                if (_userService.ChangeUser(user)) return Ok();
                 return StatusCode(500); //Query failed
             }
 
             if (user.userID == GetUserID())
             {
-                if (DBHelper.ChangeUser(user)) return Ok();
+                if (_userService.ChangeUser(user)) return Ok();
                 return StatusCode(500); //Query failed
             }
 
@@ -368,7 +374,7 @@ namespace TimeCats.Controllers
             var user = JsonConvert.DeserializeObject<User>(JsonString);
 
             if (IsAdmin() || GetUserType() == 'I' && user.userID == GetUserID())
-                return Ok(DBHelper.CreateTemplate(user.userID));
+                return Ok(_evalService.CreateTemplate(user.userID));
             return Unauthorized();
         }
 
@@ -378,7 +384,7 @@ namespace TimeCats.Controllers
             var JsonString = json.ToString();
             var evalTemplate = JsonConvert.DeserializeObject<EvalTemplate>(JsonString);
 
-            if (GetUserType() == 'I' || IsAdmin()) return Ok(DBHelper.SaveTemplateName(evalTemplate));
+            if (GetUserType() == 'I' || IsAdmin()) return Ok(_evalService.SaveTemplateName(evalTemplate));
             return Unauthorized();
         }
 
@@ -388,7 +394,7 @@ namespace TimeCats.Controllers
             var JsonString = json.ToString();
             var eval = JsonConvert.DeserializeObject<AdminEval>(JsonString);
 
-            if (IsAdmin()) return Ok(DBHelper.SaveEval(eval));
+            if (IsAdmin()) return Ok(_evalService.SaveEval(eval));
             return Unauthorized();
         }
 
@@ -401,7 +407,7 @@ namespace TimeCats.Controllers
 
             if (GetUserType() == 'I' || IsAdmin())
             {
-                if (DBHelper.CreateTemplateCopy(user.userID, evalTemplate.evalTemplateID)) return Ok();
+                if (_evalService.CreateTemplateCopy(user.userID, evalTemplate.evalTemplateID)) return Ok();
                 return StatusCode(500);
             }
 
@@ -416,7 +422,7 @@ namespace TimeCats.Controllers
 
             if (IsInstructorForEval(evalTemplate.evalTemplateID) || IsAdmin())
             {
-                var categoryID = DBHelper.CreateCategory(evalTemplate.evalTemplateID);
+                var categoryID = _evalService.CreateCategory(evalTemplate.evalTemplateID);
                 if (categoryID > 0) return Ok(categoryID);
                 return StatusCode(500);
             }
@@ -454,8 +460,8 @@ namespace TimeCats.Controllers
                 {
                     if (!IsStudentInGroupForProject(project.projectID))
                     {
-                        groupID = (int) DBHelper.CreateGroup(new Group());
-                        if (groupID > 0) DBHelper.JoinGroup(GetUserID(), groupID);
+                        groupID = (int) _groupService.CreateGroup(new Group());
+                        if (groupID > 0) _groupService.JoinGroup(GetUserID(), groupID);
                     }
                     else
                     {
@@ -464,7 +470,7 @@ namespace TimeCats.Controllers
                 }
                 else
                 {
-                    groupID = (int) DBHelper.CreateGroup(new Group());
+                    groupID = (int) _groupService.CreateGroup(new Group());
                 }
 
                 if (groupID > 0) return Ok(groupID);
@@ -490,9 +496,9 @@ namespace TimeCats.Controllers
             if (IsAdmin() || IsInstructorForCourse(courseID) || IsStudentInCourse(courseID))
             {
                 if (GetUserType() == 'S' && GetUserID() == timeCard.userID)
-                    timeCard.timeslotID = (int) DBHelper.CreateTimeCard(timeCard);
+                    timeCard.timeslotID = (int) _timeService.CreateTimeCard(timeCard);
                 else
-                    timeCard.timeslotID = (int) DBHelper.CreateTimeCard(timeCard);
+                    timeCard.timeslotID = (int) _timeService.CreateTimeCard(timeCard);
                 if (timeCard.timeslotID > 0) return Ok(timeCard.timeslotID);
                 return StatusCode(500);
             }
@@ -515,12 +521,12 @@ namespace TimeCats.Controllers
                 if (GetUserType() == 'S' && GetUserID() == timeCard.userID)
                 {
                     /*Changed to DELETE*/
-                    timeCard.timeslotID = (int) DBHelper.DeleteTimeCard(timeCard);
+                    timeCard.timeslotID = (int) _timeService.DeleteTimeCard(timeCard);
                     return StatusCode(200);
                 }
 
                 /*Changed to DELETE*/
-                timeCard.timeslotID = (int) DBHelper.DeleteTimeCard(timeCard);
+                timeCard.timeslotID = (int) _timeService.DeleteTimeCard(timeCard);
                 return StatusCode(200);
             }
 
@@ -559,7 +565,7 @@ namespace TimeCats.Controllers
             var uCourse = JsonConvert.DeserializeObject<UserCourse>(JsonString);
             if (IsAdmin() || IsInstructorForCourse(uCourse.courseID))
             {
-                if (DBHelper.DeleteUserCourse(uCourse.userID, uCourse.courseID)) return Ok();
+                if (_courseService.DeleteUserCourse(uCourse.userID, uCourse.courseID)) return Ok();
                 return StatusCode(500); //Query failed
             }
 
@@ -575,13 +581,13 @@ namespace TimeCats.Controllers
 
             if (IsAdmin() || IsInstructorForCourse(GetCourseForGroup(eval.groupID)))
             {
-                evals = DBHelper.EvalResponsesA(eval.groupID, eval.userID);
+                evals = _evalService.EvalResponsesA(eval.groupID, eval.userID);
                 return Ok(evals);
             }
 
             if (eval.userID == GetUserID())
             {
-                evals = DBHelper.EvalResponses(eval.groupID, eval.userID);
+                evals = _evalService.EvalResponses(eval.groupID, eval.userID);
                 return Ok(evals);
             }
 
@@ -611,8 +617,8 @@ namespace TimeCats.Controllers
         [HttpGet]
         public IActionResult GetCourses()
         {
-            var allCourses = _courseService.GetCourses();
-            return Ok(allCourses);
+                var allCourses = _courseService.GetCourses();
+                return Ok(allCourses);   
         }
 
         /// <summary>
@@ -636,7 +642,7 @@ namespace TimeCats.Controllers
         {
             var course = JsonConvert.DeserializeObject<Course>(json.ToString());
             var inactiveUsers = new List<User>();
-            inactiveUsers = DBHelper.GetInactiveUsersForCourse(course.courseID);
+            inactiveUsers = _courseService.GetInactiveUsersForCourse(course.courseID);
             return Ok(inactiveUsers);
         }
 
@@ -656,7 +662,7 @@ namespace TimeCats.Controllers
             var courseID = GetCourseForGroup(requestedGroup.groupID);
             if (IsStudentInCourse(courseID) || IsAdmin() || IsInstructorForCourse(courseID))
             {
-                requestedGroup = DBHelper.GetGroup(requestedGroup.groupID);
+                requestedGroup = _groupService.GetGroup(requestedGroup.groupID);
                 return Ok(requestedGroup);
             }
 
@@ -696,7 +702,7 @@ namespace TimeCats.Controllers
             var currentUser = HttpContext.Session.GetObjectFromJson<User>("user");
             if (currentUser.type == 'A' || currentUser.userID == sentUser.userID)
             {
-                var dbUser = DBHelper.GetUserByID(sentUser.userID);
+                var dbUser = _userService.GetUserByID(sentUser.userID);
                 return Ok(dbUser);
             }
 
@@ -744,7 +750,7 @@ namespace TimeCats.Controllers
             var group = JsonConvert.DeserializeObject<Group>(JsonString);
             if (IsStudentInGroup(group.groupID) || IsAdmin() || IsInstructorForCourse(GetCourseForGroup(group.groupID)))
             {
-                var users = DBHelper.GetUsersForGroup(group.groupID);
+                var users = _userService.GetUsersForGroup(group.groupID);
                 return Ok(users);
             }
 
@@ -785,7 +791,7 @@ namespace TimeCats.Controllers
 
             if (IsStudentInCourse(course.courseID))
             {
-                if (DBHelper.LeaveCourse(course.courseID, GetUserID())) return Ok();
+                if (_courseService.LeaveCourse(course.courseID, GetUserID())) return Ok();
                 return StatusCode(500); //Query failed
             }
 
@@ -801,7 +807,7 @@ namespace TimeCats.Controllers
             if ((IsAdmin() || IsInstructorForCourse(uCourse.courseID)) &&
                 UserIsStudentInCourse(uCourse.userID, uCourse.courseID))
             {
-                if (DBHelper.SaveUserInCourse(uCourse)) return Ok();
+                if (_courseService.SaveUserInCourse(uCourse)) return Ok();
                 return StatusCode(500); //Query failed
             }
 
@@ -817,7 +823,7 @@ namespace TimeCats.Controllers
             if ((IsAdmin() || IsInstructorForCourse(uCourse.courseID)) &&
                 UserIsStudentInCourse(uCourse.userID, uCourse.courseID))
             {
-                if (DBHelper.DeleteFromCourse(uCourse.courseID, uCourse.userID)) return Ok();
+                if (_courseService.DeleteFromCourse(uCourse.courseID, uCourse.userID)) return Ok();
                 return StatusCode(500); //Query failed
             }
 
@@ -838,11 +844,11 @@ namespace TimeCats.Controllers
             {
                 if (IsStudentInGroup(uGroups.groupID))
                 {
-                    if (DBHelper.ReJoinGroup(user.userID, uGroups.groupID)) return NoContent();
+                    if (_groupService.ReJoinGroup(user.userID, uGroups.groupID)) return NoContent();
                     return StatusCode(500); //Query failed
                 }
 
-                var groupID = DBHelper.JoinGroup(user.userID, uGroups.groupID);
+                var groupID = _groupService.JoinGroup(user.userID, uGroups.groupID);
                 if (groupID > 0) return Ok(groupID);
                 return StatusCode(500); //Query failed
             }
@@ -861,12 +867,12 @@ namespace TimeCats.Controllers
                 if (UserHasTimeInGroup(group.groupID))
                 {
                     //Mark the user as inactive in the group if they have existing time entries
-                    if (DBHelper.LeaveGroup(GetUserID(), group.groupID)) return Ok();
+                    if (_groupService.LeaveGroup(GetUserID(), group.groupID)) return Ok();
                     return StatusCode(500); //Query failed
                 }
 
                 //Actually remove the user from the group if they don't have any time entries yet.
-                if (DBHelper.DeleteFromGroup(GetUserID(), group.groupID)) return NoContent();
+                if (_groupService.DeleteFromGroup(GetUserID(), group.groupID)) return NoContent();
                 return StatusCode(500); //Query failed
             }
 
@@ -951,7 +957,7 @@ namespace TimeCats.Controllers
 
             if (IsAdmin() || IsInstructorForCourse(course.courseID))
             {
-                if (DBHelper.SaveCourse(course)) return Ok();
+                if (_courseService.SaveCourse(course)) return Ok();
                 return StatusCode(500); //Query failed
             }
 
@@ -973,7 +979,7 @@ namespace TimeCats.Controllers
 
             if (IsAdmin() || IsInstructorForCourse(courseID) || IsActiveStudentInGroup(group.groupID))
             {
-                if (DBHelper.SaveGroup(group)) return Ok();
+                if (_groupService.SaveGroup(group)) return Ok();
                 return StatusCode(500); // Query failed
             }
 
@@ -996,7 +1002,7 @@ namespace TimeCats.Controllers
 
             if (IsAdmin() || IsInstructorForCourse(GetCourseForProject(project.projectID)))
             {
-                if (DBHelper.SaveProject(project)) return Ok();
+                if (_projectService.SaveProject(project)) return Ok();
                 return StatusCode(500); // Query failed
             }
 
@@ -1018,7 +1024,7 @@ namespace TimeCats.Controllers
 
             if (IsAdmin() || IsInstructorForEval(category.evalTemplateID))
             {
-                if (DBHelper.SaveCategory(category)) return Ok();
+                if (_evalService.SaveCategory(category)) return Ok();
                 return StatusCode(500); //Query failed
             }
 
@@ -1037,7 +1043,7 @@ namespace TimeCats.Controllers
             var category = JsonConvert.DeserializeObject<EvalTemplateQuestionCategory>(JsonString);
             if (IsAdmin() || IsInstructorForEval(category.evalTemplateID))
             {
-                if (DBHelper.DeleteCategory(category.evalTemplateQuestionCategoryID)) return Ok();
+                if (_evalService.DeleteCategory(category.evalTemplateQuestionCategoryID)) return Ok();
                 return StatusCode(500); //Query failed
             }
 
@@ -1059,7 +1065,7 @@ namespace TimeCats.Controllers
 
             if (IsAdmin() || IsInstructorForEval(question.evalTemplateID))
             {
-                if (DBHelper.SaveQuestion(question)) return Ok();
+                if (_evalService.SaveQuestion(question)) return Ok();
                 return StatusCode(500); //Query failed
             }
 
@@ -1078,7 +1084,7 @@ namespace TimeCats.Controllers
             var question = JsonConvert.DeserializeObject<EvalTemplateQuestion>(JsonString);
             if (IsAdmin() || IsInstructorForEval(question.evalTemplateID))
             {
-                if (DBHelper.DeleteQuestion(question.evalTemplateQuestionID)) return Ok();
+                if (_evalService.DeleteQuestion(question.evalTemplateQuestionID)) return Ok();
                 return StatusCode(500); //Query failed
             }
 
@@ -1106,7 +1112,7 @@ namespace TimeCats.Controllers
             if (IsAdmin() || GetUserID() == timecard.userID ||
                 IsInstructorForCourse(GetCourseForGroup(timecard.groupID)))
             {
-                if (DBHelper.SaveTime(timecard)) return Ok();
+                if (_timeService.SaveTime(timecard)) return Ok();
                 return StatusCode(500);
             }
 
@@ -1130,7 +1136,7 @@ namespace TimeCats.Controllers
             var JsonString = json.ToString();
 
             var course = JsonConvert.DeserializeObject<Course>(JsonString);
-            var templates = DBHelper.GetTemplates(DBHelper.GetInstructorForCourse(course.courseID));
+            var templates = _evalService.GetTemplates(_courseService.GetInstructorForCourse(course.courseID));
 
             if (templates.Count > 0) return Ok(templates);
             return NoContent();
@@ -1144,7 +1150,7 @@ namespace TimeCats.Controllers
 
             if (IsAdmin() || GetUserID() == user.userID)
             {
-                var templates = DBHelper.GetFullTemplatesForInstructor(user.userID);
+                var templates = _evalService.GetFullTemplatesForInstructor(user.userID);
                 if (templates.Count > 0) return Ok(templates);
             }
 
@@ -1175,9 +1181,9 @@ namespace TimeCats.Controllers
 
             //call and set the inUse flag with another query 
 
-            if (DBHelper.AssignEvals(assignEvals.projectIDs, assignEvals.evalTemplateID))
+            if (_evalService.AssignEvals(assignEvals.projectIDs, assignEvals.evalTemplateID))
             {
-                DBHelper.SetInUse(assignEvals.evalTemplateID);
+                _evalService.SetInUse(assignEvals.evalTemplateID);
                 return Ok();
             }
 
@@ -1189,7 +1195,7 @@ namespace TimeCats.Controllers
         {
             var JsonString = json.ToString();
             var eval = JsonConvert.DeserializeObject<Eval>(JsonString);
-            if (IsAdmin()) return Ok(DBHelper.GetEvaluation(eval.evalID));
+            if (IsAdmin()) return Ok(_evalService.GetEvaluation(eval.evalID));
             return Unauthorized();
         }
 
@@ -1199,8 +1205,8 @@ namespace TimeCats.Controllers
             var JsonString = json.ToString();
             var group = JsonConvert.DeserializeObject<Group>(JsonString);
 
-            var evalID = DBHelper.GetLatestIncompleteEvaluationID(group.groupID, GetUserID());
-            if (evalID > 0) return Ok(DBHelper.GetEvaluation(evalID));
+            var evalID = _evalService.GetLatestIncompleteEvaluationID(group.groupID, GetUserID());
+            if (evalID > 0) return Ok(_evalService.GetEvaluation(evalID));
             return NoContent();
         }
 
@@ -1217,14 +1223,14 @@ namespace TimeCats.Controllers
             foreach (var response in responses)
             {
                 if (evalID == 0) evalID = response.evalID;
-                if (!DBHelper.SaveResponse(response.userID, response.evalID, response.evalTemplateQuestionID,
+                if (!_evalService.SaveResponse(response.userID, response.evalID, response.evalTemplateQuestionID,
                     response.response)) failed = true;
             }
 
             //}
             if (failed) return StatusCode(500);
 
-            if (!DBHelper.CompleteEval(evalID)) return StatusCode(500);
+            if (!_evalService.CompleteEval(evalID)) return StatusCode(500);
 
             return Ok();
         }
@@ -1238,17 +1244,17 @@ namespace TimeCats.Controllers
 
             if (IsActiveStudentInGroup(group.groupID))
                 //Use logged in users ID if they are a student
-                return Ok(DBHelper.RandomizeEvaluations(group.groupID, group.userID));
+                return Ok(_evalService.RandomizeEvaluations(group.groupID, group.userID));
             if (IsAdmin() || IsInstructorForCourse(GetCourseForGroup(group.groupID)))
                 //Get passed userID if they are an Admin/Instructor
-                return Ok(DBHelper.EvalResponsesA(group.groupID, group.userID));
+                return Ok(_evalService.EvalResponsesA(group.groupID, group.userID));
             return Unauthorized();
         }
 
         [HttpGet]
         public IActionResult GetAllEvaluations()
         {
-            if (IsAdmin()) return Ok(DBHelper.GetAllEvals());
+            if (IsAdmin()) return Ok(_evalService.GetAllEvals());
             return Unauthorized();
         }
 

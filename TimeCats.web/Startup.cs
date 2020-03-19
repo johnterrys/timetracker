@@ -26,7 +26,10 @@ namespace TimeCats
             services.AddSession(options => { options.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddScoped<StudentTimeTrackerService>();
             services.AddScoped<CourseService>();
+            services.AddScoped<EvalService>();
+            services.AddScoped<GroupService>();
             services.AddScoped<ProjectService>();
+            services.AddScoped<TimeService>();
             services.AddScoped<UserService>();
         }
 

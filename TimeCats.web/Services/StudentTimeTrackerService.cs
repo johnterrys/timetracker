@@ -41,6 +41,8 @@ namespace TimeCats.Services
             throw new NotImplementedException();
         }
 
+        
+
         public int AddCourse(Course course)
         {
             var c = _timeTrackerContext.Courses.Add(course);
