@@ -14,10 +14,9 @@ namespace TimeCats.DTOs
         public string groupName { get; set; }
         public bool isActive { get; set; }
         public int evalID { get; set; }
-        public ProjectDTO Project { get; set; }
 
-        // still need to add UserDTO
-        //public List<UserDTO> users { get; set; }
+        public ProjectDTO Project { get; set; }
+        public List<UserDTO> users { get; set; }
 
         public GroupDTO(Group that)
         {
@@ -28,11 +27,23 @@ namespace TimeCats.DTOs
 
             // not included by default
             this.Project = null;
+            this.users = null;
         }
 
         public GroupDTO WithProject()
         {
             this.Project = new ProjectDTO(_group.Project);
+            return this;
+        }
+
+        public GroupDTO WithUsers()
+        {
+            this.users = new List<UserDTO>();
+            foreach (User user in _group.users)
+            {
+                this.users.Add(new UserDTO(user));
+            }
+
             return this;
         }
     }

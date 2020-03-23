@@ -207,7 +207,11 @@ namespace TimeCats.Controllers
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
 
-            if (user != null) return DBHelper.IsUserInOtherGroup(user.userID, groupID);
+            if (user != null)
+            {
+                return _groupService.IsUserInOtherGroup(user.usierID, groupID);
+            }
+
             return false;
         }
 
@@ -987,7 +991,6 @@ namespace TimeCats.Controllers
                     group.groupName = groupData.groupName;
                     group.isActive = groupData.isActive;
                     group.evalID = groupData.evalID;
-                    group.projectID = groupData.projectID;
 
                     _groupService.Save();
 

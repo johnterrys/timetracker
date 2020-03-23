@@ -19,11 +19,10 @@ namespace TimeCats.DTOs
         public bool isActive { get; set; }
         public int InstructorId { get; set; }
         public string instructorName { get; set; }
-        public List<ProjectDTO> projects { get; set; }
 
-        // still need to add UserDTO
-        //public UserDTO Instructor { get; set; }
-        //public List<UserDTO> users { get; set; }
+        public List<ProjectDTO> projects { get; set; }
+        public UserDTO Instructor { get; set; }
+        public List<UserDTO> users { get; set; }
 
         public CourseDTO(Course that)
         {
@@ -38,11 +37,10 @@ namespace TimeCats.DTOs
 
             // not included by default
             this.projects = null;
-            //this.users = null;
+            this.users = null;
+            this.Instructor = null;
         }
 
-        /// <summary>
-        /// </summary>
         public CourseDTO WithProjects()
         {
             this.projects = new List<ProjectDTO>();
@@ -54,19 +52,22 @@ namespace TimeCats.DTOs
             return this;
         }
 
-        /*
-        /// <summary>
-        /// </summary>
         public CourseDTO WithUsers()
         {
             this.users = new List<UserDTO>();
             foreach (User user in _course.users)
             {
-                this.users.Add(new ProjectDTO(user));
+                this.users.Add(new UserDTO(user));
             }
 
             return this;
         }
-        */
+
+        public CourseDTO WithInstructor()
+        {
+            this.Instructor = new UserDTO(_course.Instructor);
+
+            return this;
+        }
     }
 }

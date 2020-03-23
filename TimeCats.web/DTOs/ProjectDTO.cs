@@ -55,7 +55,7 @@ namespace TimeCats.DTOs
         }
 
         /// <summary>
-        ///   Include the project's courses in this DTO. May cause cyclic
+        ///   Include the project's course in this DTO. May cause cyclic
         ///   reference issues
         /// </summary>
         public ProjectDTO WithCourse()
