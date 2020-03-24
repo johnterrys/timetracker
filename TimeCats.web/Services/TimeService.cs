@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,10 +51,52 @@ namespace TimeCats.Services
 
         public long CreateTimeCard(TimeCard timeCard)
         {
-            _context.TimeCards.Add(timeCard);
-            _context.SaveChanges();
+            TimeCard tc = new TimeCard();
 
-            return timeCard.userID;
+            if (timeCard.timeIn == null || timeCard.timeIn == "")
+            {
+                tc.timeIn = null;
+            }
+            else
+            {
+                tc.timeIn = Convert.ToDateTime(timeCard.timeIn).ToString(); ;
+            }
+
+            if (timeCard.timeOut == null || timeCard.timeOut == "")
+            {
+                tc.timeOut = null;
+            }
+            else
+            {
+                tc.timeOut = Convert.ToDateTime(timeCard.timeOut).ToString();
+            }
+
+            tc.isEdited = false;
+            tc.userID = timeCard.userID;
+            tc.groupID = timeCard.groupID;
+
+            if (timeCard.description == null)
+            {
+                tc.description = null;
+            }
+            else
+            {
+                tc.description = timeCard.description;
+            }
+
+            
+            try
+            {
+                _context.TimeCards.Add(tc);
+                _context.SaveChanges();
+            }
+            catch (DbUpdateException exc)
+            {
+                Console.WriteLine(exc.InnerException.Message);
+                return 0;
+            }
+
+            return tc.userID;
         }
 
 
