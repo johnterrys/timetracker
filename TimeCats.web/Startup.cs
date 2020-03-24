@@ -26,8 +26,11 @@ namespace TimeCats
             services.AddSession(options => { options.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddScoped<StudentTimeTrackerService>();
             services.AddScoped<CourseService>();
-            services.AddScoped<ProjectService>();
+            services.AddScoped<EvalService>();
             services.AddScoped<GroupService>();
+            services.AddScoped<ProjectService>();
+            services.AddScoped<TimeService>();
+            services.AddScoped<UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -20,6 +20,8 @@ namespace TimeCats.DTOs
 
         public GroupDTO(Group that)
         {
+            this._group = that;
+
             this.groupID = that.groupID;
             this.groupName = that.groupName;
             this.isActive = that.isActive;
@@ -39,9 +41,9 @@ namespace TimeCats.DTOs
         public GroupDTO WithUsers()
         {
             this.users = new List<UserDTO>();
-            foreach (User user in _group.users)
+            foreach (UserGroup userGroup in _group.UserGroups)
             {
-                this.users.Add(new UserDTO(user));
+                this.users.Add(new UserDTO(userGroup.User));
             }
 
             return this;
