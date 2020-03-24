@@ -23,7 +23,7 @@ namespace TimeCats.Services
         public void CreateCourse(Course course)
         {
             _context.Courses.Add(course);
-            _context.SaveChanges();  
+            _context.SaveChanges();
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace TimeCats.Services
         {
             _context.Courses.Add(course);
             _context.SaveChanges();
-            
+
             return course;
         }
 
@@ -79,9 +79,14 @@ namespace TimeCats.Services
         /// <returns></returns>
         public IEnumerable<Course> GetCoursesByUser(User user)
         {
-            var courses = _context.Courses
-                               .Where(c => c.InstructorId == user.userID);
+            var courseIDs = _context.UserCourses
+                .Where(uc => uc.userID == user.userID)
+                .Select(uc => uc.courseID)
+                .ToList();
 
+            var courses = _context.Courses
+                .Where(c => courseIDs.Contains(c.courseID));
+                
             return courses;
         }
 
@@ -141,7 +146,6 @@ namespace TimeCats.Services
             return courses;
         }
 
-
         /// <summary>
         /// Add an Inactive User to a Course
         /// </summary>
@@ -153,13 +157,12 @@ namespace TimeCats.Services
             _context.UserCourses.Add(new UserCourse
             {
                 userID = userId,
-                courseID = courseId, 
+                courseID = courseId,
                 isActive = false
             });
 
             return _context.SaveChanges();
         }
-
 
         /// <summary>
         /// Activate a User in a Course
@@ -216,7 +219,6 @@ namespace TimeCats.Services
             return true;
         }
 
-
         /// <summary>
         /// Delete a User in a Course
         /// </summary>
@@ -242,7 +244,6 @@ namespace TimeCats.Services
             return true;
         }
 
-
         /// <summary>
         /// Get an Instructor from a CourseID
         /// </summary>
@@ -255,7 +256,6 @@ namespace TimeCats.Services
                         .Select(u => u.InstructorId)
                         .FirstOrDefault();
         }
-
 
         /// <summary>
         /// Save a User in a Course
@@ -279,7 +279,6 @@ namespace TimeCats.Services
 
             return true;
         }
-
 
         /// <summary>
         /// Delete a User from a Course
@@ -305,7 +304,5 @@ namespace TimeCats.Services
 
             return true;
         }
-
-
     }
 }
