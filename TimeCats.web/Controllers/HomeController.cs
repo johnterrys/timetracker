@@ -1041,12 +1041,20 @@ namespace TimeCats.Controllers
         public IActionResult SaveProject([FromBody] object json)
         {
             var JsonString = json.ToString();
+            var projectData = JsonConvert.DeserializeObject<Project>(JsonString);
 
-            var project = JsonConvert.DeserializeObject<Project>(JsonString);
-
-            if (IsAdmin() || IsInstructorForCourse(GetCourseForProject(project.projectID)))
+            if (IsAdmin() || IsInstructorForCourse(GetCourseForProject(projectData.projectID)))
             {
-                if (_projectService.SaveProject(project)) return Ok();
+                var project = _projectService.GetProjectById(projectData.projectID);
+                project.description = projectData.description;
+                project.projectName = projectData.projectName;
+                project.isActive = projectData.isActive;
+
+                if (_projectService.SaveProject(project))
+                {
+                    return Ok();
+                }
+
                 return StatusCode(500); // Query failed
             }
 
