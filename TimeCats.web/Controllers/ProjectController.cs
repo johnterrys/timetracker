@@ -51,25 +51,6 @@ namespace TimeCats.Controllers
         }
 
         /// <summary>
-        ///     Creates a project given a project object. Returns the project ID
-        /// </summary>
-        /// <param name="json"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public IActionResult CreateProject([FromBody] object json)
-        {
-            var JsonString = json.ToString();
-
-            var course = JsonConvert.DeserializeObject<Course>(JsonString);
-
-            //TODO
-            //String DBProjectID = DataAccess.AddProject(course._id);
-            var DBProjectID = 0;
-
-            return Ok(DBProjectID);
-        }
-
-        /// <summary>
         ///     Return a Project based on the ID. Returns a Project if successful 204 otherwise
         /// </summary>
         /// <returns></returns>

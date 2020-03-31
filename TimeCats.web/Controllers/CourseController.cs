@@ -213,20 +213,5 @@ namespace TimeCats.Controllers
 
             return Unauthorized(); //Not an Admin or the Instructor for the course, Unauthorized (401)
         }
-
-        [HttpPost]
-        public IActionResult GetCoursesForInstructor([FromBody] object json)
-        {
-            var JsonString = json.ToString();
-            var user = JsonConvert.DeserializeObject<User>(JsonString);
-
-            if (IsAdmin() || GetUserID() == user.userID)
-            {
-                var courses = _courseService.GetCoursesByUser(user);
-                return Ok(courses);
-            }
-
-            return NoContent();
-        }
     }
 }
