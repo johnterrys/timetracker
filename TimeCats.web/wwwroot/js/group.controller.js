@@ -12,7 +12,7 @@
 
         //TODO Enable Group functionality, disable dummy data
         usSpinnerService.spin('spinner');
-        $http.post("/Home/GetGroup", { groupID: $scope.groupID })
+        $http.post("/Group/GetGroup", { groupID: $scope.groupID })
             .then(function (response) {
                 $scope.group = {};
                 $scope.group.evalID = response.data.evalID;
@@ -67,9 +67,9 @@
                 timeOut: "",
                 description: ""
             };
-            
+
             usSpinnerService.spin('spinner');
-            $http.post("/Home/CreateTimeCard", data)
+            $http.post("/Time/CreateTimeCard", data)
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
                     $scope.group.users[id].timecards[response.data] = {
@@ -110,7 +110,7 @@
             /********************************************End Jamison Edit******************************/
 
             usSpinnerService.spin('spinner');
-            $http.post("/Home/CreateTimeCard", data)
+            $http.post("/Time/CreateTimeCard", data)
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
                     $scope.group.users[id].timecards[response.data] = {
@@ -135,7 +135,7 @@
         $scope.leaveGroup = function () {
             if (confirm('Are you sure you want to leave this group?')) {
                 usSpinnerService.spin('spinner');
-                $http.post("/Home/LeaveGroup", { groupID: $scope.groupID })
+                $http.post("/Group/LeaveGroup", { groupID: $scope.groupID })
                     .then(function (response) {
                         if (response.status === 204) {
                             delete $scope.group.users[$scope.$parent.user.userID];
@@ -156,7 +156,7 @@
 
         $scope.joinGroup = function () {
             usSpinnerService.spin('spinner');
-            $http.post("/Home/JoinGroup", { groupID: $scope.groupID })
+            $http.post("/Group/JoinGroup", { groupID: $scope.groupID })
                 .then(function (response) {
                     if (response.status === 204) {
                         $scope.group.users[$scope.$parent.user.userID].isActive = true;
@@ -181,7 +181,7 @@
         };
 
         $scope.saveGroup = function () {
-            $http.post("/Home/SaveGroup", {
+            $http.post("/Group/SaveGroup", {
                 groupID: $scope.group.groupID,
                 groupName: $scope.group.groupName,
                 isActive: $scope.group.isActive,
@@ -192,7 +192,7 @@
                     toastr["success"]("Group saved.");
                 }, function (response) {
                     if (response.status === 401) toastr["error"]("Unauthorized to change this group.");
-                    else toastr["error"]("Failed to save group, unknown error."); 
+                    else toastr["error"]("Failed to save group, unknown error.");
                 });
         };
 
@@ -214,7 +214,7 @@
             });
             return inGroup;
         };
-        
+
         $scope.userActiveInGroup = function () {
             //Checks that the current user is listed in the current group.
             if (!$scope.$parent.user) return false;
@@ -265,21 +265,21 @@
         };
 
         /***************************************Jamison Edit **************************************************/
-        /* 
+        /*
         * @param {any} userID
         * @param {any} timeslotID
         */
         $scope.deleteTime = function (userID, timeslotID) {
-            toastr["warning"]("Deleting...");           
-            $http.post("/Home/DeleteTimeCard", $scope.group.users[userID].timecards[timeslotID])
+            toastr["warning"]("Deleting...");
+            $http.post("/Time/DeleteTimeCard", $scope.group.users[userID].timecards[timeslotID])
                 .then(function (response) {
-                    window.location.reload();        
+                    window.location.reload();
                 });
         };
 
         /**
          * ************************************************* End Jamison Edit *****************************************/
-        
+
         $scope.saveTime = function (userID, timeslotID) {
             /******************************************************Jamison Edit**********************************************/
             if ($scope.group.users[userID].timecards[timeslotID].timeIn > moment().format('MM/DD/YYYY h:mm A')) {
@@ -291,7 +291,7 @@
                 $scope.group.users[userID].timecards[timeslotID].timeOut = moment().format('MM/DD/YYYY h:mm A');
             }
 
-            
+
             if ($scope.group.users[userID].timecards[timeslotID].timeIn > $scope.group.users[userID].timecards[timeslotID].timeOut || $scope.group.users[userID].timecards[timeslotID].timeIn === $scope.group.users[userID].timecards[timeslotID].timeOut) {
                 if ($scope.group.users[userID].timecards[timeslotID].timeOut !== '') {
                     $scope.group.users[userID].timecards[timeslotID].timeOut = '';
@@ -302,7 +302,7 @@
             }
             /******************************************************End Jamison Edit*****************************************/
 
-            $http.post("/Home/SaveTime", $scope.group.users[userID].timecards[timeslotID])
+            $http.post("/Time/SaveTime", $scope.group.users[userID].timecards[timeslotID])
                 .then(function (response) {
                     if ($scope.group.users[userID].timecards[timeslotID].timeIn === '' || $scope.group.users[userID].timecards[timeslotID].timeOut === '') {
                         $scope.group.users[userID].timecards[timeslotID].hours = 0;
@@ -312,7 +312,7 @@
                             moment($scope.group.users[userID].timecards[timeslotID].timeOut).diff(
                                 $scope.group.users[userID].timecards[timeslotID].timeIn)).asHours().toFixed(2);
                     }
-                   
+
                     $scope.updateChart();
                     toastr["info"]("Timeslot Updated.");
                 }, function (response) {
@@ -326,7 +326,7 @@
         $scope.diffHours = function (timeIn, timeOut) {
             if (timeIn === '' || timeOut === '') return "0.00";
             return moment.duration(moment(timeOut).diff(timeIn)).asHours().toFixed(2);
-        };        
+        };
 
         //Used to check whether the currently logged in user is trying to change their own time, or is an instructor
         $scope.isUser = function (id) {
@@ -411,7 +411,7 @@
                 document.getElementById("groupHours").style.visibility = "visible";
                 document.getElementById("noData").style.visibility = "hidden";
             }
-            
+
             $scope.setData();
             myChart.update();
         };

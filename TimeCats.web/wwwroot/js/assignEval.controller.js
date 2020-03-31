@@ -13,7 +13,7 @@
         $scope.course.courseID = $scope.courseID;
 
         usSpinnerService.spin('spinner');
-        $http.post("/Home/GetProjects", { courseID: $scope.courseID })
+        $http.post("/Project/GetProjects", { courseID: $scope.courseID })
             .then(function (response) {
                 usSpinnerService.stop('spinner');
                 $.each(response.data, function (index, project) {
@@ -68,7 +68,7 @@
             });
 
         usSpinnerService.spin('spinner');
-        $http.post("/Home/GetTemplates", { courseID: $scope.courseID })
+        $http.post("/Eval/GetTemplates", { courseID: $scope.courseID })
             .then(function (response) {
                 usSpinnerService.stop('spinner');
                 $.each(response.data, function (index, eval) {
@@ -133,7 +133,7 @@
                     }
                 }
                 usSpinnerService.spin('spinner');
-                $http.post("/Home/AssignEvals", { projectIDs: projectIDs, evalTemplateID: evalTemplateID })
+                $http.post("/Eval/AssignEvals", { projectIDs: projectIDs, evalTemplateID: evalTemplateID })
                     .then(function (response) {
                         usSpinnerService.stop('spinner');
                         toastr["success"]("Evaluation assigned.");
@@ -146,7 +146,7 @@
                 // Do nothing!
             }
         };
-        
+
         $scope.loaded = true;
     };
 

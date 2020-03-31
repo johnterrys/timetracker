@@ -14,7 +14,7 @@
 
         usSpinnerService.spin('spinner');
 
-        $http.post("/Home/GetUsersForGroup", { groupID: $scope.groupID })
+        $http.post("/Group/GetUsersForGroup", { groupID: $scope.groupID })
             .then(function (response) {
                 $.each(response.data, function (index, user) {
                     $scope.group.users[user.userID] = user;
@@ -40,7 +40,7 @@
 
         $scope.loadEvals = function () {
             usSpinnerService.spin('spinner');
-            $http.post("/Home/GetAllCompleteEvaluations", { groupID: $scope.groupID, userID: $scope.currentUser })
+            $http.post("/Eval/GetAllCompleteEvaluations", { groupID: $scope.groupID, userID: $scope.currentUser })
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
                     $.each(response.data, function (index, eval) {
@@ -76,11 +76,8 @@
                             $scope.group.evaluations[eval.number].evals[response.evalID].userAvgerage = parseFloat(response.userAvgerage);
                             $scope.group.evaluations[eval.number].responses[response.evalResponseID] = response;
                         });
-                                               
+
                     });
-
-
-
 
                     $scope.group.testEvaluations = {
                         1: {
@@ -332,7 +329,7 @@
                     toastr["error"]("Failed to retrieve group evaluations.");
                 });
         };
-        
+
 
         $scope.getResponse = function (number, evalID, evalTemplateQuestionID) {
             for (responseID in $scope.group.evaluations[number].responses) {
@@ -342,7 +339,7 @@
             }
             return '';
         };
-        
+
         //  Get user average score per eval
         $scope.getUserAvg = function (number, evalID) {
             return $scope.group.evaluations[number].evals[evalID].userAvgerage;

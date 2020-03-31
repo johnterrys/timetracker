@@ -12,39 +12,39 @@
         if (!$scope.courseID) $location.path('/courses');
 
         usSpinnerService.spin('spinner');
-        
-        $http.post("/Home/GetCourse", { courseID: $scope.courseID })
+
+        $http.post("/Course/GetCourse", { courseID: $scope.courseID })
             .then(function (response) {
                 usSpinnerService.stop('spinner');
                 $scope.course = response.data;
 
                 $scope.getUsersForCourse();
                 $scope.getProjectsForCourse();
-                
+
                 if (!$scope.course.users) $scope.course.users = null;
                 if (!$scope.course.projects) $scope.course.projects = null;
             }, function () {
                 usSpinnerService.stop('spinner');
                 toastr["error"]("Failed retrieving course.");
             });
-        
+
         $scope.getUsersForCourse = function () {
-          $http.post("/Home/GetUsersForCourse", { courseID: $scope.courseID })
+          $http.post("/Course/GetUsersForCourse", { courseID: $scope.courseID })
               .then(function (response) {
                   $scope.course.users = {};
-                  
+
                   $.each(response.data, function (index, user) {
                       $scope.course.users[user.userID] = user;
                   });
-                  
+
                   console.log($scope.course.users);
               }, function () {
-                 toastr["error"]("Failed retrieving users."); 
+                 toastr["error"]("Failed retrieving users.");
               });
         };
-        
+
         $scope.getProjectsForCourse = function () {
-            $http.post("/Home/GetProjects/", { courseID: $scope.courseID })
+            $http.post("/Project/GetProjects/", { courseID: $scope.courseID })
                 .then(function (response) {
                     $scope.course.projects = [];
                     $.each(response.data, function (index, project) {
@@ -57,7 +57,7 @@
 
         $scope.createProject = function () {
             usSpinnerService.spin('spinner');
-            $http.post("/Home/AddProject", { courseID: $scope.course.courseID })
+            $http.post("/Project/AddProject", { courseID: $scope.course.courseID })
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
                     $location.path('/project/'+response.data);
@@ -70,7 +70,7 @@
 
         $scope.saveCourse = function () {
             usSpinnerService.spin('spinner');
-            $http.post("/Home/SaveCourse",
+            $http.post("/Course/SaveCourse",
                 {
                     courseID: $scope.course.courseID,
                     courseName: $scope.course.courseName,
@@ -89,7 +89,7 @@
 
         $scope.saveUserInCourse = function (userID, isActive) {
             usSpinnerService.spin('spinner');
-            $http.post("/Home/SaveUserInCourse", { userID: userID, courseID: $scope.courseID, isActive: isActive})
+            $http.post("/Course/SaveUserInCourse", { userID: userID, courseID: $scope.courseID, isActive: isActive})
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
                     toastr["success"]("Updated the user in this course.");
@@ -103,7 +103,7 @@
 
         $scope.joinCourse = function () {
             usSpinnerService.spin('spinner');
-            $http.post("/Home/JoinCourse", { courseID: $scope.courseID })
+            $http.post("/Course/JoinCourse", { courseID: $scope.courseID })
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
                     $scope.course.users[$scope.$parent.user.userID] = {
@@ -122,7 +122,7 @@
         $scope.leaveCourse = function () {
             if (confirm('Are you sure you want to leave this course? If you would like to rejoin the course later, you must contact the instructor to be added back into it.')) {
                 usSpinnerService.spin('spinner');
-                $http.post("/Home/LeaveCourse", { courseID: $scope.courseID })
+                $http.post("/Course/LeaveCourse", { courseID: $scope.courseID })
                     .then(function (response) {
                         usSpinnerService.stop('spinner');
                         $scope.course.users[$scope.$parent.user.userID].isActive = false;
@@ -141,7 +141,7 @@
         $scope.deleteUserFromCourse = function (userID) {
             if (confirm('Are you sure you want to delete this user from the course?')) {
                 usSpinnerService.spin('spinner');
-                $http.post("/Home/DeleteUserFromCourse", { userID: userID, courseID: $scope.courseID })
+                $http.post("/Course/DeleteUserFromCourse", { userID: userID, courseID: $scope.courseID })
                     .then(function (response) {
                         usSpinnerService.stop('spinner');
                         delete $scope.course.users[userID];
