@@ -59,9 +59,11 @@ namespace TimeCats.Controllers
         {
             var JsonString = json.ToString();
             var project = JsonConvert.DeserializeObject<Project>(JsonString);
-            var courseID = GetCourseForProject(project.projectID);
+            var course = _courseService.GetCourseForProject(project.projectID);
 
-            if (IsAdmin() || IsInstructorForCourse(courseID) || IsStudentInCourse(courseID))
+            if (IsAdmin() ||
+                IsInstructorForCourse(course.courseID) ||
+                IsStudentInCourse(course.courseID))
             {
                 project = _projectService.GetProjectById(project.projectID);
 
@@ -81,8 +83,9 @@ namespace TimeCats.Controllers
         {
             var JsonString = json.ToString();
             var projectData = JsonConvert.DeserializeObject<Project>(JsonString);
+            var course = _courseService.GetCourseForProject(projectData.projectID);
 
-            if (IsAdmin() || IsInstructorForCourse(GetCourseForProject(projectData.projectID)))
+            if (IsAdmin() || IsInstructorForCourse(course.courseID))
             {
                 var project = _projectService.GetProjectById(projectData.projectID);
                 project.description = projectData.description;

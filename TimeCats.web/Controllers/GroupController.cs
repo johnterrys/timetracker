@@ -27,13 +27,13 @@ namespace TimeCats.Controllers
 
             int groupID;
             var project = JsonConvert.DeserializeObject<Project>(JsonString);
-            var courseID = GetCourseForProject(project.projectID);
+            var course = _courseService.GetCourseForProject(project.projectID);
 
             // admins and instructors can create groups. Students can create
             // groups if they are in the course and not already in a group for
             // the project
-            if (IsAdmin() || IsInstructorForCourse(courseID) ||
-                (IsStudentInCourse(courseID) &&
+            if (IsAdmin() || IsInstructorForCourse(course.courseID) ||
+                (IsStudentInCourse(course.courseID) &&
                  !IsStudentInGroupForProject(project.projectID)))
             {
                 // create the group
@@ -101,7 +101,11 @@ namespace TimeCats.Controllers
         {
             var JsonString = json.ToString();
             var group = JsonConvert.DeserializeObject<Group>(JsonString);
-            if (IsStudentInGroup(group.groupID) || IsAdmin() || IsInstructorForCourse(GetCourseForGroup(group.groupID)))
+            var course = _courseService.GetCourseForGroup(group.groupID);
+
+            if (IsStudentInGroup(group.groupID) ||
+                IsAdmin() ||
+                IsInstructorForCourse(course.courseID))
             {
                 var users = _userService.GetUsersForGroup(group.groupID);
                 return Ok(users);
@@ -117,6 +121,7 @@ namespace TimeCats.Controllers
             var uGroups = JsonConvert.DeserializeObject<UserGroup>(JsonString);
 
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
+            var course = _courseService.GetCourseForGroup(uGroups.groupID);
 
             Console.WriteLine("am in ur thing");
 
@@ -126,7 +131,7 @@ namespace TimeCats.Controllers
                 return StatusCode(403);
             }
 
-            if (IsStudentInCourse(GetCourseForGroup(uGroups.groupID)))
+            if (IsStudentInCourse(course.courseID))
             {
                 Console.WriteLine("student is in ur course");
 
@@ -192,9 +197,9 @@ namespace TimeCats.Controllers
             var JsonString = json.ToString();
 
             var group = JsonConvert.DeserializeObject<Group>(JsonString);
-            var courseID = GetCourseForGroup(group.groupID);
+            var course = _courseService.GetCourseForGroup(group.groupID);
 
-            if (IsAdmin() || IsInstructorForCourse(courseID) ||
+            if (IsAdmin() || IsInstructorForCourse(course.courseID) ||
                 IsActiveStudentInGroup(group.groupID))
             {
                 if (_groupService.SaveGroup(group)) return Ok();
@@ -203,6 +208,59 @@ namespace TimeCats.Controllers
 
             return
                 Unauthorized(); // Not an Admin or the Instructor for the course, or a student in the group, Unauthorized (401)
+        }
+
+        /// <summary>
+        ///     Returns true if the user is already in a group for the given project
+        /// </summary>
+        /// <returns></returns>
+        public bool IsStudentInGroupForProject(int projectID)
+        {
+            var user = HttpContext.Session.GetObjectFromJson<User>("user");
+
+            if (user != null) return _groupService.IsUserInGroupForProject(user.userID, projectID);
+            return false;
+        }
+
+        /// <summary>
+        ///     Returns true if the user is already in a group for the project associated with the given group, ACTIVE OR INACTIVE
+        /// </summary>
+        /// <returns></returns>
+        public bool IsStudentInGroup(int groupID)
+        {
+            var user = HttpContext.Session.GetObjectFromJson<User>("user");
+
+            if (user != null) return _userService.IsUserInGroup(user.userID, groupID);
+            return false;
+        }
+
+        /// <summary>
+        ///     Returns true if the user is already in a group for the project associated with the given group
+        /// </summary>
+        /// <returns></returns>
+        public bool IsStudentInOtherGroup(int groupID)
+        {
+            var user = HttpContext.Session.GetObjectFromJson<User>("user");
+
+            if (user != null)
+            {
+                return _groupService.IsUserInOtherGroup(user.userID, groupID);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        ///     Returns true if the logged in user has timecard entries for the passed group
+        /// </summary>
+        /// <returns></returns>
+        public bool UserHasTimeInGroup(int groupID)
+        {
+            var user = HttpContext.Session.GetObjectFromJson<User>("user");
+
+            if (user != null) return _timeService.UserHasTimeInGroup(user.userID, groupID);
+
+            return false;
         }
     }
 }

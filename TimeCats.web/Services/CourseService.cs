@@ -86,7 +86,7 @@ namespace TimeCats.Services
 
             var courses = _context.Courses
                 .Where(c => courseIDs.Contains(c.courseID));
-                
+
             return courses;
         }
 
@@ -126,7 +126,7 @@ namespace TimeCats.Services
         /// </summary>
         /// <param name="groupID"></param>
         /// <returns></returns>
-        public int GetCourseForGroup(int groupID)
+        public Course GetCourseForGroup(int groupID)
         {
             var groups = _context.Groups
                             .Where(g => g.groupID == groupID)
@@ -138,12 +138,24 @@ namespace TimeCats.Services
                             .Select(p => p.CourseID)
                             .ToList();
 
-            var courses = _context.Courses
+            var course = _context.Courses
                             .Where(c => projects.Contains(c.courseID))
-                            .Select(c => c.courseID)
                             .FirstOrDefault();
 
-            return courses;
+            return course;
+        }
+
+        public Course GetCourseForProject(int projectID)
+        {
+            var project = _context.Projects
+                .Where(p => p.projectID == projectID)
+                .FirstOrDefault();
+
+            var course = _context.Courses
+                .Where(c => c.courseID == project.CourseID)
+                .FirstOrDefault();
+
+            return course;
         }
 
         /// <summary>

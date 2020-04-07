@@ -21,6 +21,18 @@ namespace TimeCats.Controllers
             : base(serviceProvider)
         {}
 
+        /// <summary>
+        ///     Returns a hashed version of the passed password
+        /// </summary>
+        /// <returns></returns>
+        public static string GenerateHash(string password)
+        {
+            var sha256 = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(password);
+            var hash = sha256.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
+        }
+        
         [HttpPost]
         public IActionResult ChangePassword([FromBody] object json)
         {

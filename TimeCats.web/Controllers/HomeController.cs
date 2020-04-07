@@ -46,39 +46,6 @@ namespace TimeCats.Controllers
             return View();
         }
 
-        #region Helper Functions
-
-        /// <summary>
-        ///     Returns a hashed version of the passed password
-        /// </summary>
-        /// <returns></returns>
-        public static string GenerateHash(string password)
-        {
-            var sha256 = SHA256.Create();
-            var bytes = Encoding.UTF8.GetBytes(password);
-            var hash = sha256.ComputeHash(bytes);
-            return Convert.ToBase64String(hash);
-        }
-
-        /// <summary>
-        ///     Returns the courseID for the passed groupID
-        /// </summary>
-        /// <returns></returns>
-        public int GetCourseForGroup(int groupID)
-        {
-            return _courseService.GetCourseForGroup(groupID);
-        }
-
-        /// <summary>
-        ///     Returns the courseID for the passed projectID
-        /// </summary>
-        /// <returns></returns>
-        public int GetCourseForProject(int projectID)
-        {
-            var courseId = _projectService.GetProjectById(projectID).CourseID;
-            return courseId;
-        }
-
         /// <summary>
         ///     Returns the currently logged in user's userID.
         /// </summary>
@@ -87,7 +54,10 @@ namespace TimeCats.Controllers
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
 
-            if (user != null) return user.userID;
+            if (user != null)
+            {
+                return user.userID;
+            }
 
             return 0;
         }
@@ -100,7 +70,10 @@ namespace TimeCats.Controllers
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
 
-            if (user != null) return user.type;
+            if (user != null)
+            {
+                return user.type;
+            }
 
             return '\0'; //Null character literal
         }
@@ -113,7 +86,10 @@ namespace TimeCats.Controllers
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
 
-            if (user != null) return user.type == 'A';
+            if (user != null)
+            {
+                return user.type == 'A';
+            }
 
             return false;
         }
@@ -125,6 +101,7 @@ namespace TimeCats.Controllers
         public bool IsInstructorForCourse(int courseID)
         {
             var user = HttpContext.Session.GetObjectFromJson<User>("user");
+
             // make sure the user is an instructor
             if (user.type != 'I')
             {
@@ -136,19 +113,6 @@ namespace TimeCats.Controllers
             {
                 return true;
             }
-
-            return false;
-        }
-
-        /// <summary>
-        ///     Returns true if the logged in user is the instructor for the passed evalTemplateID
-        /// </summary>
-        /// <returns></returns>
-        public bool IsInstructorForEval(int evalTemplateID)
-        {
-            var user = HttpContext.Session.GetObjectFromJson<User>("user");
-
-            if (user != null) return user.userID == _evalService.GetInstructorForEval(evalTemplateID);
 
             return false;
         }
@@ -166,30 +130,6 @@ namespace TimeCats.Controllers
         }
 
         /// <summary>
-        ///     Returns true if the logged in user is a student for the passed courseID
-        /// </summary>
-        /// save
-        /// <returns></returns>
-        public bool UserIsStudentInCourse(int userID, int courseID)
-        {
-            if (userID != 0 && courseID != 0) return _userService.UserIsInCourse(courseID, userID);
-
-            return false;
-        }
-
-        /// <summary>
-        ///     Returns true if the user is already in a group for the project associated with the given group, ACTIVE OR INACTIVE
-        /// </summary>
-        /// <returns></returns>
-        public bool IsStudentInGroup(int groupID)
-        {
-            var user = HttpContext.Session.GetObjectFromJson<User>("user");
-
-            if (user != null) return _userService.IsUserInGroup(user.userID, groupID);
-            return false;
-        }
-
-        /// <summary>
         ///     Returns true if the user is already in a group for the project associated with the given group
         /// </summary>
         /// <returns></returns>
@@ -201,46 +141,7 @@ namespace TimeCats.Controllers
             return false;
         }
 
-        /// <summary>
-        ///     Returns true if the user is already in a group for the project associated with the given group
-        /// </summary>
-        /// <returns></returns>
-        public bool IsStudentInOtherGroup(int groupID)
-        {
-            var user = HttpContext.Session.GetObjectFromJson<User>("user");
-
-            if (user != null)
-            {
-                return _groupService.IsUserInOtherGroup(user.userID, groupID);
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        ///     Returns true if the user is already in a group for the given project
-        /// </summary>
-        /// <returns></returns>
-        public bool IsStudentInGroupForProject(int projectID)
-        {
-            var user = HttpContext.Session.GetObjectFromJson<User>("user");
-
-            if (user != null) return _groupService.IsUserInGroupForProject(user.userID, projectID);
-            return false;
-        }
-
-        /// <summary>
-        ///     Returns true if the logged in user has timecard entries for the passed group
-        /// </summary>
-        /// <returns></returns>
-        public bool UserHasTimeInGroup(int groupID)
-        {
-            var user = HttpContext.Session.GetObjectFromJson<User>("user");
-
-            if (user != null) return _timeService.UserHasTimeInGroup(user.userID, groupID);
-
-            return false;
-        }
+        #region Helper Functions
 
         /// <summary>
         ///     Returns the logged in user if there is one.

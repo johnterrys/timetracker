@@ -108,8 +108,10 @@ namespace TimeCats.Controllers
             var JsonString = json.ToString();
             var eval = JsonConvert.DeserializeObject<Eval>(JsonString);
             var evals = new List<Eval>();
+            var course = _courseService.GetCourseForGroup(eval.groupID);
 
-            if (IsAdmin() || IsInstructorForCourse(GetCourseForGroup(eval.groupID)))
+            if (IsAdmin() ||
+                IsInstructorForCourse(course.courseID))
             {
                 evals = _evalService.EvalResponsesA(eval.groupID, eval.userID);
                 return Ok(evals);
@@ -230,7 +232,7 @@ namespace TimeCats.Controllers
 
             return NoContent();
         }
-        
+
         [HttpPost]
         public IActionResult AssignEvals([FromBody] object json)
         {
@@ -300,13 +302,20 @@ namespace TimeCats.Controllers
             var JsonString = json.ToString();
 
             var group = JsonConvert.DeserializeObject<UserGroup>(JsonString);
+            var course = _courseService.GetCourseForGroup(group.groupID);
 
             if (IsActiveStudentInGroup(group.groupID))
+            {
                 //Use logged in users ID if they are a student
                 return Ok(_evalService.RandomizeEvaluations(group.groupID, group.userID));
-            if (IsAdmin() || IsInstructorForCourse(GetCourseForGroup(group.groupID)))
+            }
+
+            if (IsAdmin() || IsInstructorForCourse(course.courseID))
+            {
                 //Get passed userID if they are an Admin/Instructor
                 return Ok(_evalService.EvalResponsesA(group.groupID, group.userID));
+            }
+
             return Unauthorized();
         }
 
@@ -315,6 +324,19 @@ namespace TimeCats.Controllers
         {
             if (IsAdmin()) return Ok(_evalService.GetAllEvals());
             return Unauthorized();
+        }
+
+        /// <summary>
+        ///     Returns true if the logged in user is the instructor for the passed evalTemplateID
+        /// </summary>
+        /// <returns></returns>
+        public bool IsInstructorForEval(int evalTemplateID)
+        {
+            var user = HttpContext.Session.GetObjectFromJson<User>("user");
+
+            if (user != null) return user.userID == _evalService.GetInstructorForEval(evalTemplateID);
+
+            return false;
         }
     }
 }

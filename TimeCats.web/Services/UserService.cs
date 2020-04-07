@@ -8,7 +8,7 @@ namespace TimeCats.Services
     public class UserService
     {
         private TimeTrackerContext _context;
-        
+
         public UserService(TimeTrackerContext context)
         {
             _context = context;
@@ -46,7 +46,7 @@ namespace TimeCats.Services
             return true;
         }
 
-        
+
 
         public IEnumerable<User> GetUsersForCourse(int courseId)
         {
@@ -119,6 +119,5 @@ namespace TimeCats.Services
 
             return names;
         }
-
     }
 }

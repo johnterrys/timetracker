@@ -213,5 +213,20 @@ namespace TimeCats.Controllers
 
             return Unauthorized(); //Not an Admin or the Instructor for the course, Unauthorized (401)
         }
+
+        /// <summary>
+        ///     Returns true if the logged in user is a student for the passed courseID
+        /// </summary>
+        /// save
+        /// <returns></returns>
+        public bool UserIsStudentInCourse(int userID, int courseID)
+        {
+            if (userID != 0 && courseID != 0)
+            {
+                return _userService.UserIsInCourse(courseID, userID);
+            }
+
+            return false;
+        }
     }
 }
