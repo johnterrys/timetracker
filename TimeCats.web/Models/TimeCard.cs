@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TimeCats.Models
@@ -12,16 +13,15 @@ namespace TimeCats.Models
         public double hours { get; set; } //TODO: This should probably be a decimal
         
         [Required]
-        public string timeIn { get; set; } //TODO: Convert to DATETIME
+        public DateTime timeIn { get; set; }
         
-        [Required]
-        public string timeOut { get; set; } //TODO: Convert to DATETIME
+        public DateTime? timeOut { get; set; }
         
         [NotMapped]
         public bool isEdited { get; set; }
         
         [Required]
-        public string createdOn { get; set; } //TODO: Convert this to a DATETIME2
+        public DateTime createdOn { get; set; }
         
         [Required]
         public int userID { get; set; }

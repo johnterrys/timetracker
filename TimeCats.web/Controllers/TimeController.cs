@@ -98,8 +98,8 @@ namespace TimeCats.Controllers
 
             //  Is time in a date?,  is time out a date?
             //  are hours negative?, is time out a future date?
-            if (!DateTime.TryParse(timecard.timeIn, out timeIn) ||
-                !DateTime.TryParse(timecard.timeOut, out timeOut) ||
+            if (!DateTime.TryParse(timecard.timeIn.ToString(), out timeIn) ||
+                !DateTime.TryParse(timecard.timeOut.ToString(), out timeOut) ||
                 timeOut.CompareTo(timeIn) < 0 ||
                 timeOut > DateTime.Now ||
                 timeIn > DateTime.Now)
