@@ -28,7 +28,7 @@
             $scope.user.password = $scope.password;
 
             usSpinnerService.spin('spinner');
-            $http.post("/Home/RegisterUser", $scope.user)
+            $http.post("/User/RegisterUser", $scope.user)
                 .then(function (response) { //Success Callback
                     usSpinnerService.stop('spinner');
                     if (response.status === 204) {

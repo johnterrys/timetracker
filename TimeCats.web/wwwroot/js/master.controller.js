@@ -27,13 +27,13 @@
         if ($scope.user !== null) {
             $('#navbarSupportedContent').removeClass('invisible');
             return true;
-        } 
+        }
         return false;
     };
 
     $scope.logout = function () {
         usSpinnerService.spin('spinner');
-        $http.get("/Home/Logout")
+        $http.get("/User/Logout")
             .then(function (response) {
                 $scope.user = null;
                 usSpinnerService.stop('spinner');
@@ -42,10 +42,5 @@
                 usSpinnerService.stop('spinner');
                 toastr["error"]("Failed to logout.");
             });
-
-        //Dummy Data
-        //$scope.user = null;
-        //$location.path('/login');
-        //toastr["info"]("Simulated logout - enable REST endpoint");
     }
 }]);

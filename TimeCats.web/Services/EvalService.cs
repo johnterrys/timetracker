@@ -9,7 +9,6 @@ namespace TimeCats.Services
 {
     public class EvalService
     {
-
         private readonly TimeTrackerContext _context;
 
         public EvalService(TimeTrackerContext context)
@@ -201,7 +200,7 @@ namespace TimeCats.Services
             //                            number = reader.GetInt32("categoryNumber")
             //                        });
 
-            //                    if (!reader.IsDBNull(7)) //column 8 = 
+            //                    if (!reader.IsDBNull(7)) //column 8 =
             //                        template.templateQuestions.Add(new EvalTemplateQuestion
             //                        {
             //                            evalTemplateQuestionID = reader.GetInt32("evalTemplateQuestionID"),
@@ -1286,18 +1285,5 @@ namespace TimeCats.Services
 
         //    return project;
         //}
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 }

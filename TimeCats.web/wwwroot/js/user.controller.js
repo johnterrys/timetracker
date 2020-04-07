@@ -10,7 +10,7 @@
 
     $scope.load = function () {
         usSpinnerService.spin('spinner');
-        $http.post("/Home/GetUser", { userID: $scope.userID })
+        $http.post("/User/GetUser", { userID: $scope.userID })
             .then(function (response) {
                 $scope.viewUser = response.data;
                 usSpinnerService.stop('spinner');
@@ -26,7 +26,7 @@
             });
 
         $scope.saveUser = function () {
-            $http.post("/Home/ChangeUser", $scope.viewUser)
+            $http.post("/User/ChangeUser", $scope.viewUser)
                 .then(function (response) {
                     toastr["success"]("User saved.");
                 }, function (response) {
@@ -68,7 +68,7 @@
             tempuser.password = $scope.viewUser.currentPassword;
             tempuser.newPassword = $scope.viewUser.newPassword;
 
-            $http.post("/Home/ChangePassword", tempuser)
+            $http.post("/User/ChangePassword", tempuser)
                 .then(function (response) {
                     toastr["success"]("Password changed.");
                 }, function (response) {
@@ -77,7 +77,7 @@
                     } else {
                         toastr["error"]("Failed to change password.");
                     }
-                    
+
                 });
         }
     };

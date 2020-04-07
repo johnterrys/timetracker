@@ -12,7 +12,7 @@
         $scope.evalID = $routeParams.ID;
         if (!$scope.evalID) window.history.back();
         usSpinnerService.spin('spinner');
-        $http.post("/Home/GetEvaluation", { evalID: $scope.evalID })
+        $http.post("/Eval/GetEvaluation", { evalID: $scope.evalID })
             .then(function (response) {
                 usSpinnerService.stop('spinner');
                 $scope.evaluation.evalID = response.data.evalID;
@@ -119,7 +119,7 @@
         $scope.completeEvaluation = function () {
             if (confirm('Are you sure you want to submit this evaluation?')) {
                 usSpinnerService.spin('spinner');
-                $http.post("/Home/CompleteEvaluation", $scope.evaluation.responses )
+                $http.post("/Eval/CompleteEvaluation", $scope.evaluation.responses )
                     .then(function (response) {
                         usSpinnerService.stop('spinner');
                         toastr["success"]("Evaluation completed.");

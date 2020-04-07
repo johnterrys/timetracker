@@ -3,7 +3,7 @@
     $scope.loaded = false;
     $scope.load = function() {
         usSpinnerService.spin('spinner');
-        $http.get("/Home/GetAllEvaluations")
+        $http.get("/Eval/GetAllEvaluations")
             .then(function (response) {
                 $scope.evals = {};
                 //Setting users to be in the index of their userID
@@ -24,7 +24,7 @@
             });
 
         $scope.saveEval = function (eval) {
-            $http.post("/Home/SaveEval", eval)
+            $http.post("/Eval/SaveEval", eval)
                 .then(function (response) {
                     toastr["success"]("Eval saved.");
                 }, function (response) {
