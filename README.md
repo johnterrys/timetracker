@@ -58,6 +58,7 @@ Edition of windows you are running, if you are not running **Windows 10 Pro** yo
 
 You must also install the microsoft development tools on your system, if you have visual studio installed you should have most of these.
 If you do not the best place to find the cli tools is by looking in the microsoft tools documentation. 
+
 The following commands will install the required development tools for: 
 * Entity Framework Core: `dotnet tool install dotnet-ef --global`
 
@@ -65,7 +66,7 @@ In the case that you do **not** have **Windows 10 Pro** you have several options
 1. Purchase Windows 10 Pro (I personally would recommend this if you are planning on actively developing in the future using a personal 
    machine, you can transfer licenses between machines but it can be a hassle sometimes)
 2. Setup Virtual Box on your system (instead of Hyper-V) and run a linux or database instance in the virtual machine
-3. Setup a remote server (sql instance, **NOT** a vm) on a service such as one of the following (this would cost some money more than likely (generally cheap, sub $10/month))
+3. Setup a remote server (sql instance, **NOT** a vm) on a service such as one of the following (this would cost some money, more than likely (generally cheap, sub $10/month))
   * Amazon Web Services (AWS)
   * Microsoft Azure (Azure)
   * Other ie. [Kimsufi](https://www.kimsufi.com/us/en/) self hosted
