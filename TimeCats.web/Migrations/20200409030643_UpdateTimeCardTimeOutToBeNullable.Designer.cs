@@ -10,8 +10,8 @@ using TimeCats;
 namespace TimeCats.Migrations
 {
     [DbContext(typeof(TimeTrackerContext))]
-    [Migration("20200407192310_UpdateTimeCardToUseDateTime")]
-    partial class UpdateTimeCardToUseDateTime
+    [Migration("20200409030643_UpdateTimeCardTimeOutToBeNullable")]
+    partial class UpdateTimeCardTimeOutToBeNullable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -207,33 +207,33 @@ namespace TimeCats.Migrations
                         new
                         {
                             userID = 1,
-                            Salt = new byte[] { 108, 149, 64, 2, 205, 192, 21, 182, 167, 205, 98, 34, 47, 219, 138, 140, 47, 107, 79, 88, 94, 62, 24, 196, 67, 32, 178, 230, 118, 19, 43, 223 },
+                            Salt = new byte[] { 221, 146, 85, 13, 248, 184, 150, 167, 115, 254, 166, 67, 39, 121, 95, 249, 45, 14, 105, 190, 117, 30, 25, 126, 95, 82, 97, 77, 16, 192, 235, 91 },
                             firstName = "Adam",
                             isActive = true,
                             lastName = "Admin",
-                            password = "9S6d/XZcJoPaEf93LEa7l7LiesmzhGpNIH2Z75JnsBM=",
+                            password = "sjTWQzBCp7jMCGR142G/jdM0v8ocp9NGmexUz6FTSjc=",
                             type = 'A',
                             username = "Admin"
                         },
                         new
                         {
                             userID = 2,
-                            Salt = new byte[] { 108, 149, 64, 2, 205, 192, 21, 182, 167, 205, 98, 34, 47, 219, 138, 140, 47, 107, 79, 88, 94, 62, 24, 196, 67, 32, 178, 230, 118, 19, 43, 223 },
+                            Salt = new byte[] { 221, 146, 85, 13, 248, 184, 150, 167, 115, 254, 166, 67, 39, 121, 95, 249, 45, 14, 105, 190, 117, 30, 25, 126, 95, 82, 97, 77, 16, 192, 235, 91 },
                             firstName = "Steve",
                             isActive = true,
                             lastName = "Jobs",
-                            password = "9S6d/XZcJoPaEf93LEa7l7LiesmzhGpNIH2Z75JnsBM=",
+                            password = "sjTWQzBCp7jMCGR142G/jdM0v8ocp9NGmexUz6FTSjc=",
                             type = 'I',
                             username = "Instructor"
                         },
                         new
                         {
                             userID = 3,
-                            Salt = new byte[] { 108, 149, 64, 2, 205, 192, 21, 182, 167, 205, 98, 34, 47, 219, 138, 140, 47, 107, 79, 88, 94, 62, 24, 196, 67, 32, 178, 230, 118, 19, 43, 223 },
+                            Salt = new byte[] { 221, 146, 85, 13, 248, 184, 150, 167, 115, 254, 166, 67, 39, 121, 95, 249, 45, 14, 105, 190, 117, 30, 25, 126, 95, 82, 97, 77, 16, 192, 235, 91 },
                             firstName = "Normal",
                             isActive = true,
                             lastName = "User",
-                            password = "9S6d/XZcJoPaEf93LEa7l7LiesmzhGpNIH2Z75JnsBM=",
+                            password = "sjTWQzBCp7jMCGR142G/jdM0v8ocp9NGmexUz6FTSjc=",
                             type = 'S',
                             username = "User"
                         });

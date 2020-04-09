@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TimeCats;
@@ -9,9 +10,10 @@ using TimeCats;
 namespace TimeCats.Migrations
 {
     [DbContext(typeof(TimeTrackerContext))]
-    partial class TimeTrackerContextModelSnapshot : ModelSnapshot
+    [Migration("20200409030243_UpdateTimeCardToUseDateTime")]
+    partial class UpdateTimeCardToUseDateTime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -133,8 +135,9 @@ namespace TimeCats.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<DateTime>("createdOn")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<string>("createdOn")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("description")
                         .IsRequired()
@@ -143,11 +146,13 @@ namespace TimeCats.Migrations
                     b.Property<int>("groupID")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("timeIn")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<string>("timeIn")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<DateTime?>("timeOut")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<string>("timeOut")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("userID")
                         .HasColumnType("integer");
@@ -205,33 +210,33 @@ namespace TimeCats.Migrations
                         new
                         {
                             userID = 1,
-                            Salt = new byte[] { 221, 146, 85, 13, 248, 184, 150, 167, 115, 254, 166, 67, 39, 121, 95, 249, 45, 14, 105, 190, 117, 30, 25, 126, 95, 82, 97, 77, 16, 192, 235, 91 },
+                            Salt = new byte[] { 106, 171, 87, 41, 99, 19, 102, 208, 212, 61, 201, 0, 71, 229, 253, 207, 249, 70, 58, 212, 65, 3, 135, 0, 58, 14, 96, 192, 218, 86, 128, 82 },
                             firstName = "Adam",
                             isActive = true,
                             lastName = "Admin",
-                            password = "sjTWQzBCp7jMCGR142G/jdM0v8ocp9NGmexUz6FTSjc=",
+                            password = "t3nJz5u8ykHpMK/tiinD+P1OhurXJf92ssXxDTE7vRc=",
                             type = 'A',
                             username = "Admin"
                         },
                         new
                         {
                             userID = 2,
-                            Salt = new byte[] { 221, 146, 85, 13, 248, 184, 150, 167, 115, 254, 166, 67, 39, 121, 95, 249, 45, 14, 105, 190, 117, 30, 25, 126, 95, 82, 97, 77, 16, 192, 235, 91 },
+                            Salt = new byte[] { 106, 171, 87, 41, 99, 19, 102, 208, 212, 61, 201, 0, 71, 229, 253, 207, 249, 70, 58, 212, 65, 3, 135, 0, 58, 14, 96, 192, 218, 86, 128, 82 },
                             firstName = "Steve",
                             isActive = true,
                             lastName = "Jobs",
-                            password = "sjTWQzBCp7jMCGR142G/jdM0v8ocp9NGmexUz6FTSjc=",
+                            password = "t3nJz5u8ykHpMK/tiinD+P1OhurXJf92ssXxDTE7vRc=",
                             type = 'I',
                             username = "Instructor"
                         },
                         new
                         {
                             userID = 3,
-                            Salt = new byte[] { 221, 146, 85, 13, 248, 184, 150, 167, 115, 254, 166, 67, 39, 121, 95, 249, 45, 14, 105, 190, 117, 30, 25, 126, 95, 82, 97, 77, 16, 192, 235, 91 },
+                            Salt = new byte[] { 106, 171, 87, 41, 99, 19, 102, 208, 212, 61, 201, 0, 71, 229, 253, 207, 249, 70, 58, 212, 65, 3, 135, 0, 58, 14, 96, 192, 218, 86, 128, 82 },
                             firstName = "Normal",
                             isActive = true,
                             lastName = "User",
-                            password = "sjTWQzBCp7jMCGR142G/jdM0v8ocp9NGmexUz6FTSjc=",
+                            password = "t3nJz5u8ykHpMK/tiinD+P1OhurXJf92ssXxDTE7vRc=",
                             type = 'S',
                             username = "User"
                         });
