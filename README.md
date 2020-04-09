@@ -69,6 +69,7 @@ In the case that you do **not** have **Windows 10 Pro** you have several options
   * Amazon Web Services (AWS)
   * Microsoft Azure (Azure)
   * Other ie. [Kimsufi](https://www.kimsufi.com/us/en/) self hosted
+  
 Of the above options number 1 is the easiest and fastest to get setup, unless you are experienced with linux servers or servers in general this is the route I would recommend.
 
 #### Setup
