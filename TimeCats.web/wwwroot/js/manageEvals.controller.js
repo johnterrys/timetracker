@@ -10,12 +10,12 @@
         $scope.userID = $routeParams.ID;
         $scope.config.instructorID = $scope.userID;
         if (!$scope.userID) window.history.back();
-        
+
         $scope.loadTemplates = function () {
             $scope.evaluations = {};
             $scope.config.currentTemplate = 0;
             usSpinnerService.spin('spinner');
-            $http.post("/Home/GetTemplatesForInstructor", { userID: $scope.config.instructorID })
+            $http.post("/Eval/GetTemplatesForInstructor", { userID: $scope.config.instructorID })
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
                     $.each(response.data, function (index, template) {
@@ -99,7 +99,7 @@
                             }
                         },
                         2: {
-                            evalTemplateID: 2, 
+                            evalTemplateID: 2,
                             templateName: "Test Evalation Template 2",
                             inUse: false,
                             number: 1,
@@ -161,7 +161,7 @@
 
         if ($scope.$parent.user.type === 'A') {
             usSpinnerService.spin('spinner');
-            $http.get("/Home/GetUsers")
+            $http.get("/User/GetUsers")
                 .then(function (response) {
                     //Setting users to be in the index of their userID
                     $.each(response.data, function (index, user) {
@@ -198,7 +198,7 @@
 
         $scope.saveTemplateName = function (evalTemplate) {
             usSpinnerService.spin('spinner');
-            $http.post("/Home/SaveTemplateName", { evalTemplateID: evalTemplate.evalTemplateID, templateName: evalTemplate.templateName })
+            $http.post("/Eval/SaveTemplateName", { evalTemplateID: evalTemplate.evalTemplateID, templateName: evalTemplate.templateName })
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
                     toastr["success"]("Saved template name.");
@@ -215,7 +215,7 @@
         $scope.createBlankEvaluation = function () {
             if (confirm('Are you sure you want to create a new template?')) {
                 usSpinnerService.spin('spinner');
-                $http.post("/Home/CreateTemplate", { userID: $scope.config.instructorID })
+                $http.post("/Eval/CreateTemplate", { userID: $scope.config.instructorID })
                     .then(function (response) {
                         usSpinnerService.stop('spinner');
                         toastr["success"]("Created evaluation.");
@@ -231,7 +231,7 @@
 
         $scope.createCategory = function () {
             usSpinnerService.spin('spinner');
-            $http.post("/Home/CreateCategory", { evalTemplateID: $scope.config.currentTemplate })
+            $http.post("/Eval/CreateCategory", { evalTemplateID: $scope.config.currentTemplate })
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
                     toastr["success"]("Created category.");
@@ -249,7 +249,7 @@
         $scope.deleteCategory = function (category) {
             if (confirm('Are you sure you want to delete this category?')) {
                 usSpinnerService.spin('spinner');
-                $http.post("/Home/DeleteCategory", { evalTemplateQuestionCategoryID: category.evalTemplateQuestionCategoryID })
+                $http.post("/Eval/DeleteCategory", { evalTemplateQuestionCategoryID: category.evalTemplateQuestionCategoryID })
                     .then(function (response) {
                         usSpinnerService.stop('spinner');
                         toastr["success"]("Category deleted.");
@@ -272,7 +272,7 @@
         $scope.deleteQuestion = function (question) {
             if (confirm('Are you sure you want to delete this question?')) {
                 usSpinnerService.spin('spinner');
-                $http.post("/Home/DeleteQuestion", { evalTemplateID: $scope.config.currentTemplate, evalTemplateQuestionID: question.evalTemplateQuestionID })
+                $http.post("/Eval/DeleteQuestion", { evalTemplateID: $scope.config.currentTemplate, evalTemplateQuestionID: question.evalTemplateQuestionID })
                     .then(function (response) {
                         usSpinnerService.stop('spinner');
                         toastr["success"]("Question deleted.");
@@ -287,7 +287,7 @@
         };
 
         $scope.saveCategory = function (category) {
-            $http.post("/Home/SaveCategory", category)
+            $http.post("/Eval/SaveCategory", category)
                 .then(function (response) {
                     toastr["success"]("Category saved.");
                 }, function () {
@@ -297,7 +297,7 @@
 
         $scope.saveQuestion = function (question) {
             if (question.number === null || isNaN(question.number)) { question.number = 0 }
-            $http.post("/Home/SaveQuestion", question)
+            $http.post("/Eval/SaveQuestion", question)
                 .then(function (response) {
                     toastr["success"]("Question saved.");
                 }, function () {
@@ -306,7 +306,7 @@
         };
 
         $scope.addQuestion = function (categoryID) {
-            $http.post("/Home/CreateTemplateQuestion", { evalTemplateID: $scope.config.currentTemplate, evalTemplateQuestionCategoryID: categoryID })
+            $http.post("/Eval/CreateTemplateQuestion", { evalTemplateID: $scope.config.currentTemplate, evalTemplateQuestionCategoryID: categoryID })
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
                     toastr["success"]("Created question.");

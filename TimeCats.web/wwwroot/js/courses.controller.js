@@ -7,7 +7,7 @@
     $scope.load = function () {
 
         usSpinnerService.spin('spinner');
-        $http.get("/Home/GetCourses")
+        $http.get("/Course/GetCourses")
             .then(function (response) {
                 usSpinnerService.stop('spinner');
                 $scope.courses = response.data;
@@ -17,7 +17,7 @@
             });
 
         $scope.createCourse = function () {
-            $http.post("/Home/AddCourse", $scope.user)
+            $http.post("/Course/AddCourse", $scope.user)
                 .then(function (response) {
                     $location.path('/course/' + response.data);
                 }, function (response) {

@@ -24,7 +24,7 @@ namespace TimeCats.Services
         {
             _context.Projects.Add(project);
             _context.SaveChanges();
-           
+
             return project;
         }
 
@@ -49,8 +49,8 @@ namespace TimeCats.Services
         public Project GetProjectById(int projectId)
         {
             return _context.Projects
-                .Where(p => p.projectID == projectId)
-                .FirstOrDefault();
+                .Include(p => p.groups)
+                .FirstOrDefault(p => p.projectID == projectId);
         }
 
 
@@ -93,7 +93,7 @@ namespace TimeCats.Services
                 Console.WriteLine(exc.InnerException.Message);
                 return false;
             }
-            
+
             return true;
         }
 

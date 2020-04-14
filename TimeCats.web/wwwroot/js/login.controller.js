@@ -17,7 +17,7 @@
             $scope.user.password = $scope.password;
 
             usSpinnerService.spin('spinner');
-            $http.post("/Home/LoginUser", $scope.user)
+            $http.post("/User/LoginUser", $scope.user)
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
                     if (response.status === 204) {
@@ -41,7 +41,7 @@
         $scope.loaded = true;
         $("#username").focus(); //Focus on the username field for quicker login
     };
-   
+
     usSpinnerService.spin('spinner');
     $http.get("/Home/CheckSession")
         .then(function (response) {

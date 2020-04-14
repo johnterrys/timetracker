@@ -10,7 +10,7 @@
         if (!$scope.projectID) $location.path('/courses');
 
         usSpinnerService.spin('spinner');
-        $http.post("/Home/GetProject", { projectID: $scope.projectID })
+        $http.post("/Project/GetProject", { projectID: $scope.projectID })
             .then(function (response) {
                 $scope.project = {};
                 $scope.project.projectID = response.data.projectID;
@@ -40,7 +40,7 @@
                         });
                     });
                 });
-                
+
                 $scope.updateAllHours();
                 $scope.updateChart();
                 usSpinnerService.stop('spinner');
@@ -51,7 +51,7 @@
             });
 
         $scope.createGroup = function () {
-            $http.post("/Home/CreateGroup", {
+            $http.post("/Group/CreateGroup", {
                 projectID: $scope.projectID
             })
                 .then(function (response) {
@@ -64,7 +64,7 @@
         };
 
         $scope.saveProject = function () {
-            $http.post("/Home/SaveProject", {
+            $http.post("/Project/SaveProject", {
                 projectID: $scope.project.projectID,
                 projectName: $scope.project.projectName,
                 description: $scope.project.description,
@@ -103,7 +103,7 @@
 
             // These labels appear in the legend and in the tooltips when hovering different arcs
             labels: []
-            
+
         };
 
         $scope.setData = function () {
@@ -136,7 +136,7 @@
         });
 
         $scope.updateChart = function () {
-            //  The section below creates a display for a empty chart.            
+            //  The section below creates a display for a empty chart.
             var hours = 0;
 
             for (var g in $scope.project.groups) {
@@ -159,7 +159,7 @@
                 document.getElementById("projectHours").style.visibility = "visible";
                 document.getElementById("noProjectData").style.visibility = "hidden";
             }
-            
+
             $scope.setData();
             myChart.update();
         };

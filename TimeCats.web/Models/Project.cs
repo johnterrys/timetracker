@@ -16,11 +16,14 @@ namespace TimeCats.Models
 
         [Required]
         public string description { get; set; }
-        
+
+        [NotMapped]
         public List<Group> groups { get; set; }
 
         [Required]
         public int CourseID { get; set; }
+
+        [NotMapped]
         public Course Course { get; set; }
     }
 }

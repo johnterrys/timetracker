@@ -1,6 +1,6 @@
 ﻿angular.module('time').controller('DashboardCtrl', ['$scope', '$http', '$routeParams', '$location', 'usSpinnerService', function ($scope, $http, $routeParams, $location, usSpinnerService) {
     $scope.loaded = false;
-    
+
     $scope.load = function () {
         $scope.groups = {};
         $scope.courses = {};
@@ -8,7 +8,7 @@
         $scope.loadInactivePanel = false;
         $scope.responsesComplete = 0;
 
-        $http.get("/Home/GetDashboard")
+        $http.get("/User/GetDashboard")
             .then(function (response) {
                 $scope.groups = response.data;
             }, function () {
@@ -16,7 +16,7 @@
             });
 
         if ($scope.$parent.user.type === "I" || $scope.$parent.user.type === "A") {
-            $http.post("/Home/GetInstructorCourses")
+            $http.post("/Course/GetInstructorCourses")
                 .then(function (response) {
                     $scope.courses = response.data;
                     if ($scope.courses.length <= 0) {
@@ -26,7 +26,7 @@
                     }
                     else {
                         for (i = 0; i < $scope.courses.length; i++) {
-                            $http.post("/Home/GetInactiveStudentsInCourse", $scope.courses[i])
+                            $http.post("/Course/GetInactiveStudentsInCourse", $scope.courses[i])
                                 .then(function (response_inner) {
                                     var indexCourseID = response_inner.config.data.courseID;
                                     $scope.courseToInactiveUsers[indexCourseID] = response_inner.data;
@@ -57,7 +57,7 @@
 
         $scope.saveUserInCourse = function (courseID, userID, isActive) {
                 usSpinnerService.spin('spinner');
-                $http.post("/Home/SaveUserInCourse", { userID: userID, courseID: courseID, isActive: isActive })
+                $http.post("/Course/SaveUserInCourse", { userID: userID, courseID: courseID, isActive: isActive })
                     .then(function (response) {
                         usSpinnerService.stop('spinner');
                         toastr["success"]("Updated the user in this course.");
@@ -71,7 +71,7 @@
         $scope.deleteUserFromCourse = function (userID) {
             if (confirm('Are you sure you want to delete this user from the course?')) {
                 usSpinnerService.spin('spinner');
-                $http.post("/Home/DeleteUserFromCourse", { userID: userID, courseID: $scope.courseID })
+                $http.post("/Course/DeleteUserFromCourse", { userID: userID, courseID: $scope.courseID })
                     .then(function (response) {
                         usSpinnerService.stop('spinner');
                         delete $scope.course.users[userID];

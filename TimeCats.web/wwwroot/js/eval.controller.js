@@ -15,7 +15,7 @@
         $scope.groupID = $routeParams.ID;
         if (!$scope.groupID) window.history.back();
         usSpinnerService.spin('spinner');
-        $http.post("/Home/GetLatestIncompleteEvaluation", { groupID: $scope.groupID })
+        $http.post("/Eval/GetLatestIncompleteEvaluation", { groupID: $scope.groupID })
             .then(function (response) {
                 usSpinnerService.stop('spinner');
 
@@ -132,7 +132,7 @@
         $scope.completeEvaluation = function () {
             if (confirm('Are you sure you want to submit this evaluation?')) {
                 usSpinnerService.spin('spinner');
-                $http.post("/Home/CompleteEvaluation", $scope.evaluation.responses )
+                $http.post("/Eval/CompleteEvaluation", $scope.evaluation.responses )
                     .then(function (response) {
                         usSpinnerService.stop('spinner');
                         toastr["success"]("Evaluation completed.");

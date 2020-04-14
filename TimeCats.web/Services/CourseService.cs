@@ -23,7 +23,7 @@ namespace TimeCats.Services
         public void CreateCourse(Course course)
         {
             _context.Courses.Add(course);
-            _context.SaveChanges();  
+            _context.SaveChanges();
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace TimeCats.Services
         {
             _context.Courses.Add(course);
             _context.SaveChanges();
-            
+
             return course;
         }
 
@@ -79,8 +79,13 @@ namespace TimeCats.Services
         /// <returns></returns>
         public IEnumerable<Course> GetCoursesByUser(User user)
         {
+            var courseIDs = _context.UserCourses
+                .Where(uc => uc.userID == user.userID)
+                .Select(uc => uc.courseID)
+                .ToList();
+
             var courses = _context.Courses
-                               .Where(c => c.InstructorId == user.userID);
+                .Where(c => courseIDs.Contains(c.courseID));
 
             return courses;
         }
@@ -121,7 +126,7 @@ namespace TimeCats.Services
         /// </summary>
         /// <param name="groupID"></param>
         /// <returns></returns>
-        public int GetCourseForGroup(int groupID)
+        public Course GetCourseForGroup(int groupID)
         {
             var groups = _context.Groups
                             .Where(g => g.groupID == groupID)
@@ -133,14 +138,25 @@ namespace TimeCats.Services
                             .Select(p => p.CourseID)
                             .ToList();
 
-            var courses = _context.Courses
+            var course = _context.Courses
                             .Where(c => projects.Contains(c.courseID))
-                            .Select(c => c.courseID)
                             .FirstOrDefault();
 
-            return courses;
+            return course;
         }
 
+        public Course GetCourseForProject(int projectID)
+        {
+            var project = _context.Projects
+                .Where(p => p.projectID == projectID)
+                .FirstOrDefault();
+
+            var course = _context.Courses
+                .Where(c => c.courseID == project.CourseID)
+                .FirstOrDefault();
+
+            return course;
+        }
 
         /// <summary>
         /// Add an Inactive User to a Course
@@ -153,13 +169,12 @@ namespace TimeCats.Services
             _context.UserCourses.Add(new UserCourse
             {
                 userID = userId,
-                courseID = courseId, 
+                courseID = courseId,
                 isActive = false
             });
 
             return _context.SaveChanges();
         }
-
 
         /// <summary>
         /// Activate a User in a Course
@@ -216,7 +231,6 @@ namespace TimeCats.Services
             return true;
         }
 
-
         /// <summary>
         /// Delete a User in a Course
         /// </summary>
@@ -242,7 +256,6 @@ namespace TimeCats.Services
             return true;
         }
 
-
         /// <summary>
         /// Get an Instructor from a CourseID
         /// </summary>
@@ -255,7 +268,6 @@ namespace TimeCats.Services
                         .Select(u => u.InstructorId)
                         .FirstOrDefault();
         }
-
 
         /// <summary>
         /// Save a User in a Course
@@ -279,7 +291,6 @@ namespace TimeCats.Services
 
             return true;
         }
-
 
         /// <summary>
         /// Delete a User from a Course
@@ -305,7 +316,5 @@ namespace TimeCats.Services
 
             return true;
         }
-
-
     }
 }
