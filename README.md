@@ -1,4 +1,13 @@
 # Student Time Tracker
+If you need more information about how to setup the project or context on specific tools see our wiki on github.
+ We recommend that you become familiar with the wiki and the information contained in it before starting the project.
+ Especially, if you are new to C# or any of its best practices. We have done everything we can to provide information
+ on how the project is laid out, how the tools used work, and why we chose them. 
+ 
+If anything in this readme does not make sense or appear to be out of date please refer to the wiki for the most accurate info.
+
+[Student Time Tracker Wiki](https://github.com/bradleypeterson/timetracker/wiki)
+
 ## General Information
 * This project is configured using .NET Core 3.1
 * We use git as our version control system
@@ -31,15 +40,6 @@
     * To disable the container run `docker-compose down`
     * To destroy the backend and clear data run `docker-compose down -v`
   * For more advanced docker configuration see the docker/docker-compose docs
-  
-## Vocabulary
-* Project = Generally refers to the project as a whole unless referring to a specific directory with regards to .NET
-* Solution Directory / Repository Directory / Root Directory = The top level folder where your project initially begins, typically contains an `.sln` file and any `docker-compose.yml` files.
-* Project Directory = The directory for a specific project, ie. A C# project or `.csproj`, this is a .NET specific thing; other languages have their equivalents though.
-* ORM = Object Relational Mapper
-* EF Core = Entity Framework Core, this is also our ORM
-* Docker = Container Management Tool
-* Postgres = Database
 
 ## Project Setup
 The following steps assume you:
@@ -115,17 +115,3 @@ Main documentation websites:
 * [Angular Official Tutorial](https://angular.io/tutorial/toh-pt0)
 * [Angular Google Material Design](https://material.angular.io/)
 * [Angular Style Guide and Best Practices](https://angular.io/guide/styleguide)
-
-## Entity Framework Documentation
-Best way to learn Entity Framework is just to start reading the docs on microsoft's web site and if you have access to Pluralsite check out courses by `Julie Lerman` (Leading Expert) or `Mosh Hamedani`
-* [EF Tutorial Site](https://www.entityframeworktutorial.net/efcore/entity-framework-core.aspx)
-* [General Microsoft Documentation](https://docs.microsoft.com/en-us/ef/core/)
-* [EF Migrations Documentation](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli)
-  
-## Migration Documentation
-### Dealing with dates
-If you need to upgrade a string type to a `DateTime` in the dotnet entities refer to the following migrations and documentation for examples.
-
-* Migration: `TimeCats.web/Migrations/20200407192310_UpdateTimeCardToUseDateTime.cs`
-* [to_timestamp documentation](https://www.postgresqltutorial.com/postgresql-to_timestamp/)
-* [to_char documentation](https://www.postgresqltutorial.com/postgresql-to_char/)
