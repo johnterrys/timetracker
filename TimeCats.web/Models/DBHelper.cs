@@ -29,10 +29,16 @@ namespace TimeCats.Models
                 courseName = "Course2345",
                 instructorID = 1,
                 instructorName = "Instructor Man!"
+                
+            
             });
+
+            
 
             return dashboard;
         }
+
+
 
 
         //    var group = new Group();

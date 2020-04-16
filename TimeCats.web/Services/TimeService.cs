@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using TimeCats.Models;
 
@@ -19,28 +20,37 @@ namespace TimeCats.Services
 
         public bool SaveTime(TimeCard timecard)
         {
-            var edited = "";
-            DateTime before;
-            DateTime after;
 
-            after = Convert.ToDateTime(edited);
-            before = after.AddDays(-7);
+            var time = _context.TimeCards
+                .FirstOrDefault(t => t.timeslotID == timecard.timeslotID);
+
+            DateTime after = Convert.ToDateTime(time.createdOn);
+            DateTime before = after.AddDays(-7);
+
 
             if (after < before)
             {
-                timecard.isEdited = true;
-                _context.TimeCards.Update(timecard);
-                _context.SaveChanges();
-            }
-            else
-            {
-                timecard.isEdited = false;
-                _context.TimeCards.Update(timecard);
-                _context.SaveChanges();
+                time.isEdited = true;
             }
 
-            return timecard.isEdited;
+            time.timeIn = timecard.timeIn;
+            time.timeOut = timecard.timeOut;
+            time.description = timecard.description;
+
+            try
+            {
+                _context.TimeCards.Update(time);
+                _context.SaveChanges();
+            }
+            catch (DbUpdateException exc)
+            {
+                Console.WriteLine(exc.InnerException.Message);
+                return false;
+            }
+
+            return true;
         }
+
 
         public bool UserHasTimeInGroup(int userID, int groupID)
         {
@@ -50,12 +60,57 @@ namespace TimeCats.Services
 
         public long CreateTimeCard(TimeCard timeCard)
         {
-            _context.TimeCards.Add(timeCard);
-            _context.SaveChanges();
+            TimeCard tc = new TimeCard();
 
-            return timeCard.userID;
+            tc.createdOn = DateTime.Now;
+            tc.isEdited = false;
+            tc.userID = timeCard.userID;
+            tc.groupID = timeCard.groupID;
+
+            if (timeCard.timeIn == null)
+            {
+                tc.timeIn = DateTime.Now;
+            }
+            else
+            {
+                tc.timeIn = timeCard.timeIn;
+            }
+
+            if (timeCard.timeOut == null)
+            {
+                tc.timeOut = null;
+            }
+            else
+            {
+                tc.timeOut = timeCard.timeOut;
+            }
+
+            tc.userID = timeCard.userID;
+
+            tc.groupID = timeCard.groupID;
+
+            if (timeCard.description == null || timeCard.description == "")
+            {
+                tc.description = "";
+            }
+            else
+            {
+                tc.description = timeCard.description;
+            }
+
+            try
+            {
+                _context.TimeCards.Add(tc);
+                _context.SaveChanges();
+            }
+            catch (DbUpdateException exc)
+            {
+                Console.WriteLine(exc.InnerException.Message);
+                return 0;
+            }
+
+            return tc.timeslotID;
         }
-
 
         public long DeleteTimeCard(TimeCard timeCard)
         {
@@ -65,11 +120,6 @@ namespace TimeCats.Services
             return 0;
         }
 
-
-
-
-
-
-
     }
 }
+

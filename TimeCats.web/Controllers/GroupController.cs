@@ -86,7 +86,13 @@ namespace TimeCats.Controllers
                 IsAdmin() ||
                 IsInstructorForCourse(courseID))
             {
-                return Ok(new GroupDTO(group).WithUsers());
+                var dto = new GroupDTO(group).WithUsers();
+                foreach (var user in dto.users)
+                {
+                    user.WithTimeCards();
+                }
+
+                return Ok(dto);
             }
 
             return Unauthorized(); //Not allowed to view the group.

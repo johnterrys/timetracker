@@ -105,13 +105,15 @@ You will now need to run migrations on your project to bring your database up to
 We do this using Entity Framework Core Code First Migrations.
 In the project directory enter the following command: `dotnet ef database update` this will bring the database located at the above connection string up-to-date with the migrations you have.
 
+Three default accounts should be made with the `dotnet ef database update` command.
+* Admin User
+  * Username: admin
+  * Password: Password1!
+* Instructor User
+  * Username: instructor
+  * Password: Password1!
+* Standard User
+  * Username: user
+  * Password: Password1!
+
 You should now be able to launch the application.
-
-## Angular Documentation
-The following is information about Angular (not angularJS).
-
-Main documentation websites:
-* [How to setup your system](https://angular.io/guide/setup-local)
-* [Angular Official Tutorial](https://angular.io/tutorial/toh-pt0)
-* [Angular Google Material Design](https://material.angular.io/)
-* [Angular Style Guide and Best Practices](https://angular.io/guide/styleguide)
