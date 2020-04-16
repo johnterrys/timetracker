@@ -24,6 +24,7 @@ namespace TimeCats.Services
                 .Include(g => g.Project)
                 .Include(g => g.UserGroups)
                 .ThenInclude(ug => ug.User)
+                .ThenInclude(u => u.timecards)
                 .FirstOrDefault(g => g.groupID == groupID);
         }
 
