@@ -25,8 +25,7 @@ namespace TimeCats.DTOs
 
         public List<GroupDTO> Groups { get; set; }
         public List<CourseDTO> Courses { get; set; }
-        // still need TimeCardDTO
-        //public List<TimeCardDTO> timeCards { get; set; }
+        public List<TimeCardDTO> timecards { get; set; }
 
         public UserDTO(User that)
         {
@@ -47,7 +46,7 @@ namespace TimeCats.DTOs
             // not included by default
             this.Groups = null;
             this.Courses = null;
-            //this.timecards = null;
+            this.timecards = null;
         }
 
         public UserDTO WithGroups()
@@ -67,6 +66,17 @@ namespace TimeCats.DTOs
             foreach (Course course in _user.Courses)
             {
                 this.Courses.Add(new CourseDTO(course));
+            }
+
+            return this;
+        }
+
+        public UserDTO WithTimeCards()
+        {
+            this.timecards = new List<TimeCardDTO>();
+            foreach (TimeCard timecard in _user.timecards)
+            {
+                this.timecards.Add(new TimeCardDTO(timecard));
             }
 
             return this;
