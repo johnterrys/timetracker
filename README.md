@@ -42,7 +42,9 @@ If anything in this readme does not make sense or appear to be out of date pleas
   * For more advanced docker configuration see the docker/docker-compose docs
 
 ## Project Setup
+### Assumptions
 The following steps assume you:
+* YOU HAVE READ THE WIKI!
 * Have already cloned the repository
 * Are using Postgres as your Database
 * Are using docker as your database environment
