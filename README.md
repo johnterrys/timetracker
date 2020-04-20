@@ -86,7 +86,7 @@ After the containers are built you should have a postgres database that has the 
 ```yaml
 services:
   ports:
-    - internalPort:exposedPort
+    - hostPort:containerPort
 ```
 We must now configure your `appsettings.Development.json` file in your project directory.
 Under the connection strings object make sure to add your database name variable, used by environment variables in c#/.net.
@@ -117,3 +117,8 @@ Three default accounts should be made with the `dotnet ef database update` comma
   * Password: Password1!
 
 You should now be able to launch the application.
+
+## Production Information
+If you go to use the `docker-compose.production.yml` file on linux you will need to make sure you are at least running docker-compose version `1.25.5`.
+See [How to install docker from the github repository for the latest version](https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-18-04). 
+You may be able to install using `apt install docker-compose` however, the linux repos are sometimes several minor versions out of date.
