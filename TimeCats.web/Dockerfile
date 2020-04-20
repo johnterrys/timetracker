@@ -9,7 +9,6 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS Base
 COPY . temp/
 WORKDIR temp/
-RUN ["dotnet", "restore"]
 RUN ["dotnet", "publish"]
 
 # Dotnet Runtime
