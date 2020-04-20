@@ -11,7 +11,9 @@ COPY . temp/
 WORKDIR temp/
 RUN ["dotnet", "publish"]
 
-# Dotnet Runtime
+# Dotnet Runtime: this is the portion of the dockerfile that actually builds the running container image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS Runtime
 COPY --from=Base temp/bin/Debug/netcoreapp3.1/publish/ app/
-ENTRYPOINT ["dotnet", "app/TimeCats.dll"]
+#This is very important to have as it changes the working directory of the .net application
+WORKDIR /app 
+ENTRYPOINT ["dotnet", "TimeCats.dll"]
