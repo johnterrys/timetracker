@@ -10,18 +10,23 @@ namespace TimeCats
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
-
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionstring = Configuration["ConnectionString:TimeTrackerDB"];
+
+            Console.WriteLine($"CONFIGURATION: {Configuration}");
+            Console.WriteLine($"POSTGRES_CONNECTION_STRING: {Configuration.GetConnectionString("TimeTrackerDB")}");
+            
             services.AddDbContext<TimeTrackerContext>(options =>
-                options.UseNpgsql(Configuration["ConnectionString:TimeTrackerDB"]));
+                options.UseNpgsql(connectionstring));
             services.AddMvc(options => { options.EnableEndpointRouting = false; });
             services.AddSession(options => { options.IdleTimeout = TimeSpan.FromHours(1); });
             services.AddScoped<StudentTimeTrackerService>();
