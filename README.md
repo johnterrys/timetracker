@@ -15,8 +15,8 @@ Contact Info:
     Name: `Kayden Miller`  
     Email: `kaydenmiller1@gmail.com` (personal email)  
     Discord: `death2142zerg#3250` (personal discord)
-    Phone: I am not going to put my phone number on here but Brad should be able to get it if needed.
-    GitHub: You can also contact me via GitHub.
+    Phone: `nice try` (I am not going to put my phone number on here but Brad should be able to get it if needed.)  
+    GitHub: You can also contact me via GitHub.  
 
 ## General Information
 * This project is configured using .NET Core 3.1
