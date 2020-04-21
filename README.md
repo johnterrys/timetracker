@@ -8,6 +8,16 @@ If anything in this readme does not make sense or appear to be out of date pleas
 
 [Student Time Tracker Wiki](https://github.com/bradleypeterson/timetracker/wiki)
 
+## Contact Information
+I know this project has been setup in a somewhat complicated manner so if there are any problems with getting setup or if you have any questions feel free to reach out to me `Kayden Miller` at any of the following contact options. I will do my best to get back to you within 24 hours. However, please keep in mind I do work as a Software Engineer and Team Lead with my company `Guru Technologies` as well as run my own company so it make take may some time especially if I have client meetings. 
+
+Contact Info:
+    Name: `Kayden Miller`  
+    Email: `kaydenmiller1@gmail.com` (personal email)  
+    Discord: `death2142zerg#3250` (personal discord)
+    Phone: I am not going to put my phone number on here but Brad should be able to get it if needed.
+    GitHub: You can also contact me via GitHub.
+
 ## General Information
 * This project is configured using .NET Core 3.1
 * We use git as our version control system
