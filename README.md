@@ -110,12 +110,12 @@ In the project directory enter the following command: `dotnet ef database update
 Three default accounts should be made with the `dotnet ef database update` command.
 * Admin User
   * Username: admin
-  * Password: Password1!
+  * Password: Password!
 * Instructor User
   * Username: instructor
-  * Password: Password1!
+  * Password: Password!
 * Standard User
   * Username: user
-  * Password: Password1!
+  * Password: Password!
 
 You should now be able to launch the application.
