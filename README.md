@@ -140,6 +140,6 @@ Do not actually use the database in a docker container that is bad for a product
  currently setup as a docker container is to ease development on a remote system and test deployment procedures. For an actual production environment the database should
  be hosted via Azure, AWS, Google, or some other database hosting service (unless absolutely needed). 
 
-This includes for COPA compliant databases, it may be more expensive to run on any of these services but it is still a better choice than hosting them yourself. The reason
+This includes for FERPA compliant databases, it may be more expensive to run on any of these services but it is still a better choice than hosting them yourself. The reason
  this is better is due to how much security is involved in a database like that a it should be maintained by a company that has the proper systems and services setup to work
  with a dataset that requires compliance. Bottom line is don't host the production databases yourself, have someone else do it.
