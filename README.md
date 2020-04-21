@@ -14,7 +14,7 @@ I know this project has been setup in a somewhat complicated manner so if there 
 Contact Info:
     Name: `Kayden Miller`  
     Email: `kaydenmiller1@gmail.com` (personal email)  
-    Discord: `death2142zerg#3250` (personal discord)
+    Discord: `death2142zerg#3250` (personal discord)  
     Phone: `nice try` (I am not going to put my phone number on here but Brad should be able to get it if needed.)  
     GitHub: You can also contact me via GitHub.  
 
