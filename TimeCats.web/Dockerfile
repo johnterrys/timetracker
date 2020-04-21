@@ -9,11 +9,11 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS Base
 COPY . temp/
 WORKDIR temp/
-RUN ["dotnet", "publish"]
+RUN ["dotnet", "publish", "-c", "Staging"]
 
 # Dotnet Runtime: this is the portion of the dockerfile that actually builds the running container image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS Runtime
-COPY --from=Base temp/bin/Debug/netcoreapp3.1/publish/ app/
+COPY --from=Base temp/bin/Staging/netcoreapp3.1/publish/ app/
 #This is very important to have as it changes the working directory of the .net application
 WORKDIR /app 
 ENTRYPOINT ["dotnet", "TimeCats.dll"]

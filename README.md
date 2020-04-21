@@ -42,7 +42,9 @@ If anything in this readme does not make sense or appear to be out of date pleas
   * For more advanced docker configuration see the docker/docker-compose docs
 
 ## Project Setup
+### Assumptions
 The following steps assume you:
+* YOU HAVE READ THE WIKI!
 * Have already cloned the repository
 * Are using Postgres as your Database
 * Are using docker as your database environment
@@ -86,7 +88,7 @@ After the containers are built you should have a postgres database that has the 
 ```yaml
 services:
   ports:
-    - internalPort:exposedPort
+    - hostPort:containerPort
 ```
 We must now configure your `appsettings.Development.json` file in your project directory.
 Under the connection strings object make sure to add your database name variable, used by environment variables in c#/.net.
@@ -108,12 +110,26 @@ In the project directory enter the following command: `dotnet ef database update
 Three default accounts should be made with the `dotnet ef database update` command.
 * Admin User
   * Username: admin
-  * Password: Password1!
+  * Password: Password!
 * Instructor User
   * Username: instructor
-  * Password: Password1!
+  * Password: Password!
 * Standard User
   * Username: user
-  * Password: Password1!
+  * Password: Password!
 
 You should now be able to launch the application.
+
+## Production Information
+If you go to use the `docker-compose.production.yml` file on linux you will need to make sure you are at least running docker-compose version `1.25.5`.
+See [How to install docker from the github repository for the latest version](https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-18-04). 
+You may be able to install using `apt install docker-compose` however, the linux repos are sometimes several minor versions out of date.
+
+**!!IMPORTANT!!**  
+Do not actually use the database in a docker container that is bad for a production environment as you could instantly loose all of your data. The only reason it is
+ currently setup as a docker container is to ease development on a remote system and test deployment procedures. For an actual production environment the database should
+ be hosted via Azure, AWS, Google, or some other database hosting service (unless absolutely needed). 
+
+This includes for COPA compliant databases, it may be more expensive to run on any of these services but it is still a better choice than hosting them yourself. The reason
+ this is better is due to how much security is involved in a database like that a it should be maintained by a company that has the proper systems and services setup to work
+ with a dataset that requires compliance. Bottom line is don't host the production databases yourself, have someone else do it.

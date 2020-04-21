@@ -2,16 +2,18 @@
 services:
   database:
     image: postgres
-    restart: always
+    restart: unless-stopped
+    hostname: database
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
     ports:
-      - 5432:5432
+      - 5556:5432
   timecatsweb:
     build:
       context: ./TimeCats.web
       dockerfile: Dockerfile
+    restart: unless-stopped
     environment:
       - ASPNETCORE_ENVIRONMENT
     ports:
