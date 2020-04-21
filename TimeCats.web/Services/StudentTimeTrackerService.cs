@@ -21,6 +21,8 @@ namespace TimeCats.Services
             user.password = crypto.CalculateHash(salt, user.password);
             user.Salt = salt;
             user.isActive = true;
+            // This is a temp fix for users not being able to register (fix this properly by changing the id type to a GUID)
+            user.userID = _timeTrackerContext.Users.Max(user => user.userID) + 1;
             _timeTrackerContext.Users.Add(user);
             _timeTrackerContext.SaveChanges();
         }
