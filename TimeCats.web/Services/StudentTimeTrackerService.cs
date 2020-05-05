@@ -25,6 +25,7 @@ namespace TimeCats.Services
             user.userID = _timeTrackerContext.Users.Max(user => user.userID) + 1;
             _timeTrackerContext.Users.Add(user);
             _timeTrackerContext.SaveChanges();
+            // Test doing a commit.
         }
 
         public User GetUserByID(int userID)
