@@ -34,7 +34,7 @@
                     }
                 });
         };
-
+        //test commit
         $scope.register = function () {
             $location.path('/register'); //Changes to the register URL
         };
