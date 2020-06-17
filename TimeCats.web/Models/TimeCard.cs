@@ -13,8 +13,10 @@ namespace TimeCats.Models
         public double hours { get; set; } //TODO: This should probably be a decimal
         
         [Required]
+       // [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime timeIn { get; set; }
         
+       // [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? timeOut { get; set; }
         
         [NotMapped]

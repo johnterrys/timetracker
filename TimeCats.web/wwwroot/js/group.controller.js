@@ -96,6 +96,7 @@
                 timeOut: $scope.group.users[id].blank.timeOut,
                 description: $scope.group.users[id].blank.description,
                 isEdited: false
+                
             };
 
             if ($scope.group.users[id].blank.timeIn === '' && $scope.group.users[id].blank.timeOut === '' && $scope.group.users[id].blank.description === '')

@@ -15,8 +15,8 @@ namespace TimeCats.DTOs
 
         public int timeslotID { get; set; }
         public double hours { get; set; }
-        public DateTime timeIn { get; set; }
-        public DateTime? timeOut { get; set; }
+        public string timeIn { get; set; }
+        public string timeOut { get; set; }
         public bool isEdited { get; set; }
         public DateTime createdOn { get; set; }
         public int userID { get; set; }
@@ -32,8 +32,8 @@ namespace TimeCats.DTOs
 
             this.timeslotID = that.timeslotID;
             this.hours = that.hours;
-            this.timeIn = that.timeIn;
-            this.timeOut = that.timeOut;
+            this.timeIn = that.timeIn.ToString("MM/dd/yyyy hh:mm tt");
+            this.timeOut = that.timeOut?.ToString("MM/dd/yyyy hh:mm tt");
             this.isEdited = that.isEdited;
             this.createdOn = that.createdOn;
             this.userID = that.userID;
