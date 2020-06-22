@@ -79,7 +79,8 @@
                         timeIn: startTime,
                         timeOut: "",
                         description: "",
-                        userID: id
+                        userID: id,
+                        groupID: $routeParams.ID
                     };
                     toastr["success"]("Timeslot created.");
                 }, function () {
