@@ -185,7 +185,7 @@
                                 <td>
                                     <div>
                                         <!--Jamison Added Delete Button-->
-                                        <button ng-readonly="!isUser(u.userID) || (!u.isActive && !($parent.user.type === 'A' || $parent.user.type === 'I'))" ng-click="deleteTime(u.userID, t.timeslotID)">Delete</button>
+                                        <button ng-readonly="!isUser(u.userID) || (!u.isActive)" ng-click="deleteTime(u.userID, t.timeslotID)">Delete</button>
                                     </div>
                                 </td>
 
