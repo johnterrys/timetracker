@@ -122,7 +122,8 @@
                         isEdited: false,
                         timeIn: $scope.group.users[id].blank.timeIn,
                         timeOut: $scope.group.users[id].blank.timeOut,
-                        description: $scope.group.users[id].blank.description
+                        description: $scope.group.users[id].blank.description,
+                        groupID: $routeParams.ID
                     };
                     $scope.group.users[id].blank.timeIn = '';
                     $scope.group.users[id].blank.timeOut = '';
@@ -273,6 +274,7 @@
         */
         $scope.deleteTime = function (userID, timeslotID) {
             toastr["warning"]("Deleting...");
+            $scope.group.users[userID].timecards[timeslotID].groupID = $routeParams.ID;
             $http.post("/Time/DeleteTimeCard", $scope.group.users[userID].timecards[timeslotID])
                 .then(function (response) {
                     window.location.reload();
@@ -302,6 +304,9 @@
                     toastr["error"]("Invalid Time Input");
                 }
             }
+
+            $scope.group.users[userID].timecards[timeslotID].groupID = $routeParams.ID;
+
             /******************************************************End Jamison Edit*****************************************/
 
             $http.post("/Time/SaveTime", $scope.group.users[userID].timecards[timeslotID])
