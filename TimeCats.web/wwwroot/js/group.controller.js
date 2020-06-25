@@ -109,6 +109,13 @@
                 toastr["error"]("Invalid Start Time: Slot Not Created");
                 return;
             }
+
+            //Prevent sending null data
+            if (data.timeOut === '' || data.timeOut === undefined || data.timeOut === null) {
+                $scope.group.users[id].blank.timeOut = '';
+                toastr["error"]("Invalid End Time: Slot Not Created");
+                return;
+            }
             /********************************************End Jamison Edit******************************/
 
             usSpinnerService.spin('spinner');
