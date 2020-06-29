@@ -104,9 +104,24 @@
                 return;
 
             /*********************************************Jamison Edit*********************************/
+            //Time-in is now a required field
             if (data.timeIn > moment().format('MM/DD/YYYY h:mm A')) {
                 $scope.group.users[id].blank.timeIn = '';
                 toastr["error"]("Invalid Start Time: Slot Not Created");
+                return;
+            }
+
+            //Time-out is now a required field
+            if (data.timeOut === '' || data.timeOut === undefined || data.timeOut === null) {
+                $scope.group.users[id].blank.timeOut = '';
+                toastr["error"]("Invalid End Time: Slot Not Created");
+                return;
+            }
+
+            //Description is now a required field
+            if (data.description === '' || data.description === undefined || data.description === null) {
+                $scope.group.users[id].blank.description = '';
+                toastr["error"]("Invalid Description: Slot Not Created");
                 return;
             }
             /********************************************End Jamison Edit******************************/
