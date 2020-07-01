@@ -24,7 +24,7 @@
         <div class="col-sm col-12">
             <div class="position-relative">
                 <h5>Users</h5>
-                <div class="float-right top-right-buttons">
+                <div class="float-right top-right-buttons" ng-if="!($parent.user.type === 'A')">
                     <button class="btn btn-primary" ng-click="joinGroup()" ng-if="(!userInGroup() || !group.users[$parent.user.userID].isActive) && $parent.user.userID !== course.instructorID">Join Group</button>
                     <button class="btn btn-danger" ng-click="leaveGroup()" ng-if="userInGroup() && group.users[$parent.user.userID].isActive">Leave Group</button>
                 </div>
