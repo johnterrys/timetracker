@@ -268,12 +268,13 @@
         $scope.endTime = function () {
             if ($scope.userInGroup()) {
                 $.each($scope.group.users[$scope.$parent.user.userID].timecards, function (index, time) {
-                    if (time.timeIn !== '' && time.timeOut === '') {
+                    if (time.timeIn !== '' && time.timeOut === '' && time.description === '') {
                         $scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].timeOut = moment().format('MM/DD/YYYY h:mm A');
                         $scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].hours = moment.duration(
                             moment($scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].timeOut).diff(
                                 $scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].timeIn)).asHours().toFixed(2);
                         $scope.saveTime($scope.$parent.user.userID, time.timeslotID);
+                        $scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].description = 'FILL ME OUT';
                         return false;
                     }
                 });
