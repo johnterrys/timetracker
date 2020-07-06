@@ -24,8 +24,8 @@ namespace TimeCats.Services
             var time = _context.TimeCards
                 .FirstOrDefault(t => t.timeslotID == timecard.timeslotID);
 
-            DateTime after = Convert.ToDateTime(time.createdOn);
-            DateTime before = after.AddDays(-7);
+            DateTimeOffset after = DateTimeOffset.Parse(time.createdOn.ToString());
+            DateTimeOffset before = after.AddDays(-7);
 
 
             if (after < before)
