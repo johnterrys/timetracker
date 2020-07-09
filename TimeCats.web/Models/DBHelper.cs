@@ -27,7 +27,7 @@ namespace TimeCats.Models
                 projectName = "Super Project Name",
                 courseID = 1,
                 courseName = "Course2345",
-                instructorID = 1,
+                instructorId = 1,
                 instructorName = "Instructor Man!"
                 
             

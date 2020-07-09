@@ -202,13 +202,25 @@ namespace TimeCats.Controllers
         public IActionResult SaveCourse([FromBody] object json)
         {
             var JsonString = json.ToString();
-
             var course = JsonConvert.DeserializeObject<Course>(JsonString);
+
+            //Set course without instructor to admin
+            if (course.InstructorId == 0)
+            {
+                //UserID of 1 is the default admin account
+                course.InstructorId = 1;
+            }
 
             if (IsAdmin() || IsInstructorForCourse(course.courseID))
             {
-                if (_courseService.SaveCourse(course)) return Ok();
-                return StatusCode(500); //Query failed
+                if (_courseService.SaveCourse(course))
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return StatusCode(500); //Query failed
+                }
             }
 
             return Unauthorized(); //Not an Admin or the Instructor for the course, Unauthorized (401)

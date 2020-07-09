@@ -14,7 +14,7 @@
 
         public string projectName { get; set; }
 
-        public int instructorID { get; set; }
+        public int instructorId { get; set; }
 
         public string instructorName { get; set; }
     }

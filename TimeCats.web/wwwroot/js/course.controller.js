@@ -76,7 +76,7 @@
                     courseName: $scope.course.courseName,
                     isActive: $scope.course.isActive,
                     description: $scope.course.description,
-                    instructorID: $scope.course.instructorID
+                    instructorId: $scope.course.instructorId
                 })
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
@@ -194,7 +194,7 @@
         };
 
         $scope.assignEval = function () {
-            if ($scope.$parent.user.type === 'A' || $scope.$parent.user.userID === $scope.course.instructorID) $location.path('/assignEval/' + $scope.courseID);
+            if ($scope.$parent.user.type === 'A' || $scope.$parent.user.userID === $scope.course.instructorId) $location.path('/assignEval/' + $scope.courseID);
         };
 
         $scope.loaded = true;

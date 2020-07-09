@@ -40,9 +40,9 @@
                         </div>
                         <div class="card-body">
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item p-2" ng-if="u.isActive || ($parent.user.type === 'A' || $parent.user.userID === c.instructorID)" ng-repeat="u in courseToInactiveUsers[c.courseID] | orderObjectBy :'firstName'">
+                                <li class="list-group-item p-2" ng-if="u.isActive || ($parent.user.type === 'A' || $parent.user.userID === c.instructorId)" ng-repeat="u in courseToInactiveUsers[c.courseID] | orderObjectBy :'firstName'">
                                     {{u.firstName}} {{u.lastName}}
-                                    <div class="pretty p-svg p-curve float-right" ng-if="$parent.user.type === 'A' || $parent.user.userID === c.instructorID">
+                                    <div class="pretty p-svg p-curve float-right" ng-if="$parent.user.type === 'A' || $parent.user.userID === c.instructorId">
                                         <input type="checkbox" ng-model="u.isActive" title="Accept the user into the course." ng-change="saveUserInCourse(c.courseID, u.userID, u.isActive)" />
                                         <div class="state p-primary">
                                             <svg class="svg svg-icon" viewBox="0 0 20 20">
@@ -51,7 +51,7 @@
                                             <label></label>
                                         </div>
                                     </div>
-                                    <i class="fa fa-times clickable delete-user-button" ng-if="$parent.user.type === 'A' || $parent.user.userID === course.instructorID" ng-click="deleteUserFromCourse(u.userID)" title="Delete user from the course."></i>
+                                    <i class="fa fa-times clickable delete-user-button" ng-if="$parent.user.type === 'A' || $parent.user.userID === course.instructorId" ng-click="deleteUserFromCourse(u.userID)" title="Delete user from the course."></i>
                                 </li>
                             </ul></div>
                     </div>

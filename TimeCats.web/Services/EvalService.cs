@@ -111,12 +111,12 @@ namespace TimeCats.Services
 
 
 
-        public List<EvalTemplate> GetTemplates(int instructorID)
+        public List<EvalTemplate> GetTemplates(int instructorId)
         {
             throw new NotImplementedException();
 
             //return _TimeTrackerContext.evalTemplates
-            //    .ToList(u => u.instructorID == instructorID);
+            //    .ToList(u => u.instructorId == instructorId);
         }
 
         //var templates = new List<EvalTemplate>();
@@ -129,7 +129,7 @@ namespace TimeCats.Services
         //        //SQL and Parameters
         //        cmd.CommandText = "Select * From evalTemplates e Where e.userID = @userID ";
 
-        //        cmd.Parameters.AddWithValue("@userID", instructorID);
+        //        cmd.Parameters.AddWithValue("@userID", instructorId);
 
         //        using (var reader = cmd.ExecuteReader())
         //        {
@@ -149,7 +149,7 @@ namespace TimeCats.Services
         //return templates;
 
 
-        public List<EvalTemplate> GetFullTemplatesForInstructor(int instructorID)
+        public List<EvalTemplate> GetFullTemplatesForInstructor(int instructorId)
         {
             throw new NotImplementedException();
             //    var templates = new List<EvalTemplate>();
@@ -167,7 +167,7 @@ namespace TimeCats.Services
             //                "LEFT JOIN evalTemplateQuestionCategories eTQC on eT.evalTemplateID = eTQC.evalTemplateID " +
             //                "LEFT JOIN evalTemplateQuestions eTQ on eT.evalTemplateID = eTQ.evalTemplateID " +
             //                "WHERE eT.userID = @userID ";
-            //            cmd.Parameters.AddWithValue("@userID", instructorID);
+            //            cmd.Parameters.AddWithValue("@userID", instructorId);
 
             //            using (var reader = cmd.ExecuteReader())
             //            {
@@ -349,7 +349,7 @@ namespace TimeCats.Services
 
             //return _TimeTrackerContext.evalTemplates
             //          .Where(u => u.evalTemplateID == evalTemplateID)
-            //          .Select(u => u.instructorID)
+            //          .Select(u => u.instructorId)
             //          .FirstOrDefault();
         }
 
@@ -586,14 +586,14 @@ namespace TimeCats.Services
             //        //SQL and Parameters
             //        cmd.CommandText =
             //            "SELECT e.*, CONCAT(u.firstName, ' ', u.lastName) AS usersName, g.groupName, p.projectID, p.projectName, " +
-            //            "c.courseID, c.courseName, et.templateName, c.instructorID, CONCAT(ui.firstName, ' ', ui.lastName) AS instructorName " +
+            //            "c.courseID, c.courseName, et.templateName, c.instructorId, CONCAT(ui.firstName, ' ', ui.lastName) AS instructorName " +
             //            "FROM evals e " +
             //            "LEFT JOIN cs4450.groups g on e.groupID = g.groupID " +
             //            "LEFT JOIN users u on e.userID = u.userID " +
             //            "LEFT JOIN projects p on g.projectID = p.projectID " +
             //            "LEFT JOIN courses c on p.courseID = c.courseID " +
             //            "LEFT JOIN evalTemplates et on e.evalTemplateID = et.evalTemplateID " +
-            //            "LEFT JOIN users ui on c.instructorID = ui.userID";
+            //            "LEFT JOIN users ui on c.instructorId = ui.userID";
 
             //        using (var reader = cmd.ExecuteReader())
             //        {
@@ -614,7 +614,7 @@ namespace TimeCats.Services
             //                    courseID = reader.GetInt32("courseID"),
             //                    courseName = reader.GetString("courseName"),
             //                    templateName = reader.GetString("templateName"),
-            //                    instructorID = reader.GetInt32("instructorID"),
+            //                    instructorId = reader.GetInt32("instructorId"),
             //                    instructorName = reader.GetString("instructorName")
             //                });
             //        }

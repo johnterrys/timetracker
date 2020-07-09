@@ -12,7 +12,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="instructor">Instructor</label>
             </div>
-            <select class="custom-select" id="instructor" ng-model="config.instructorID" ng-change="loadTemplates()">
+            <select class="custom-select" id="instructor" ng-model="config.instructorId" ng-change="loadTemplates()">
                 <option ng-repeat="i in instructors | orderObjectBy : 'firstName' | filter: {isActive: true}" value="{{i.userID}}" selected>{{i.firstName}} {{i.lastName}}</option>
             </select>
         </div>

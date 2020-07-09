@@ -2,20 +2,20 @@
     $scope.loaded = false;
     $scope.config = {};
     $scope.config.currentTemplate = 0;
-    $scope.config.instructorID = 0;
+    $scope.config.instructorId = 0;
     $scope.evaulations = {};
     $scope.instructors = {};
 
     $scope.load = function () {
         $scope.userID = $routeParams.ID;
-        $scope.config.instructorID = $scope.userID;
+        $scope.config.instructorId = $scope.userID;
         if (!$scope.userID) window.history.back();
 
         $scope.loadTemplates = function () {
             $scope.evaluations = {};
             $scope.config.currentTemplate = 0;
             usSpinnerService.spin('spinner');
-            $http.post("/Eval/GetTemplatesForInstructor", { userID: $scope.config.instructorID })
+            $http.post("/Eval/GetTemplatesForInstructor", { userID: $scope.config.instructorId })
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
                     $.each(response.data, function (index, template) {
@@ -215,7 +215,7 @@
         $scope.createBlankEvaluation = function () {
             if (confirm('Are you sure you want to create a new template?')) {
                 usSpinnerService.spin('spinner');
-                $http.post("/Eval/CreateTemplate", { userID: $scope.config.instructorID })
+                $http.post("/Eval/CreateTemplate", { userID: $scope.config.instructorId })
                     .then(function (response) {
                         usSpinnerService.stop('spinner');
                         toastr["success"]("Created evaluation.");
