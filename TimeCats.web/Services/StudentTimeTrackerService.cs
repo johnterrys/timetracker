@@ -45,9 +45,49 @@ namespace TimeCats.Services
             return _timeTrackerContext.Users;
         }
 
-        public ICollection<Dashboard> GetDashboardsForUser()
+        public ICollection<Dashboard> GetDashboardsForUser(int userID)
         {
-            throw new NotImplementedException();
+            var dashboard = new List<Dashboard>();
+            var userGroups = new List<Group>();
+
+            foreach (Group group in _timeTrackerContext.Groups.ToList())
+            {
+                foreach (UserGroup usergroup in _timeTrackerContext.UserGroups.ToList())
+                {
+                    if ( (!userGroups.Contains(usergroup.Group)) && (userID == usergroup.userID) )
+                    {
+                        userGroups.Add(usergroup.Group);
+                    }
+                }
+            }
+
+
+
+
+            foreach (Group group in userGroups)
+            {
+                var projectname = _timeTrackerContext.Projects.Where(p => p.projectID == group.projectID).Select(p => new { p.projectName }).ToList()[0].projectName;
+                var courseid = _timeTrackerContext.Projects.Where(p => p.projectID == group.projectID).Select(p => new { p.CourseID }).ToList()[0].CourseID;
+                var coursename = _timeTrackerContext.Courses.Where(c => c.courseID == courseid).Select(c => new { c.courseName }).ToList()[0].courseName;
+                var instructorid = _timeTrackerContext.Courses.Where(c => c.courseID == courseid).Select(c => new { c.InstructorId }).ToList()[0].InstructorId;
+                var instructorname = _timeTrackerContext.Users.Where(u => u.userID == instructorid).Select(u => new { fullname = u.firstName + " " + u.lastName }).ToList()[0].fullname;
+
+                dashboard.Add(new Dashboard
+                {
+                    groupID = group.groupID,
+                    groupName = group.groupName,
+                    projectID = group.projectID,
+                    projectName = projectname,
+                    courseID = courseid,
+                    courseName = coursename,
+                    instructorId = instructorid,
+                    instructorName = instructorname
+                });
+            }
+
+            //throw new NotImplementedException();
+
+            return dashboard;
         }
 
         

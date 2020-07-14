@@ -114,7 +114,7 @@ namespace TimeCats.Controllers
         [HttpGet]
         public IActionResult GetDashboard()
         {
-            var dashboard = DBHelper.GetDashboard(GetUserID());
+            var dashboard = _timeTrackerService.GetDashboardsForUser(GetUserID());
             return Ok(dashboard);
         }
 
