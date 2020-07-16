@@ -30,6 +30,7 @@
                 </div>
             </div>
 <!-- list the users -->
+
             <div class="card">
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item p-2" ng-repeat="u in group.users" ng-if="userInGroup() && u.userID === $parent.user.userID">{{u.firstName}} {{u.lastName}} <span ng-if="!u.isActive" class="text-danger">(Left Group)</span></li>
@@ -66,6 +67,7 @@
                                     <th scope="col" class="col d-none d-lg-table-cell col-lg">Time Out</th>
                                     <th scope="col" class="col d-none d-sm-table-cell col-lg-6">Description</th>
                                     <th scope="col" class="hours-col">Hours</th>
+                                    <th scope="col" class="hours-col">Delete</th>
                                 </tr>
                             </thead>
 
@@ -87,11 +89,11 @@
                                             </div>
                                         </div>
                                         <!-- if super tiny screen use this for time out-->
-                                        <div class="row d-lg-none">
+                                        <div class="row d-lg-none ">
                                             <span class="col-2 pr-0 text-right">Out</span>
                                             <div class="input-group date timeslot col mb-1 pl-1" id="datetimepicker-blank-{{u.userID}}-out" data-target-input="nearest">
                                                 <input class="full-width form-control datetimepicker-input py-0 px-1 date-text" type="text" data-target="#datetimepicker-blank-{{u.userID}}-out" ng-model="u.blank.timeOut"
-                                                       ng-readonly="!isUser(u.userID) || (!u.isActive && !($parent.user.type === 'A' || $parent.user.type === 'I'))" ng-model-options="{updateOn: 'blur', debounce: 750}" ng-change="createTimeFromBlank(u.userID)  />
+                                                       ng-readonly="!isUser(u.userID) || (!u.isActive && !($parent.user.type === 'A' || $parent.user.type === 'I'))" ng-model-options="{updateOn: 'blur', debounce: 750}" ng-change="createTimeFromBlank(u.userID)"  />
                                                 <div class="input-group-append" data-target="#datetimepicker-blank-{{u.userID}}-out" data-toggle="datetimepicker">
                                                     <div class="input-group-text px-2 py-1"><i class="fa fa-calendar"></i></div>
                                                 </div>
@@ -99,7 +101,8 @@
                                         </div>
                                         <!-- This is the div to log in time on a normal screen-->
                                         <div class="d-none d-lg-block">
-                                            <div class="input-group date timeslot col mb-1 pl-1 pr-0" id="datetimepicker-blank-{{u.userID}}-in-lg" data-target-input="nearest">
+                                            
+                                            <div class="input-group date timeslot col mb-1 pl-1 pr-0" id="datetimepicker-blank-{{u.userID}}-in-lg" data-target-input="nearest" >
                                                 <input class="full-width form-control datetimepicker-input py-0 px-1 date-text" type="text" data-target="#datetimepicker-blank-{{u.userID}}-in-lg" ng-model="u.blank.timeIn"
                                                        ng-readonly="!isUser(u.userID) || (!u.isActive && !($parent.user.type === 'A' || $parent.user.type === 'I'))" ng-model-options="{updateOn: 'blur', debounce: 750}" ng-change="createTimeFromBlank(u.userID)" />
                                                 <div class="input-group-append" data-target="#datetimepicker-blank-{{u.userID}}-in-lg" data-toggle="datetimepicker">
@@ -108,6 +111,7 @@
                                             </div>
                                         </div>
                                     </td>
+                                    
                                     <!-- Time out -->
                                     <td class="d-none d-lg-table-cell col-lg">
                                         <div>
@@ -141,11 +145,15 @@
                                                       ng-model-options="{updateOn: 'blur', debounce: 750}" ng-change="createTimeFromBlank(u.userID)" placeholder="Description"></textarea>
                                         </div>
                                     </td>
+                                            <td class="pr-1 hours-col" style="position:relative;">
+                                                <!--<span style="position: absolute;">{{u.blank.hours = diffHours(u.blank.timeIn, u.blank.timeOut)}}</span>
+                                            <i class="fa fa-pencil edited-icon" ng-if="u.blank.isEdited" title="This time entry has been edited."></i>-->
+                                            </td>
                                 </tr>
 
 
 
-                                <!-- table row  of all ready entered times repeated  -->
+                                <!-- table row  of already entered times repeated  -->
                                 <tr ng-repeat="t in u.timecards | orderObjectBy :'timeslotID':true" class="row no-gutters pt-1" style="border-top: 1px lightgray solid;">
 
                                     <!-- Time in area of already logged time -->
@@ -207,7 +215,8 @@
 
                                     <!-- List hours put in  -->
                                     <td class="pr-1 hours-col" style="position:relative;">
-                                        <span style="position: absolute;">{{t.hours = diffHours(t.timeIn, t.timeOut)}}</span>
+                                        <!-- <span style="position: absolute;">{{t.hours = diffHours(t.timeIn, t.timeOut)}}</span> -->
+                                     <span style="position: absolute;">{{t.hours }}</span>
                                         <i class="fa fa-pencil edited-icon" ng-if="t.isEdited" title="This time entry has been edited."></i>
                                     </td>
 
@@ -346,11 +355,11 @@
                                     </td>
                                     <td class="d-none d-lg-table-cell col-lg">
                                         <div>
-                                            <div class="input-group date timeslot col mb-1 pl-0 pr-1" id="datetimepicker-{{t.timeslotID}}-out-lg" data-target-input="nearest">
-                                                <input class="full-width form-control datetimepicker-input py-0 px-1 date-text" type="text" data-target="#datetimepicker-{{t.timeslotID}}-out-lg" ng-model="t.timeOut"
+                                            <div class="input-group date timeslot col mb-1 pl-0 pr-1 " id="datetimepicker-{{t.timeslotID}}-out-lg" data-target-input="nearest">
+                                                <input class="full-width form-control datetimepicker-input py-0 px-1 date-text " type="text" data-target="#datetimepicker-{{t.timeslotID}}-out-lg" ng-model="t.timeOut"
                                                        ng-readonly="!isUser(u.userID)" ng-model-options="{updateOn: 'blur', debounce: 750}" ng-change="saveTime(u.userID, t.timeslotID)" />
                                                 <div class="input-group-append" data-target="#datetimepicker-{{t.timeslotID}}-out-lg" data-toggle="datetimepicker">
-                                                    <div class="input-group-text px-2 py-1"><i class="fa fa-calendar"></i></div>
+                                                    <div class="input-group-text px-2 py-1"><i class="fa fa-calendar "></i></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -360,7 +369,9 @@
                                                   ng-model-options="{debounce: 750}" ng-change="saveTime(u.userID, t.timeslotID)"></textarea>
                                     </td>
                                     <td class="pr-1 hours-col" style="position:relative;">
-                                        <span style="position: absolute;">{{t.hours = diffHours(t.timeIn, t.timeOut)}}</span>
+                                        <!-- <span style="position: absolute;">{{t.hours = diffHours(t.timeIn, t.timeOut)}}</span> -->
+                                        <span style="position: absolute;">{{t.hours}}</span>
+
                                         <i class="fa fa-pencil edited-icon" ng-if="t.isEdited" title="This time entry has been edited."></i>
                                     </td>
                                     <td class="d-sm-none col-12 pr-4 mb-1">

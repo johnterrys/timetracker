@@ -10,7 +10,7 @@ namespace TimeCats.Models
         public int timeslotID { get; set; }
         
         [NotMapped]
-        public double hours { get; set; } //TODO: This should probably be a decimal
+        public string hours { get; set; } 
         
         [Required]
        // [DisplayFormat(DataFormatString = "{0:d}")]
