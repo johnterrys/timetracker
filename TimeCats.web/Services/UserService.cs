@@ -41,7 +41,9 @@ namespace TimeCats.Services
         //Normal version doesn't save type or isActive
         public bool ChangeUser(User user)
         {
-            _context.Users.Update(user);
+            var entry = _context.Users.First(u => u.userID == user.userID);
+
+            _context.Entry(entry).CurrentValues.SetValues(user);
             _context.SaveChanges();
             return true;
         }
