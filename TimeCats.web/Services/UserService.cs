@@ -55,6 +55,28 @@ namespace TimeCats.Services
             var users = _context.UserCourses
                 .Where(uc => uc.courseID == courseId)
                 .Select(uc => uc.User);
+
+            var usercourses = _context.UserCourses
+                .Where(uc => uc.courseID == courseId)
+                .Select(uc => new
+                {
+                    uc.userID,
+                    uc.courseID,
+                    uc.isActive
+                }).ToList();
+
+            //There's probably a much better way to do this
+            foreach(var user in users)
+            {
+                foreach(var usercourse in usercourses)
+                {
+                    if(user.userID == usercourse.userID && usercourse.courseID == courseId)
+                    {
+                        user.isActive = usercourse.isActive;
+                    }
+                }
+            }
+
             return users;
         }
 

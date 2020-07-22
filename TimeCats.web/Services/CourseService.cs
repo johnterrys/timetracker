@@ -305,7 +305,10 @@ namespace TimeCats.Services
                 var names = _context.UserCourses
                                .FirstOrDefault(u => u.courseID == course && u.userID == user);
 
-                _context.UserCourses.Remove(names);
+                //We shouldn't really delete them from the table, just make them "inactive" <-- not too sure after thinking about this
+                names.isActive = false;
+
+                _context.UserCourses.Remove(names); //If this causes primary key-foreign key problems then remove this line
                 _context.SaveChanges();
             }
             catch (DbUpdateException exc)

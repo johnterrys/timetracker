@@ -13,8 +13,6 @@ namespace TimeCats.Models
         [Required]
         public int courseID { get; set; }
         public Course Course { get; set; }
-        
-        [NotMapped]
         public bool isActive { get; set; }
     }
 }

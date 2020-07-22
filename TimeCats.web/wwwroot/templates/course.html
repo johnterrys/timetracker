@@ -36,13 +36,13 @@
                 <div class="float-right top-right-buttons">
                     <button class="btn btn-primary mr-1" ng-click="joinCourse()" ng-if="($parent.user.type !== 'A') && !userInCourse() && $parent.user.userID !== course.instructorId">Join Course</button>
                     <button class="btn btn-danger mr-1" ng-click="leaveCourse()" ng-if="userActiveInCourse()">Leave Course</button>
-                    <span ng-if="$parent.user.type === 'A' || $parent.user.userID === course.instructorId" class="align-middle">Accepted</span>
                 </div>
             </div>
 
             <div class="card" ng-if="hasUsers()">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item p-2" ng-if="u.isActive || ($parent.user.type === 'A' || $parent.user.userID === course.instructorId)" ng-repeat="u in course.users | orderObjectBy :'firstName'" ng-class="{'inactive-user': !u.isActive}">{{u.firstName}} {{u.lastName}} 
+                    <li class="list-group-item p-2" ng-if="u.isActive || ($parent.user.type === 'A' || $parent.user.userID === course.instructorId)" ng-repeat="u in course.users | orderObjectBy :'firstName'" ng-class="{'inactive-user': !u.isActive}">{{u.firstName}} {{u.lastName}}
+                        <span style="position: relative; left: 30px"><kbd style="background-color: darkslategray; color: white;">{{u.isActive === true ? "Active" : "Inactive"}}</kbd></span>
                         <div class="pretty p-svg p-curve float-right" ng-if="$parent.user.type === 'A' || $parent.user.userID === course.instructorId">
                             <input type="checkbox" ng-model="u.isActive" title="Accept the user into the course." ng-change="saveUserInCourse(u.userID, u.isActive)"/>
                             <div class="state p-primary">
