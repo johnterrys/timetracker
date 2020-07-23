@@ -37,7 +37,7 @@ namespace TimeCats.Controllers
                 {
                     courseID = _courseService.GetNextCourseID(),
                     courseName = "New Course",
-                    InstructorId = 2,
+                    InstructorId = GetUserID(),
                     isActive = true,
                     description = ""
                 });

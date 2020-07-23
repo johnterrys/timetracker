@@ -86,16 +86,18 @@ namespace TimeCats.Services
         {
             var courseIDs = _context.UserCourses
                 .Where(uc => uc.userID == user.userID)
+                .AsNoTracking()
                 .Select(uc => uc.courseID)
                 .ToList();
 
             var courses = _context.Courses
-                .Where(c => courseIDs.Contains(c.courseID));
+                .Where(c => courseIDs.Contains(c.courseID))
+                .AsNoTracking();
 
             if(user.type == 'I')
             {
                 //find all courses where the instructorID for the course is user.ID
-                courses = _context.Courses.Where(c => c.InstructorId == user.userID);
+                courses = _context.Courses.Where(c => c.InstructorId == user.userID).AsNoTracking();
                 
             }
 
