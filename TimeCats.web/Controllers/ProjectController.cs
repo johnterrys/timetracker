@@ -36,6 +36,7 @@ namespace TimeCats.Controllers
             {
                 var project = new Project()
                 {
+                    projectID = _projectService.GetNewProjectID(),
                     projectName = "Default Project",
                     description = "This is the default project template.",
                                                         isActive = true,

@@ -28,6 +28,11 @@ namespace TimeCats.Services
             return project;
         }
 
+        public int GetNewProjectID()
+        {
+            return (_context.Projects.Max(p => p.projectID) + 1);
+        }
+
         /// <summary>
         /// Get a single Project from a ProjectID
         /// </summary>

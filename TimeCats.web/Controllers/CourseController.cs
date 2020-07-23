@@ -35,6 +35,7 @@ namespace TimeCats.Controllers
             {
                 var course = _courseService.AddCourse(new Course()
                 {
+                    courseID = _courseService.GetNextCourseID(),
                     courseName = "New Course",
                     InstructorId = 2,
                     isActive = true,

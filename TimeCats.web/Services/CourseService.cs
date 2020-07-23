@@ -39,6 +39,11 @@ namespace TimeCats.Services
             return course;
         }
 
+        public int GetNextCourseID()
+        {
+            return (_context.Courses.Max(c => c.courseID) + 1);
+        }
+
         /// <summary>
         /// Get a single Course from a CourseID
         /// </summary>
@@ -86,6 +91,13 @@ namespace TimeCats.Services
 
             var courses = _context.Courses
                 .Where(c => courseIDs.Contains(c.courseID));
+
+            if(user.type == 'I')
+            {
+                //find all courses where the instructorID for the course is user.ID
+                courses = _context.Courses.Where(c => c.InstructorId == user.userID);
+                
+            }
 
             return courses;
         }

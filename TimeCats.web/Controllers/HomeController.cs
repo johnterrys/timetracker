@@ -107,7 +107,7 @@ namespace TimeCats.Controllers
             {
                 return false;
             }
-
+            //get all coures by user and then check if one of those courseID's is the courseID passed in.
             var courses = _courseService.GetCoursesByUser(user);
             if (courses.Any(c => c.courseID == courseID))
             {
