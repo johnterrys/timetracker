@@ -23,8 +23,10 @@ namespace TimeCats.Services
         //Admin version doesn't require the current password to be passed
         public bool ChangePasswordA(User user)
         {
-            user.password = user.newPassword;
-            _context.Users.Update(user);
+            var temp = GetUserByID(user.userID);
+            temp.password = user.newPassword;
+            temp.Salt = user.Salt;
+            _context.Users.Update(temp);
             _context.SaveChanges();
             return true;
         }
@@ -32,8 +34,10 @@ namespace TimeCats.Services
         //Normal version requires current password to be passed
         public bool ChangePassword(User user)
         {
-            user.password = user.newPassword;
-            _context.Users.Update(user);
+            var temp = GetUserByID(user.userID);
+            temp.password = user.newPassword;
+            temp.Salt = user.Salt;
+            _context.Users.Update(temp);
             _context.SaveChanges();
             return true;
         }

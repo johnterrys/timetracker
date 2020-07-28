@@ -38,17 +38,26 @@ namespace TimeCats.Controllers
         {
             var JsonString = json.ToString();
             var user = JsonConvert.DeserializeObject<User>(JsonString);
-            user.password = GenerateHash(user.password);
-            user.newPassword = GenerateHash(user.newPassword);
+
+            var crypto = new CryptographyService();
+            var salt = crypto.GenerateSalt();
 
             if (IsAdmin())
             {
+                user.password = crypto.CalculateHash(salt, "password");
+                user.newPassword = crypto.CalculateHash(salt, user.newPassword);
+                user.Salt = salt;
+
                 if (_userService.ChangePasswordA(user)) return Ok();
                 return StatusCode(500); //Query failed
             }
 
             if (user.userID == GetUserID())
             {
+                user.password = crypto.CalculateHash(salt, user.password);
+                user.newPassword = crypto.CalculateHash(salt, user.newPassword);
+                user.Salt = salt;
+
                 if (_userService.ChangePassword(user)) return Ok();
                 return StatusCode(500); //Query failed
             }
