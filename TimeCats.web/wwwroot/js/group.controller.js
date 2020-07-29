@@ -355,10 +355,36 @@
                             var hour = Math.floor(duration.asHours());
                             var minutes= Math.floor(duration.asMinutes()-(hour*60));
                             var seconds = Math.floor(duration.asSeconds()-(hour*3600)-(minutes*60));
+                            var FormatedString = "00:00:00"
+                            //hour + ':' + minutes + ':' + seconds;
+                            //if hour is between 0 and 9 stick a zero in front 
+                            //if minute is between 0 and 9 stick a zero in front 
+                            //if seconds is between 0 and 9 stick a zero in front 
     
-                            $scope.group.users[userID].timecards[timeslotID].hours = hour + ':' + minutes + ':' + seconds; 
-
-                           // $scope.updateAllHours(); 
+                            $scope.group.users[user.userID].timecards[time.timeslotID].hours = "00:00:00";   
+                           
+                            if (hour > 9){
+                                FormatedString = hour + ":";
+                            }
+                            else{
+                                FormatedString = "0" + hour + ":"; 
+                            }
+                            if (minutes > 9){
+                                FormatedString += minutes + ":"; 
+                            }
+                            else{
+                                FormatedString += "0" + minutes + ":"; 
+                            }
+                            if(seconds > 9){
+                                FormatedString += seconds; 
+                            }
+                            else{
+                                FormatedString += "0" + seconds;  
+                            }
+                        
+                            
+                            $scope.group.users[user.userID].timecards[time.timeslotID].hours = FormatedString;  
+    
                             $scope.updateChart();
                           
                         
@@ -405,8 +431,36 @@
                         var minutes= Math.floor(duration.asMinutes()-(hour*60));
                         var seconds = Math.floor(duration.asSeconds()-(hour*3600)-(minutes*60));
 
-                        $scope.group.users[user.userID].timecards[time.timeslotID].hours = hour + ':' + minutes + ':' + seconds;  
+
+                        var FormatedString = "00:00:00"
+                        //hour + ':' + minutes + ':' + seconds;
+                        //if hour is between 0 and 9 stick a zero in front 
+                        //if minute is between 0 and 9 stick a zero in front 
+                        //if seconds is between 0 and 9 stick a zero in front 
+
+                        $scope.group.users[user.userID].timecards[time.timeslotID].hours = "00:00:00";   
+                       
+                        if (hour > 9){
+                            FormatedString = hour + ":";
+                        }
+                        else{
+                            FormatedString = "0" + hour + ":"; 
+                        }
+                        if (minutes > 9){
+                            FormatedString += minutes + ":"; 
+                        }
+                        else{
+                            FormatedString += "0" + minutes + ":"; 
+                        }
+                        if(seconds > 9){
+                            FormatedString += seconds; 
+                        }
+                        else{
+                            FormatedString += "0" + seconds;  
+                        }
                     
+                        
+                        $scope.group.users[user.userID].timecards[time.timeslotID].hours = FormatedString;  
 
                        $scope.updateChart();
                         
