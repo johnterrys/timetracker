@@ -19,11 +19,11 @@ namespace TimeCats
         public DbSet<UserCourse> UserCourses { get; set; }
         public DbSet<UserGroup> UserGroups { get; set; }
 
-        // public DbSet<Eval> Evals { get; set; }
-        // public DbSet<EvalResponse> EvalResponses { get; set; }
-        // public DbSet<EvalTemplate> EvalTemplates { get; set; }
-        // public DbSet<EvalTemplateQuestion> EvalTemplateQuestions { get; set; }
-        // public DbSet<EvalTemplateQuestionCategory> EvalTemplateQuestionCategories { get; set; }
+        public DbSet<Eval> Evals { get; set; }
+        public DbSet<EvalResponse> EvalResponses { get; set; }
+        public DbSet<EvalTemplate> EvalTemplates { get; set; }
+        public DbSet<EvalTemplateQuestion> EvalTemplateQuestions { get; set; }
+        public DbSet<EvalTemplateQuestionCategory> EvalTemplateQuestionCategories { get; set; }
 
         public TimeTrackerContext(DbContextOptions options) : base(options)
         {
