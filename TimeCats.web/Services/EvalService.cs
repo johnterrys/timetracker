@@ -1,4 +1,5 @@
 ﻿//using MySql.Data.MySqlClient;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Npgsql;
@@ -16,11 +17,12 @@ namespace TimeCats.Services
     public class EvalService
     {
         private readonly TimeTrackerContext _context;
-        private readonly string ConnString = JObject.Parse(File.ReadAllText("appsettings.json"))["TimeTrackerDB"].ToString(); //Gets the connection string from appsettings.json
-        
+        private readonly string ConnString;
+
         public EvalService(TimeTrackerContext context)
         {
             _context = context;
+            ConnString = context.Database.GetDbConnection().ConnectionString;
         }
 
         public bool CompleteEval(int evalID)
@@ -61,11 +63,11 @@ namespace TimeCats.Services
             return true;
         }
 
-        public bool SaveEval(AdminEval eval)
+        public bool SaveEval(Eval eval)
         {
             //throw new NotImplementedException();
 
-            _context.AdminEval.Update(eval);
+            _context.Evals.Update(eval);
             _context.SaveChanges();
             return true;
         }
@@ -170,9 +172,9 @@ namespace TimeCats.Services
                         "SELECT eT.*, eTQC.evalTemplateQuestionCategoryID, eTQC.categoryName, eTQC.number AS categoryNumber, " +
                         "eTQ.evalTemplateQuestionID, eTQ.evalTemplateQuestionCategoryID AS qevalTemplateQuestionCategoryID, " +
                         "eTQ.questionType, eTQ.questionText, eTQ.number AS questionNumber " +
-                        "FROM evalTemplates eT " +
-                        "LEFT JOIN evalTemplateQuestionCategories eTQC on eT.evalTemplateID = eTQC.evalTemplateID " +
-                        "LEFT JOIN evalTemplateQuestions eTQ on eT.evalTemplateID = eTQ.evalTemplateID " +
+                        "FROM EvalTemplates eT " +
+                        "LEFT JOIN EvalTemplateQuestionCategories eTQC on eT.evalTemplateID = eTQC.evalTemplateID " +
+                        "LEFT JOIN EvalTemplateQuestions eTQ on eT.evalTemplateID = eTQ.evalTemplateID " +
                         "WHERE eT.userID = @userID ";
                     cmd.Parameters.AddWithValue("@userID", instructorId);
 
@@ -229,6 +231,16 @@ namespace TimeCats.Services
             return templates;
         }
 
+        public Group GetGroup(int groupID)
+        {
+            return _context.Groups
+                .Include(g => g.Project)
+                .Include(g => g.UserGroups)
+                .ThenInclude(ug => ug.User)
+                .ThenInclude(u => u.timecards)
+                .FirstOrDefault(g => g.groupID == groupID);
+        }
+
         public bool AssignEvals(List<int> projectIDs, int evalTemplateID)
         {
             //throw new NotImplementedException();
@@ -245,7 +257,7 @@ namespace TimeCats.Services
                     {
                         //SQL and Parameters
                         cmd.CommandText =
-                            "Select g.groupID From cs4450.groups g Inner Join uGroups ug On g.groupID = ug.groupID " +
+                            "Select g.groupID From Groups g Inner Join UserGroups ug On g.groupID = ug.groupID " +
                             "INNER Join users u On ug.userID = u.userID Where projectID = @projectID AND g.isActive = 1 AND ug.isActive = 1 " +
                             "GROUP BY g.groupID";
 
@@ -316,7 +328,7 @@ namespace TimeCats.Services
                 using (var cmd = conn.CreateCommand())
                 {
                     //SQL and Parameters
-                    cmd.CommandText = "Select MAX(number) AS number From evals e WHERE groupID = @groupID";
+                    cmd.CommandText = "Select MAX(number) AS number From Evals e WHERE groupID = @groupID";
 
                     cmd.Parameters.AddWithValue("@groupID", groupID);
 
@@ -390,7 +402,7 @@ namespace TimeCats.Services
                 using (var cmd = conn.CreateCommand())
                 {
                     //SQL and Parameters
-                    cmd.CommandText = "Update evalTemplates Set inUse = 1 Where evalTemplateID = @evalTemplateID";
+                    cmd.CommandText = "Update EvalTemplates Set inUse = 1 Where evalTemplateID = @evalTemplateID";
 
                     // cmd.Parameters.AddWithValue("@evalTemplateID", evalTemplateID);
                     cmd.Parameters.AddWithValue("@evalTemplateID", evalTemplateID);
@@ -415,7 +427,7 @@ namespace TimeCats.Services
                 {
                     //SQL and Parameters
                     cmd.CommandText =
-                        "Select evalID From evals WHERE groupID = @groupID AND userID = @userID AND isComplete = 0 ORDER BY number DESC";
+                        "Select evalID From Evals WHERE groupID = @groupID AND userID = @userID AND isComplete = 0 ORDER BY number DESC";
 
                     cmd.Parameters.AddWithValue("@groupID", groupID);
                     cmd.Parameters.AddWithValue("@userID", userID);
@@ -452,7 +464,7 @@ namespace TimeCats.Services
                 using (var cmd = conn.CreateCommand())
                 {
                     //SQL and Parameters
-                    cmd.CommandText = "Select * From evals Where evalID = @evalID";
+                    cmd.CommandText = "Select * From Evals Where evalID = @evalID";
 
                     // cmd.Parameters.AddWithValue("@evalTemplateID", evalTemplateID);
                     cmd.Parameters.AddWithValue("@evalID", evalID);
@@ -472,7 +484,7 @@ namespace TimeCats.Services
 
 
                     //SQL and Parameters
-                    cmd.CommandText = "Select * From evalTemplateQuestions Where evalTemplateID = @evalTemplateID";
+                    cmd.CommandText = "Select * From EvalTemplateQuestions Where evalTemplateID = @evalTemplateID";
                     cmd.Parameters.AddWithValue("@evalTemplateID", eval.evalTemplateID);
 
                     using (var reader = cmd.ExecuteReader())
@@ -489,7 +501,7 @@ namespace TimeCats.Services
                     }
 
                     cmd.CommandText =
-                        "Select * From evalTemplateQuestionCategories Where evalTemplateID = @evalTemplateID";
+                        "Select * From EvalTemplateQuestionCategories Where evalTemplateID = @evalTemplateID";
 
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -501,7 +513,7 @@ namespace TimeCats.Services
                             });
                     }
 
-                    cmd.CommandText = "Select * From evalResponses Where evalID = @evalID";
+                    cmd.CommandText = "Select * From EvalResponses Where evalID = @evalID";
 
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -517,7 +529,7 @@ namespace TimeCats.Services
                     }
 
                     cmd.CommandText =
-                        "Select * From uGroups uG LEFT JOIN users u on uG.userID = u.userID WHERE uG.groupID = @groupID AND uG.isActive = 1 AND u.isActive";
+                        "Select * From UserGroups uG LEFT JOIN Users u on uG.userID = u.userID WHERE uG.groupID = @groupID AND uG.isActive = 1 AND u.isActive";
                     cmd.Parameters.AddWithValue("@groupID", eval.groupID);
 
                     using (var reader = cmd.ExecuteReader())
@@ -598,13 +610,13 @@ namespace TimeCats.Services
                     cmd.CommandText =
                         "SELECT e.*, CONCAT(u.firstName, ' ', u.lastName) AS usersName, g.groupName, p.projectID, p.projectName, " +
                         "c.courseID, c.courseName, et.templateName, c.instructorId, CONCAT(ui.firstName, ' ', ui.lastName) AS instructorName " +
-                        "FROM evals e " +
-                        "LEFT JOIN cs4450.groups g on e.groupID = g.groupID " +
-                        "LEFT JOIN users u on e.userID = u.userID " +
-                        "LEFT JOIN projects p on g.projectID = p.projectID " +
-                        "LEFT JOIN courses c on p.courseID = c.courseID " +
-                        "LEFT JOIN evalTemplates et on e.evalTemplateID = et.evalTemplateID " +
-                        "LEFT JOIN users ui on c.instructorId = ui.userID";
+                        "FROM Evals e " +
+                        "LEFT JOIN Groups g on e.groupID = g.groupID " +
+                        "LEFT JOIN Users u on e.userID = u.userID " +
+                        "LEFT JOIN Projects p on g.projectID = p.projectID " +
+                        "LEFT JOIN Courses c on p.courseID = c.courseID " +
+                        "LEFT JOIN EvalTemplates et on e.evalTemplateID = et.evalTemplateID " +
+                        "LEFT JOIN Users ui on c.instructorId = ui.userID";
 
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -650,11 +662,11 @@ namespace TimeCats.Services
                         "SELECT er.*, u.firstName, e.number AS 'evalNumber', etq.number AS 'questionNumber', " +
                         "u.lastName, etq.questionText, etq.evalTemplateID, etq.questionType, etq.evalTemplateQuestionCategoryID, " +
                         "etqc.categoryName, etqc.number AS 'categoryNumber' " +
-                        "FROM evalResponses er " +
-                        "  INNER JOIN evals e ON er.evalID = e.evalID " +
-                        "  INNER JOIN users u ON u.userID = e.userID " +
-                        "  INNER JOIN evalTemplateQuestions etq ON etq.evalTemplateQuestionID = er.evalTemplateQuestionID " +
-                        "  LEFT JOIN evalTemplateQuestionCategories etqc ON etqc.evalTemplateQuestionCategoryID = etq.evalTemplateQuestionCategoryID " +
+                        "FROM EvalResponses er " +
+                        "  INNER JOIN Evals e ON er.evalID = e.evalID " +
+                        "  INNER JOIN Users u ON u.userID = e.userID " +
+                        "  INNER JOIN EvalTemplateQuestions etq ON etq.evalTemplateQuestionID = er.evalTemplateQuestionID " +
+                        "  LEFT JOIN EvalTemplateQuestionCategories etqc ON etqc.evalTemplateQuestionCategoryID = etq.evalTemplateQuestionCategoryID " +
                         "WHERE groupID = @groupID AND er.userID = @userID";
                     cmd.Parameters.AddWithValue("@groupID", groupID);
                     cmd.Parameters.AddWithValue("@userID", userID);
@@ -811,11 +823,11 @@ namespace TimeCats.Services
                         "SELECT er.*, u.firstName, e.number AS 'evalNumber', etq.number AS 'questionNumber', " +
                         "u.lastName, etq.questionText, etq.evalTemplateID, etq.questionType, etq.evalTemplateQuestionCategoryID, " +
                         "etqc.categoryName, etqc.number AS 'categoryNumber' " +
-                        "FROM evalResponses er " +
-                        "  INNER JOIN evals e ON er.evalID = e.evalID " +
-                        "  INNER JOIN users u ON u.userID = e.userID " +
-                        "  INNER JOIN evalTemplateQuestions etq ON etq.evalTemplateQuestionID = er.evalTemplateQuestionID " +
-                        "  LEFT JOIN evalTemplateQuestionCategories etqc ON etqc.evalTemplateQuestionCategoryID = etq.evalTemplateQuestionCategoryID " +
+                        "FROM EvalResponses er " +
+                        "  INNER JOIN Evals e ON er.evalID = e.evalID " +
+                        "  INNER JOIN Users u ON u.userID = e.userID " +
+                        "  INNER JOIN EvalTemplateQuestions etq ON etq.evalTemplateQuestionID = er.evalTemplateQuestionID " +
+                        "  LEFT JOIN EvalTemplateQuestionCategories etqc ON etqc.evalTemplateQuestionCategoryID = etq.evalTemplateQuestionCategoryID " +
                         "WHERE groupID = @groupID AND er.userID = @userID";
                     cmd.Parameters.AddWithValue("@groupID", groupID);
                     cmd.Parameters.AddWithValue("@userID", userID);
@@ -977,10 +989,10 @@ namespace TimeCats.Services
                         {
                             cmd.CommandText =
                                 "SELECT u.userID, u.firstName, u.lastName, AVG(er.response) AS avg " +
-                                "FROM evalResponses er INNER JOIN evals e ON er.evalID = e.evalID " +
-                                "INNER JOIN users u ON u.userID = e.userID " +
-                                "INNER JOIN evalTemplateQuestions etq ON etq.evalTemplateQuestionID = er.evalTemplateQuestionID " +
-                                "LEFT JOIN evalTemplateQuestionCategories etqc ON etqc.evalTemplateQuestionCategoryID = etq.evalTemplateQuestionCategoryID " +
+                                "FROM EvalResponses er INNER JOIN Evals e ON er.evalID = e.evalID " +
+                                "INNER JOIN Users u ON u.userID = e.userID " +
+                                "INNER JOIN EvalTemplateQuestions etq ON etq.evalTemplateQuestionID = er.evalTemplateQuestionID " +
+                                "LEFT JOIN EvalTemplateQuestionCategories etqc ON etqc.evalTemplateQuestionCategoryID = etq.evalTemplateQuestionCategoryID " +
                                 "WHERE groupID = @groupID " +
                                 "AND e.evalID = @evalID " +
                                 "GROUP BY u.userID;";
@@ -1009,7 +1021,7 @@ namespace TimeCats.Services
                 using (var cmd = conn.CreateCommand())
                 {
                     //SQL and Parameters
-                    cmd.CommandText = "INSERT INTO evalResponses (evalID, evalTemplateQuestionID, userID, response) " +
+                    cmd.CommandText = "INSERT INTO EvalResponses (evalID, evalTemplateQuestionID, userID, response) " +
                                       "VALUES (@evalID, @evalTemplateQuestionID, @userID, @response)";
                     cmd.Parameters.AddWithValue("@userID", userID);
                     cmd.Parameters.AddWithValue("@evalID", evalID);
@@ -1036,7 +1048,7 @@ namespace TimeCats.Services
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT templateName FROM evalTemplates WHERE evalTemplateID = @evalTemplateID";
+                    cmd.CommandText = "SELECT templateName FROM EvalTemplates WHERE evalTemplateID = @evalTemplateID";
                     cmd.Parameters.AddWithValue("@evalTemplateID", evalTemplateID);
 
                     using (var reader = cmd.ExecuteReader())
@@ -1046,7 +1058,7 @@ namespace TimeCats.Services
                     }
 
                     //SQL and Parameters
-                    cmd.CommandText = "INSERT INTO evalTemplates (userID, templateName) " +
+                    cmd.CommandText = "INSERT INTO EvalTemplates (userID, templateName) " +
                                       "VALUES (@userID, '@TempName')";
                     cmd.Parameters.AddWithValue("@userID", userID);
                     cmd.Parameters.AddWithValue("@TempName", templateName);
@@ -1058,10 +1070,11 @@ namespace TimeCats.Services
                     cmd.Parameters.AddWithValue("@questionText", higher);
                     cmd.Parameters.AddWithValue("@number", higher);
                     cmd.CommandText =
-                        "SELECT * FROM evalTemplateQuestions AS 'ETQ' INNER JOIN evalTemplateQuestionCategories AS 'ETC' "
+                        "SELECT * FROM EvalTemplateQuestions AS 'ETQ' INNER JOIN EvalTemplateQuestionCategories AS 'ETC' "
                         + "ON ETC.evalTemplateQuestionCategoryID = ETQ.evalTemplateQuestionCategoryID WHERE ETQ.evalTemplateID = "
-                        + "@evalTemplateID ORDER BY ETC.categoryName";
-                    cmd.Parameters.AddWithValue("@evalTemplateID", cmd.LastInsertedId);
+                        + "@evalTemplateID ORDER BY ETC.categoryName"
+                        + "RETURNING id";
+                    cmd.Parameters.AddWithValue("@evalTemplateID", (int) cmd.ExecuteScalar());
                     cmd.Parameters.AddWithValue("@evalTemplateQuestionCategoryID", higher);
 
                     using (var reader = cmd.ExecuteReader())
@@ -1073,17 +1086,18 @@ namespace TimeCats.Services
                             if (catName != temp)
                             {
                                 cmd.CommandText =
-                                    "INSERT INTO evalTemplateQuestionCategory (evalTemplateID, categoryName) "
-                                    + "VALUES (@evalTemplateID, @categoryName)";
+                                    "INSERT INTO EvalTemplateQuestionCategory (evalTemplateID, categoryName) "
+                                    + "VALUES (@evalTemplateID, @categoryName)"
+                                    + "RETURNING id";
                                 cmd.ExecuteNonQuery();
-                                cmd.Parameters["@evalTemplateQuestionCategoryID"].Value = cmd.LastInsertedId;
+                                cmd.Parameters["@evalTemplateQuestionCategoryID"].Value = (int) cmd.ExecuteScalar();
                             }
 
                             temp = catName;
                             catNum = (int) reader["ETQ.evalTemplateQuestionCategoryID"];
 
                             cmd.CommandText =
-                                "INSERT INTO evalTemplateQuestions (evalTemplateID, evalTemplateQuestionCategoryID, "
+                                "INSERT INTO EvalTemplateQuestions (evalTemplateID, evalTemplateQuestionCategoryID, "
                                 + "questionType, questionText, number) VALUES (@evalTemplateID, @evalTemplateQuestionCategoryID, "
                                 + "@questionType, @questionText, @number)";
                             cmd.Parameters["@questionType"].Value = (string) reader["ETQ.questionType"];
