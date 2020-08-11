@@ -8,3 +8,15 @@ services:
       - POSTGRES_PASSWORD
     ports:
     - 5432:5432
+
+  web:
+    build: 
+      context: .
+      dockerfile: ./TimeCats.web/Dockerfile
+    links: 
+      - database
+    depends_on: 
+      - database
+    command: dotnet run --urls=http://0.0.0.0:52082
+    ports: 
+      - "52082:52082"
