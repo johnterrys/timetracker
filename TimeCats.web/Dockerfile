@@ -21,11 +21,14 @@ WORKDIR app/TimeCats.web
 
 ############################################################################################
 
+
+# UNCOMMENT THIS SECTION OUT FOR WORKING ON THE REVERSE PROXY WITH NGINX####################
 # Get the base default nginx image from docker hub
-FROM nginx
+# FROM nginx
 
-# Delete the existing default.conf
-RUN rm /etx/nginx/conf.d/default.conf
+# # Delete the existing default.conf
+# RUN rm /etx/nginx/conf.d/default.conf
 
-# Copy the custom default.conf to the nginx configuration
-COPY default.conf /etc/nginx/conf.d
+# # Copy the custom default.conf to the nginx configuration
+# COPY default.conf /etc/nginx/conf.d
+#############################################################################################
