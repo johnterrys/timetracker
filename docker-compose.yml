@@ -1,3 +1,7 @@
+# This is the docker code that gets run when you use the command: docker-compose up
+# it is used to build the containerized app. You will notice there is a database and web sections
+# this is how we build both the database_1 and the web_1 portions of the app with the mentioned command.
+
 version: "3.7"
 services:
   database:
