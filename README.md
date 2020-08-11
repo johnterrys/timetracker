@@ -169,7 +169,14 @@ It is a linux server running ubuntu. In order to gain access to it, you will
       g.	There is a corresponding YouTube video for this tutorial as well
   6.	You will be working entirely in the command line/terminal for this section, get used to it, don’t be    afraid. Here is a quick little cheat sheet you might find useful
     a.	https://gist.github.com/cferdinandi/ef665330286fd5d7127d
-  7.	Good Luck!
+  7.	If you want to run the app locally from the docker-deploy branch, you need to
+    a.	Make sure you are not in the linux server
+    b.	In the terminal use the command: docker-compose up
+    c.	You will see the app boot up as described above
+    d.	In your web browser go to localhost:52082
+    e.	To shut down the app run the command: hold the control button and press ‘c’
+  8. Good Luck!
+
 
 
 **!!IMPORTANT!!**  
