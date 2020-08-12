@@ -53,6 +53,16 @@ The following steps assume you:
 * Have an understanding of how to use your personal dev machine (windows, mac, linux)
 * Your repository is on the master branch
 
+### Simple Startup Guide
+1. run dotnet tool install --global dotnet-ef --version 3.0.0
+2. install docker https://docs.docker.com/docker-for-windows/install/
+3. copy .env-default in timetracker and rename to .env, change to your docker account info
+4. edit appsettings.Development.json ConnectionStrings line with docker account info
+5. run dotnet ef database update from TimeCats.web folder
+6. run docker-compose up from timetracker folder
+
+IF ON WINDOWS 10 PRO or above then enable HYPER-V and Windows Hypervisor Platform in Turn Windows Features On or Off
+
 ### Windows
 #### System Requirements
 On windows you will need to make sure your system supports virtualization. This can be a setting in the bios and or a setting in the 
