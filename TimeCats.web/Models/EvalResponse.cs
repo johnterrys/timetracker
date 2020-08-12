@@ -1,10 +1,16 @@
-﻿namespace TimeCats.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TimeCats.Models
 {
     public class EvalResponse
     {
+        [Key]
         public int evalResponseID { get; set; }
+        [Required]
         public int evalID { get; set; }
+        [Required]
         public int evalTemplateQuestionID { get; set; }
+        [Required]
         public int userID { get; set; }
         public string response { get; set; }
         public string firstName { get; set; }

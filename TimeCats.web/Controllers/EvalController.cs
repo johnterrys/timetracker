@@ -64,7 +64,7 @@ namespace TimeCats.Controllers
         public IActionResult SaveEval([FromBody] object json)
         {
             var JsonString = json.ToString();
-            var eval = JsonConvert.DeserializeObject<AdminEval>(JsonString);
+            var eval = JsonConvert.DeserializeObject<Eval>(JsonString);
 
             if (IsAdmin()) return Ok(_evalService.SaveEval(eval));
             return Unauthorized();
