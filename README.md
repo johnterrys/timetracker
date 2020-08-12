@@ -131,9 +131,53 @@ Three default accounts should be made with the `dotnet ef database update` comma
 You should now be able to launch the application.
 
 ## Production Information
-If you go to use the `docker-compose.production.yml` file on linux you will need to make sure you are at least running docker-compose version `1.25.5`.
-See [How to install docker from the github repository for the latest version](https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-18-04). 
-You may be able to install using `apt install docker-compose` however, the linux repos are sometimes several minor versions out of date.
+This is to help with the deployment of the timetracker app
+
+	Hello! If you are reading this, it means you are currently working on the Time Tracker app! I will go over what I was working on at the time of the handoff. 
+
+I was working on getting the app deployed to the student server: IP Address: 137.190.18.16 
+It is a linux server running ubuntu. In order to gain access to it, you will 
+
+  1.	Get permissions given to you from Brad
+  2.	Use your terminal or command line and log in
+    a.	For terminal use: ssh <<username@137.190.18.16>> then enter your password
+      i.	For example I would type: ssh tuckerbrady@137.190.18.16
+      ii.	Then type in my password
+    b.	For command line, not really sure, but I would imagine it’s very similar to ‘a’
+  3.	Once you have entered the server, you can Change Directory into the timetracker folder
+    a.	Use the command: cd timetracker
+  4.	Once you are inside the timetracker folder, you will need to make sure you navigate to the correct branch of the git repo. (docker-deploy)
+    a.	Use the command: git branch to see what branch you are currently on
+    b.	Use the command: git checkout docker-deploy to move to the correct branch
+    c.	Use the command: docker-compose up to get the app up and running
+      i.	You should see the database_1 boot up
+      ii.	You should see web_1 boot up
+      iii.	If this doesn’t happen, you may need to build the app again
+        1.	Use the command: docker-compose build
+      iv.	At any time you can see what docker images are running
+        1.	Use the command: docker ps
+        2.	Or use the command: docker ps -a
+    d.	Continue to use the docker-deploy branch until you get the reverse proxy up and running
+  5.	Here is a link to the last tutorial I was trying. You should see the coordinating code in the     ‘Dockerfile’ and ‘default.conf’ files in the program (I’ve left comments there as well)
+    a.	http://littlebigextra.com/install-nginx-reverse-proxy-server-docker/
+    b.	I have already created the nginx base image (terminal)
+    c.	I have already created the custom nginx image (default.conf)
+    d.	I have added the code for the docker image (commented out in Dockerfile)
+      i.	I was starting to run into an issue here when I tried to run: docker-compose up in the server, it might have to do with the next step that I didn’t entirely get around to
+      e.	YOU will need to work on ‘Running your own Custom Nginx Image’ step.
+      f.	If everything works as intended –lol—you should be able to see you app up and running on the server!
+      g.	There is a corresponding YouTube video for this tutorial as well
+  6.	You will be working entirely in the command line/terminal for this section, get used to it, don’t be    afraid. Here is a quick little cheat sheet you might find useful
+    a.	https://gist.github.com/cferdinandi/ef665330286fd5d7127d
+  7.	If you want to run the app locally from the docker-deploy branch, you need to
+    a.	Make sure you are not in the linux server
+    b.	In the terminal use the command: docker-compose up
+    c.	You will see the app boot up as described above
+    d.	In your web browser go to localhost:52082
+    e.	To shut down the app run the command: hold the control button and press ‘c’
+  8. Good Luck!
+
+
 
 **!!IMPORTANT!!**  
 Do not actually use the database in a docker container that is bad for a production environment as you could instantly loose all of your data. The only reason it is

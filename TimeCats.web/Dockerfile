@@ -7,13 +7,28 @@
 
 # Use base dotnet core sdk for base image
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS Base
-COPY . temp/
-WORKDIR temp/
-RUN ["dotnet", "publish", "-c", "Staging"]
+COPY . app/
+WORKDIR app/TimeCats.web
+
+
+# I DONT BELIEVE YOU NEED THIS COMMENTED CODE BELOW. ######################################
 
 # Dotnet Runtime: this is the portion of the dockerfile that actually builds the running container image
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS Runtime
-COPY --from=Base temp/bin/Staging/netcoreapp3.1/publish/ app/
-#This is very important to have as it changes the working directory of the .net application
-WORKDIR /app 
-ENTRYPOINT ["dotnet", "TimeCats.dll"]
+# FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS Runtime
+# COPY --from=Base temp/TimeCats.web/bin/Debug/netcoreapp3.1/publish/ app/
+# #This is very important to have as it changes the working directory of the .net application
+# WORKDIR /app 
+
+############################################################################################
+
+
+# UNCOMMENT THIS SECTION OUT FOR WORKING ON THE REVERSE PROXY WITH NGINX####################
+# Get the base default nginx image from docker hub
+# FROM nginx
+
+# # Delete the existing default.conf
+# RUN rm /etx/nginx/conf.d/default.conf
+
+# # Copy the custom default.conf to the nginx configuration
+# COPY default.conf /etc/nginx/conf.d
+#############################################################################################
