@@ -177,8 +177,8 @@ namespace TimeCats.Services
                         "LEFT JOIN EvalTemplateQuestions eTQ on eT.evalTemplateID = eTQ.evalTemplateID " +
                         "WHERE eT.userID = @userID ";
                     cmd.Parameters.AddWithValue("@userID", instructorId);
-
-                    using (var reader = cmd.ExecuteReader())
+                    
+                    using (var reader = cmd.ExecuteReader()) //EXCEPTION HERE: I believe the problem is Npgsql is turining the CommandText lowercase and that's why it can't find the table
                     {
                         var template = new EvalTemplate();
                         //Runs once per record retrieved
