@@ -14,7 +14,7 @@ namespace TimeCats.DTOs
         protected TimeCard _timeCard;
 
         public int timeslotID { get; set; }
-        public double hours { get; set; }
+        public string hours { get; set; }
         public string timeIn { get; set; }
         public string timeOut { get; set; }
         public bool isEdited { get; set; }
@@ -32,8 +32,8 @@ namespace TimeCats.DTOs
 
             this.timeslotID = that.timeslotID;
             this.hours = that.hours;
-            this.timeIn = that.timeIn.ToString("MM/dd/yyyy hh:mm tt");
-            this.timeOut = that.timeOut?.ToString("MM/dd/yyyy hh:mm tt");
+            this.timeIn = that.timeIn.ToString("MM/dd/yyyy hh:mm:ss tt");
+            this.timeOut = that.timeOut?.ToString("MM/dd/yyyy hh:mm:ss tt");
             this.isEdited = that.isEdited;
             this.createdOn = that.createdOn;
             this.userID = that.userID;
