@@ -12,10 +12,15 @@ namespace TimeCats.Models
         public int evalTemplateQuestionID { get; set; }
         [Required]
         public int userID { get; set; }
+
         public string response { get; set; }
+
         public string firstName { get; set; }
+
         public string lastName { get; set; }
+
         public int evalNumber { get; set; }
+
         public int questionNumber { get; set; }
 
         /**Jamison Edit**/

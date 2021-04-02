@@ -3,23 +3,35 @@
     $scope.config = {};
     $scope.config.currentTemplate = 0;
     $scope.config.instructorId = 0;
-    $scope.evaulations = {};
+    $scope.evaluations = {};
     $scope.instructors = {};
+
+    var lastEval = 0; 
 
     $scope.load = function () {
         $scope.userID = $routeParams.ID;
         $scope.config.instructorId = $scope.userID;
         if (!$scope.userID) window.history.back();
 
+        if (lastEval = 0) {
+            $scope.config.currentTemplateID = 0;
+        }
+
         $scope.loadTemplates = function () {
             $scope.evaluations = {};
-            $scope.config.currentTemplate = 0;
             usSpinnerService.spin('spinner');
             $http.post("/Eval/GetTemplatesForInstructor", { userID: $scope.config.instructorId })
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
                     $.each(response.data, function (index, template) {
-                        if ($scope.config.currentTemplate === 0) $scope.config.currentTemplate = template.evalTemplateID;
+                        lastEval = template.evalTemplateID;
+                        if ($scope.config.currentTemplate === 0) {
+                            $scope.config.currentTemplate = template.evalTemplateID;
+                        }
+                        else
+                        {
+                            $scope.config.currentTemplate = lastEval;
+                        }
                         $scope.evaluations[template.evalTemplateID] = {
                             evalTemplateID: template.evalTemplateID,
                             templateName: template.templateName,
@@ -235,6 +247,7 @@
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
                     toastr["success"]("Created category.");
+                    $route.reload();
                     $scope.evaluations[$scope.config.currentTemplate].categories[response.data] = {
                         evalTemplateQuestionCategoryID: response.data,
                         categoryName: "New Category",
@@ -275,6 +288,7 @@
                 $http.post("/Eval/DeleteQuestion", { evalTemplateID: $scope.config.currentTemplate, evalTemplateQuestionID: question.evalTemplateQuestionID })
                     .then(function (response) {
                         usSpinnerService.stop('spinner');
+                        $route.reload();
                         toastr["success"]("Question deleted.");
                         delete $scope.evaluations[$scope.config.currentTemplate].templateQuestions[question.evalTemplateQuestionID];
                     }, function () {
@@ -290,6 +304,7 @@
             $http.post("/Eval/SaveCategory", category)
                 .then(function (response) {
                     toastr["success"]("Category saved.");
+                    $route.reload();
                 }, function () {
                     toastr["error"]("Failed to save the category.");
                 });
@@ -300,6 +315,7 @@
             $http.post("/Eval/SaveQuestion", question)
                 .then(function (response) {
                     toastr["success"]("Question saved.");
+                    $route.reload();
                 }, function () {
                     toastr["error"]("Failed to save the question.");
                 });
@@ -309,6 +325,7 @@
             $http.post("/Eval/CreateTemplateQuestion", { evalTemplateID: $scope.config.currentTemplate, evalTemplateQuestionCategoryID: categoryID })
                 .then(function (response) {
                     usSpinnerService.stop('spinner');
+                    $route.reload();
                     toastr["success"]("Created question.");
                     $scope.evaluations[$scope.config.currentTemplate].templateQuestions[response.data] = {
                         evalTemplateQuestionCategoryID: categoryID,
@@ -323,6 +340,13 @@
                     toastr["error"]("Failed to create a new question.");
                 });
         };
+
+        //wb:INB - When user completes eval and clicks button they are rerouted to dashboard
+        $scope.completeEval = function () {
+            if (confirm("Are you finished editing this Evaluation? You may edit at a later time.")) {
+                $location.path('/dashboard');
+            }
+        }
 
         $scope.loaded = true;
     };

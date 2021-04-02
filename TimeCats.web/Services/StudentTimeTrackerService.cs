@@ -35,8 +35,7 @@ namespace TimeCats.Services
 
         public User GetUserByUsername(string username)
         {
-            var user = _timeTrackerContext.Users.FirstOrDefault(u => u.username.ToLower().Equals(username.ToLower()));
-            return user;
+            return _timeTrackerContext.Users.FirstOrDefault(u => u.username.ToLower().Equals(username.ToLower()));
         }
 
         public IEnumerable<User> GetUsers()

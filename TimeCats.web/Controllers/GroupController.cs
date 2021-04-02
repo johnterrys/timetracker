@@ -89,7 +89,7 @@ namespace TimeCats.Controllers
                 var dto = new GroupDTO(group).WithUsers();
                 foreach (var user in dto.users)
                 {
-                    user.WithTimeCards();
+                    user.WithTimeCards(groupID);
                 }
 
                 return Ok(dto);

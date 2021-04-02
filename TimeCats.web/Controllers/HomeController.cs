@@ -95,6 +95,22 @@ namespace TimeCats.Controllers
         }
 
         /// <summary>
+        ///     Returns true if the currently logged in user is an Instructor
+        /// </summary>
+        /// <returns></returns>
+        public bool IsInstructor()
+        {
+            var user = HttpContext.Session.GetObjectFromJson<User>("user");
+
+            if (user != null)
+            {
+                return user.type == 'I';
+            }
+
+            return false;
+        }
+
+        /// <summary>
         ///     Returns true if the logged in user is the instructor for the passed courseID
         /// </summary>
         /// <returns></returns>

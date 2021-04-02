@@ -71,12 +71,15 @@ namespace TimeCats.DTOs
             return this;
         }
 
-        public UserDTO WithTimeCards()
+        public UserDTO WithTimeCards(int gID)
         {
             this.timecards = new List<TimeCardDTO>();
             foreach (TimeCard timecard in _user.timecards)
             {
-                this.timecards.Add(new TimeCardDTO(timecard));
+                if (timecard.groupID == gID)
+                {
+                    this.timecards.Add(new TimeCardDTO(timecard));
+                }
             }
 
             return this;

@@ -15,6 +15,7 @@
         $scope.groupID = $routeParams.ID;
         if (!$scope.groupID) window.history.back();
         usSpinnerService.spin('spinner');
+
         $http.post("/Eval/GetLatestIncompleteEvaluation", { groupID: $scope.groupID })
             .then(function (response) {
                 usSpinnerService.stop('spinner');
@@ -36,67 +37,70 @@
                 $.each(response.data.users, function (index, user) {
                     $scope.users[user.userID] = user;
                 });
-            }, function () {
-                usSpinnerService.stop('spinner');
-                toastr["error"]("Failed to retrieve evaluation. Using Dummy Data.");
 
-                //Dummy Data
-                $scope.group = {
-                    groupID: $scope.groupID,
-                    groupName: 'Test Group'
-                };
-                $scope.evaluation = {
-                    evalID: 1, //Should we randomize this number on the back end?
-                    templateName: "Test Evalation",
-                    number: 1,
-                    categories: {
-                        1: {
-                            evalTemplateQuestionCategoryID: 1,
-                            categoryName: "Category 1"
-                        },
-                        2: {
-                            evalTemplateQuestionCategoryID: 2,
-                            categoryName: "Category 2"
-                        }
-                    },
-                    templateQuestions: {
-                        1: {
-                            evalTemplateQuestionID: 1,
-                            evalTemplateQuestionCategoryID: 1,
-                            questionType: 'N',
-                            questionText: "Test question 1, what do you think?",
-                            number: 2
-                        },
-                        2: {
-                            evalTemplateQuestionID: 2,
-                            evalTemplateQuestionCategoryID: 1,
-                            questionType: 'R',
-                            questionText: "Test question 2 (should be first), what do you think?",
-                            number: 1
-                        },
-                        3: {
-                            evalTemplateQuestionID: 3,
-                            evalTemplateQuestionCategoryID: 2,
-                            questionType: 'N',
-                            questionText: "Test question 3, what do you think?",
-                            number: 1
-                        },
-                        4: {
-                            evalTemplateQuestionID: 4,
-                            evalTemplateQuestionCategoryID: 2,
-                            questionType: 'R',
-                            questionText: "Test question 4, what do you think?",
-                            number: 2
-                        },
-                        5: {
-                            evalTemplateQuestionID: 4,
-                            evalTemplateQuestionCategoryID: 0,
-                            questionType: 'N',
-                            questionText: "Test question 5, what do you think?",
-                            number: 1
-                        }
-                    }
-                };
+            }, function (response) {
+                    usSpinnerService.stop('spinner');
+                    var headers = response.headers;
+                    alert(headers);
+                    toastr["error"]("Failed to retrieve evaluation. Using Dummy Data.");
+
+                ////Dummy Data
+                //$scope.group = {
+                //    groupID: $scope.groupID,
+                //    groupName: 'Test Group'
+                //};
+                //$scope.evaluation = {
+                //    evalID: 1, //Should we randomize this number on the back end?
+                //    templateName: "Test Evalation",
+                //    number: 1,
+                //    categories: {
+                //        1: {
+                //            evalTemplateQuestionCategoryID: 1,
+                //            categoryName: "Category 1"
+                //        },
+                //        2: {
+                //            evalTemplateQuestionCategoryID: 2,
+                //            categoryName: "Category 2"
+                //        }
+                //    },
+                //    templateQuestions: {
+                //        1: {
+                //            evalTemplateQuestionID: 1,
+                //            evalTemplateQuestionCategoryID: 1,
+                //            questionType: 'N',
+                //            questionText: "Test question 1, what do you think?",
+                //            number: 2
+                //        },
+                //        2: {
+                //            evalTemplateQuestionID: 2,
+                //            evalTemplateQuestionCategoryID: 1,
+                //            questionType: 'R',
+                //            questionText: "Test question 2 (should be first), what do you think?",
+                //            number: 1
+                //        },
+                //        3: {
+                //            evalTemplateQuestionID: 3,
+                //            evalTemplateQuestionCategoryID: 2,
+                //            questionType: 'N',
+                //            questionText: "Test question 3, what do you think?",
+                //            number: 1
+                //        },
+                //        4: {
+                //            evalTemplateQuestionID: 4,
+                //            evalTemplateQuestionCategoryID: 2,
+                //            questionType: 'R',
+                //            questionText: "Test question 4, what do you think?",
+                //            number: 2
+                //        },
+                //        5: {
+                //            evalTemplateQuestionID: 4,
+                //            evalTemplateQuestionCategoryID: 0,
+                //            questionType: 'N',
+                //            questionText: "Test question 5, what do you think?",
+                //            number: 1
+                //        }
+                //    }
+                //};
 
                 //create empty responses
                 tempID = 1;

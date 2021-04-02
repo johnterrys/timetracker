@@ -18,21 +18,21 @@ namespace TimeCats.Controllers
     public class EvalController : HomeController
     {
         public EvalController(IServiceProvider serviceProvider)
-            : base(serviceProvider)
+            :base(serviceProvider)
         {}
 
         [HttpPost]
-        public IActionResult CreateTemplateQuestion([FromBody] EvalTemplateQuestionCategory json)
+        public IActionResult CreateTemplateQuestion([FromBody] object json)
         {
             var JsonString = json.ToString();
             var evalTemplateQuestionCategory = JsonConvert.DeserializeObject<EvalTemplateQuestionCategory>(JsonString);
 
-            if (IsInstructorForEval(evalTemplateQuestionCategory.evalTemplateID) || IsAdmin())
+            if (IsInstructor() || IsAdmin())
             {
                 var questionID = _evalService.CreateTemplateQuestion(
                     evalTemplateQuestionCategory.evalTemplateQuestionCategoryID,
                     evalTemplateQuestionCategory.evalTemplateID);
-                if (questionID > 0) return Ok(questionID);
+                if (questionID >= 0) return Ok(questionID);
                 return StatusCode(500);
             }
 
@@ -55,6 +55,10 @@ namespace TimeCats.Controllers
         {
             var JsonString = json.ToString();
             var evalTemplate = JsonConvert.DeserializeObject<EvalTemplate>(JsonString);
+
+            Eval eval = new Eval();
+
+            _evalService.SaveEval(eval);
 
             if (GetUserType() == 'I' || IsAdmin()) return Ok(_evalService.SaveTemplateName(evalTemplate));
             return Unauthorized();
@@ -92,13 +96,13 @@ namespace TimeCats.Controllers
             var JsonString = json.ToString();
             var evalTemplate = JsonConvert.DeserializeObject<EvalTemplate>(JsonString);
 
-            if (IsInstructorForEval(evalTemplate.evalTemplateID) || IsAdmin())
+            if (IsInstructor() || IsAdmin())
             {
                 var categoryID = _evalService.CreateCategory(evalTemplate.evalTemplateID);
-                if (categoryID > 0) return Ok(categoryID);
+                if (categoryID >= 0) return Ok(categoryID);
+                SaveCategory(evalTemplate);
                 return StatusCode(500);
             }
-
             return Unauthorized();
         }
 
@@ -138,7 +142,8 @@ namespace TimeCats.Controllers
 
             var category = JsonConvert.DeserializeObject<EvalTemplateQuestionCategory>(JsonString);
 
-            if (IsAdmin() || IsInstructorForEval(category.evalTemplateID))
+            //if (IsAdmin() || IsInstructorForEval(category.evalTemplateID))
+            if (IsAdmin() || IsInstructor())
             {
                 if (_evalService.SaveCategory(category)) return Ok();
                 return StatusCode(500); //Query failed
@@ -157,7 +162,7 @@ namespace TimeCats.Controllers
         {
             var JsonString = json.ToString();
             var category = JsonConvert.DeserializeObject<EvalTemplateQuestionCategory>(JsonString);
-            if (IsAdmin() || IsInstructorForEval(category.evalTemplateID))
+            if (IsAdmin() || IsInstructor())
             {
                 if (_evalService.DeleteCategory(category.evalTemplateQuestionCategoryID)) return Ok();
                 return StatusCode(500); //Query failed
@@ -178,7 +183,7 @@ namespace TimeCats.Controllers
 
             var question = JsonConvert.DeserializeObject<EvalTemplateQuestion>(JsonString);
 
-            if (IsAdmin() || IsInstructorForEval(question.evalTemplateID))
+            if (IsAdmin() || IsInstructor())
             {
                 if (_evalService.SaveQuestion(question)) return Ok();
                 return StatusCode(500); //Query failed
@@ -197,7 +202,7 @@ namespace TimeCats.Controllers
         {
             var JsonString = json.ToString();
             var question = JsonConvert.DeserializeObject<EvalTemplateQuestion>(JsonString);
-            if (IsAdmin() || IsInstructorForEval(question.evalTemplateID))
+            if (IsAdmin() || IsInstructor())
             {
                 if (_evalService.DeleteQuestion(question.evalTemplateQuestionID)) return Ok();
                 return StatusCode(500); //Query failed
@@ -261,14 +266,20 @@ namespace TimeCats.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetLatestIncompleteEvaluation([FromBody] object json)
+        public string GetLatestIncompleteEvaluation([FromBody] object json)
         {
             var JsonString = json.ToString();
             var group = JsonConvert.DeserializeObject<Group>(JsonString);
 
             var evalID = _evalService.GetLatestIncompleteEvaluationID(group.groupID, GetUserID());
-            if (evalID > 0) return Ok(_evalService.GetEvaluation(evalID));
-            return NoContent();
+            if (evalID > 0)
+            {
+                Eval eval = new Eval();
+                eval = _evalService.GetEvaluation(evalID);
+                string jsonEval = JsonConvert.SerializeObject(eval);
+                return jsonEval;
+            }
+            return "";
         }
 
         [HttpPost]
