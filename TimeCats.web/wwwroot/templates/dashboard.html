@@ -1,9 +1,8 @@
-﻿<div id="dashboard"  ng-cloak>
+﻿<div id="dashboard" ng-cloak>
     <h3 class="mt-3">Dashboard</h3>
     <div ng-if="groups.length === 0 && loaded">
         <h4 class="mt-5">You are not a member of any groups. Find a group through the <a href="/#!/courses">courses</a> page.</h4>
     </div>
-    <script>console.log(groups.length);</script>
     <div class="panel panel-default border border-primary" ng-if="groups.length !== 0 && loaded">
         <div class="panel-heading" style="background: #2D3E50; color: #45a59a">
             <h4 style="padding: .5em">Groups</h4>
@@ -53,7 +52,8 @@
                                     </div>
                                     <i class="fa fa-times clickable delete-user-button" ng-if="$parent.user.type === 'A' || $parent.user.userID === course.instructorId" ng-click="deleteUserFromCourse(u.userID)" title="Delete user from the course."></i>
                                 </li>
-                            </ul></div>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>

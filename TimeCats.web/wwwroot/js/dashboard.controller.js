@@ -2,6 +2,7 @@
     $scope.loaded = false;
 
     $scope.load = function () {
+        console = console;
         $scope.groups = {};
         $scope.courses = {};
         $scope.courseToInactiveUsers = {};
@@ -11,6 +12,7 @@
         $http.get("/User/GetDashboard")
             .then(function (response) {
                 $scope.groups = response.data;
+                console.log("Number of Groups being loaded: " + $scope.groups.length);
             }, function () {
                 toastr["error"]("Error retrieving dashboard groups.");
             });
@@ -56,17 +58,17 @@
         }
 
         $scope.saveUserInCourse = function (courseID, userID, isActive) {
-                usSpinnerService.spin('spinner');
-                $http.post("/Course/SaveUserInCourse", { userID: userID, courseID: courseID, isActive: isActive })
-                    .then(function (response) {
-                        usSpinnerService.stop('spinner');
-                        toastr["success"]("Updated the user in this course.");
-                    }, function (response) {
-                        usSpinnerService.stop('spinner');
-                        if (response.status === 500) toastr["error"]("Failed to update the user in this course, query error.");
-                        else if (response.status === 401) toastr["error"]("Unathorized to update the user in this course.");
-                        else toastr["error"]("Failed to update the user in this course, unknown error.");
-                    });
+            usSpinnerService.spin('spinner');
+            $http.post("/Course/SaveUserInCourse", { userID: userID, courseID: courseID, isActive: isActive })
+                .then(function (response) {
+                    usSpinnerService.stop('spinner');
+                    toastr["success"]("Updated the user in this course.");
+                }, function (response) {
+                    usSpinnerService.stop('spinner');
+                    if (response.status === 500) toastr["error"]("Failed to update the user in this course, query error.");
+                    else if (response.status === 401) toastr["error"]("Unathorized to update the user in this course.");
+                    else toastr["error"]("Failed to update the user in this course, unknown error.");
+                });
         };
         $scope.deleteUserFromCourse = function (userID) {
             if (confirm('Are you sure you want to delete this user from the course?')) {
@@ -99,7 +101,7 @@
     usSpinnerService.spin('spinner');
     $http.get("/Home/CheckSession")
         .then(function (response) {
-//            usSpinnerService.stop('spinner');
+            //            usSpinnerService.stop('spinner');
             $scope.$parent.user = response.data;
             $scope.$parent.loaded = true;
             $scope.load();

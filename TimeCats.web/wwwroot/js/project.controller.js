@@ -3,7 +3,7 @@
     $scope.config = {};
     $scope.config.showInactiveGroups = false;
 
-    $scope.load = function() {
+    $scope.load = function () {
 
         $scope.projectID = $routeParams.ID;
 
@@ -55,7 +55,7 @@
                 projectID: $scope.projectID
             })
                 .then(function (response) {
-                    $location.path('/group/'+response.data);
+                    $location.path('/group/' + response.data);
                 }, function (response) {
                     if (response.status === 401) toastr["error"]("Unauthorized to create a group on this project.");
                     else if (response.status === 403) toastr["error"]("You are already part of a group on this project. Please leave the group before creating a new one.");
@@ -139,18 +139,29 @@
             //  The section below creates a display for a empty chart.
             var hours = 0;
 
+
+            console.log("Update chart function called");
+
+            console.log($scope.project.groups);
+
             for (var g in $scope.project.groups) {
                 g = $scope.project.groups[g];
                 if (!g.isActive && !$scope.config.showInactiveGroups) continue;
-
+                console.log("var g in $scop.project hit");
+                console.log(g.UserGroups);
+                console.log(g.users);
                 for (var u in g.users) {
+                    console.log("var u in g.users hit");
                     u = g.users[u];
                     for (var t in u.timecards) {
                         t = u.timecards[t];
+                        console.log("var t in u.timecards hit");
+
                         hours += Number(t.hours);
                     }
                 }
             }
+
             if (hours === 0) {
                 document.getElementById("projectHours").style.visibility = "hidden";
                 document.getElementById("noProjectData").style.visibility = "visible";

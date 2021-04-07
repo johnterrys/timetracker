@@ -27,6 +27,14 @@ namespace TimeCats.Services
             DateTimeOffset after = DateTimeOffset.Parse(time.createdOn.ToString());
             DateTimeOffset before = after.AddDays(-7);
 
+            // Get the current date.
+            //DateTime dateForButton = DateTime.Now.AddDays(-1);
+            DateTime cutOffDay = DateTime.Today.AddDays(-14);
+            int cutOffResult = DateTime.Compare(cutOffDay, timecard.timeIn);
+
+
+            Console.WriteLine("Save time is being called.");
+
 
             if (after < before)
             {
@@ -122,4 +130,3 @@ namespace TimeCats.Services
 
     }
 }
-

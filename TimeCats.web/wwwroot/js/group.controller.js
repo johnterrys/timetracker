@@ -9,7 +9,6 @@
         $scope.groupID = $routeParams.ID;
 
         if (!$scope.groupID) $location.path('/courses');
-
         //TODO Enable Group functionality, disable dummy data
         usSpinnerService.spin('spinner');
         $http.post("/Group/GetGroup", { groupID: $scope.groupID })
@@ -47,7 +46,7 @@
                 }
             });
 
-            //makes a blank time card for every user?
+        //makes a blank time card for every user?
         $.each($scope.group.users, function (userID, user) {
             $scope.group.users[userID].blank = {
                 timeslotID: userID + '-blank',
@@ -98,7 +97,7 @@
                 timeOut: $scope.group.users[id].blank.timeOut,
                 description: $scope.group.users[id].blank.description,
                 isEdited: false
-                
+
             };
 
             if ($scope.group.users[id].blank.timeIn === '' && $scope.group.users[id].blank.timeOut === '' && $scope.group.users[id].blank.description === '')
@@ -139,21 +138,21 @@
                         description: $scope.group.users[id].blank.description,
                         groupID: $routeParams.ID
                     };
-                   
+
 
                     $scope.group.users[id].blank.timeIn = '';
                     $scope.group.users[id].blank.timeOut = '';
                     $scope.group.users[id].blank.description = '';
                     toastr["success"]("Timeslot created.");
-                   // window.location.reload();
-                   $scope.updateAllHours();
-                   $scope.updateChart();
+                    // window.location.reload();
+                    $scope.updateAllHours();
+                    $scope.updateChart();
 
-                }, 
-                function () {
-                    usSpinnerService.stop('spinner');
-                    toastr["error"]("Failed to create time.");
-                });
+                },
+                    function () {
+                        usSpinnerService.stop('spinner');
+                        toastr["error"]("Failed to create time.");
+                    });
         };
 
         $scope.leaveGroup = function () {
@@ -278,26 +277,26 @@
                     if (time.timeIn !== '' && time.timeOut === '' && time.description === '') {
                         $scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].timeOut = moment().format('MM/DD/YYYY h:mm:ss A');
 
-                        var startTime =  moment($scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].timeIn);
-                        var endTime = moment($scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].timeOut); 
+                        var startTime = moment($scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].timeIn);
+                        var endTime = moment($scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].timeOut);
                         var duration = moment.duration(endTime.diff(startTime));
                         var hour = Math.floor(duration.asHours());
-                        var minutes= Math.floor(duration.asMinutes()-(hour*60));
-                        var seconds = Math.floor(duration.asSeconds()-(hour*3600)-(minutes*60));
+                        var minutes = Math.floor(duration.asMinutes() - (hour * 60));
+                        var seconds = Math.floor(duration.asSeconds() - (hour * 3600) - (minutes * 60));
 
-                        $scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].hours = hour + ':' + minutes + ':' + seconds; 
+                        $scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].hours = hour + ':' + minutes + ':' + seconds;
 
                         // $scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].hours = moment.duration(
                         //     moment($scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].timeOut).diff(
                         //         $scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].timeIn)).asHours().toFixed(2);
 
-                      //  $scope.updateAllHours();
-                     
+                        //  $scope.updateAllHours();
+
                         $scope.saveTime($scope.$parent.user.userID, time.timeslotID);
                         $scope.group.users[$scope.$parent.user.userID].timecards[time.timeslotID].description = 'FILL ME OUT';
-                       $scope.updateChart();
+                        $scope.updateChart();
 
-                       
+
                         return false;
                     }
                 });
@@ -316,10 +315,10 @@
                 });
         };
 
-        
+
 
         $scope.saveTime = function (userID, timeslotID) {
-           //if stuff is in the future throw error 
+            //if stuff is in the future throw error 
             if ($scope.group.users[userID].timecards[timeslotID].timeIn > moment().format('MM/DD/YYYY h:mm:ss A')) {
                 toastr["error"]("TimeIn > Current Date");
                 $scope.group.users[userID].timecards[timeslotID].timeIn = moment().format('MM/DD/YYYY h:mm:ss A');
@@ -347,62 +346,62 @@
                     if ($scope.group.users[userID].timecards[timeslotID].timeIn === '' || $scope.group.users[userID].timecards[timeslotID].timeOut === '') {
                         $scope.group.users[userID].timecards[timeslotID].hours = '';
                     }
+                    else {
+                        //  math to get proper display of hours hh:mm:ss
+                        var startTime = moment($scope.group.users[userID].timecards[timeslotID].timeIn);
+                        var endTime = moment($scope.group.users[userID].timecards[timeslotID].timeOut);
+                        var duration = moment.duration(endTime.diff(startTime));
+                        var hour = Math.floor(duration.asHours());
+                        var minutes = Math.floor(duration.asMinutes() - (hour * 60));
+                        var seconds = Math.floor(duration.asSeconds() - (hour * 3600) - (minutes * 60));
+                        var FormatedString = "00:00:00"
+                        //hour + ':' + minutes + ':' + seconds;
+                        //if hour is between 0 and 9 stick a zero in front 
+                        //if minute is between 0 and 9 stick a zero in front 
+                        //if seconds is between 0 and 9 stick a zero in front 
+
+                        $scope.group.users[user.userID].timecards[time.timeslotID].hours = "00:00:00";
+
+                        if (hour > 9) {
+                            FormatedString = hour + ":";
+                        }
                         else {
-                          //  math to get proper display of hours hh:mm:ss
-                            var startTime =  moment($scope.group.users[userID].timecards[timeslotID].timeIn);
-                            var endTime = moment($scope.group.users[userID].timecards[timeslotID].timeOut); 
-                            var duration = moment.duration(endTime.diff(startTime));
-                            var hour = Math.floor(duration.asHours());
-                            var minutes= Math.floor(duration.asMinutes()-(hour*60));
-                            var seconds = Math.floor(duration.asSeconds()-(hour*3600)-(minutes*60));
-                            var FormatedString = "00:00:00"
-                            //hour + ':' + minutes + ':' + seconds;
-                            //if hour is between 0 and 9 stick a zero in front 
-                            //if minute is between 0 and 9 stick a zero in front 
-                            //if seconds is between 0 and 9 stick a zero in front 
-    
-                            $scope.group.users[user.userID].timecards[time.timeslotID].hours = "00:00:00";   
-                           
-                            if (hour > 9){
-                                FormatedString = hour + ":";
-                            }
-                            else{
-                                FormatedString = "0" + hour + ":"; 
-                            }
-                            if (minutes > 9){
-                                FormatedString += minutes + ":"; 
-                            }
-                            else{
-                                FormatedString += "0" + minutes + ":"; 
-                            }
-                            if(seconds > 9){
-                                FormatedString += seconds; 
-                            }
-                            else{
-                                FormatedString += "0" + seconds;  
-                            }
-                        
-                            
-                            $scope.group.users[user.userID].timecards[time.timeslotID].hours = FormatedString;  
-    
-                            $scope.updateChart();
-                          
-                        
+                            FormatedString = "0" + hour + ":";
+                        }
+                        if (minutes > 9) {
+                            FormatedString += minutes + ":";
+                        }
+                        else {
+                            FormatedString += "0" + minutes + ":";
+                        }
+                        if (seconds > 9) {
+                            FormatedString += seconds;
+                        }
+                        else {
+                            FormatedString += "0" + seconds;
+                        }
+
+
+                        $scope.group.users[user.userID].timecards[time.timeslotID].hours = FormatedString;
+
+                        $scope.updateChart();
+
+
                         // $scope.group.users[userID].timecards[timeslotID].hours = moment.duration(
                         //     moment($scope.group.users[userID].timecards[timeslotID].timeOut).diff(
                         //         $scope.group.users[userID].timecards[timeslotID].timeIn)).asHours().toFixed(2);
                     }
-                   // $scope.updateAllHours(); 
-                   // $scope.updateChart();
+                    // $scope.updateAllHours(); 
+                    // $scope.updateChart();
 
                     toastr["info"]("Timeslot Updated.");
                 }, function (response) {
                     if (response.status === 401) toastr["error"]("Unauthorized to edit this time entry.");
                     else if (response.status === 400) toastr["error"]("Failed to save time entry due to : negative time or " +
                         "clock out in the future.");
-                    else toastr["error"]( response.status.toString() + "Failed to save time entry, unknown error.");
+                    else toastr["error"](response.status.toString() + "Failed to save time entry, unknown error.");
                 });
-                
+
         };
 
         //this isnt used?
@@ -423,13 +422,13 @@
             $.each($scope.group.users, function (index, user) {
                 $.each(user.timecards, function (index, time) {
                     if (time.timeIn !== '' && time.timeOut !== '') {
-                        
-                        var startTime =  moment($scope.group.users[user.userID].timecards[time.timeslotID].timeIn);
-                        var endTime = moment($scope.group.users[user.userID].timecards[time.timeslotID].timeOut); 
+
+                        var startTime = moment($scope.group.users[user.userID].timecards[time.timeslotID].timeIn);
+                        var endTime = moment($scope.group.users[user.userID].timecards[time.timeslotID].timeOut);
                         var duration = moment.duration(endTime.diff(startTime));
                         var hour = Math.floor(duration.asHours());
-                        var minutes= Math.floor(duration.asMinutes()-(hour*60));
-                        var seconds = Math.floor(duration.asSeconds()-(hour*3600)-(minutes*60));
+                        var minutes = Math.floor(duration.asMinutes() - (hour * 60));
+                        var seconds = Math.floor(duration.asSeconds() - (hour * 3600) - (minutes * 60));
 
 
                         var FormatedString = "00:00:00"
@@ -438,32 +437,32 @@
                         //if minute is between 0 and 9 stick a zero in front 
                         //if seconds is between 0 and 9 stick a zero in front 
 
-                        $scope.group.users[user.userID].timecards[time.timeslotID].hours = "00:00:00";   
-                       
-                        if (hour > 9){
+                        $scope.group.users[user.userID].timecards[time.timeslotID].hours = "00:00:00";
+
+                        if (hour > 9) {
                             FormatedString = hour + ":";
                         }
-                        else{
-                            FormatedString = "0" + hour + ":"; 
+                        else {
+                            FormatedString = "0" + hour + ":";
                         }
-                        if (minutes > 9){
-                            FormatedString += minutes + ":"; 
+                        if (minutes > 9) {
+                            FormatedString += minutes + ":";
                         }
-                        else{
-                            FormatedString += "0" + minutes + ":"; 
+                        else {
+                            FormatedString += "0" + minutes + ":";
                         }
-                        if(seconds > 9){
-                            FormatedString += seconds; 
+                        if (seconds > 9) {
+                            FormatedString += seconds;
                         }
-                        else{
-                            FormatedString += "0" + seconds;  
+                        else {
+                            FormatedString += "0" + seconds;
                         }
-                    
-                        
-                        $scope.group.users[user.userID].timecards[time.timeslotID].hours = FormatedString;  
 
-                       $scope.updateChart();
-                        
+
+                        $scope.group.users[user.userID].timecards[time.timeslotID].hours = FormatedString;
+
+                        $scope.updateChart();
+
                         // $scope.group.users[user.userID].timecards[time.timeslotID].hours = moment.duration( 
                         //     moment($scope.group.users[user.userID].timecards[time.timeslotID].timeOut).diff( 
                         //         $scope.group.users[user.userID].timecards[time.timeslotID].timeIn)).asHours().toFixed(2);
@@ -500,34 +499,34 @@
             data.labels = []; //empty out labels 
             for (var u in $scope.group.users) { //loop through each user
                 u = $scope.group.users[u];
-                var hours = 0; 
+                var hours = 0;
                 for (var t in u.timecards) {//go through eacah time card
                     t = u.timecards[t];
                     //hours += Number(t.hours);//add on each hours for each user
 
 
-                    
-                var time = t.hours.split(":"); //[0] is hours, [1] is min 
-                if(time.length == 3){
-                    var addedHours = Number(time[0])*60; //grab hours and make it minutes
-                    var addedMinutes = Number(time[1]); //get minutes
-                    var addedSeconds = Number(time[2]); //get seconds 
-                    var totalTime = addedHours + addedMinutes + addedSeconds;  
-    
-                    hours += totalTime;
 
-                }
-                else {
-                    var addedHours = Number(time[0])*60; //grab hours and make it minutes
-                    var addedMinutes = Number(time[1]); //get minutes
-                    var totalTime = addedHours + addedMinutes + addedSeconds;  
-                    hours += totalTime;
-                }
+                    var time = t.hours.split(":"); //[0] is hours, [1] is min 
+                    if (time.length == 3) {
+                        var addedHours = Number(time[0]) * 60; //grab hours and make it minutes
+                        var addedMinutes = Number(time[1]); //get minutes
+                        var addedSeconds = Number(time[2]); //get seconds 
+                        var totalTime = addedHours + addedMinutes + addedSeconds;
 
-               
+                        hours += totalTime;
+
+                    }
+                    else {
+                        var addedHours = Number(time[0]) * 60; //grab hours and make it minutes
+                        var addedMinutes = Number(time[1]); //get minutes
+                        var totalTime = addedHours + addedMinutes + addedSeconds;
+                        hours += totalTime;
+                    }
+
+
                 }
                 data.datasets[0].data.push(hours);
-                data.labels.push(u.firstName+" "+u.lastName);
+                data.labels.push(u.firstName + " " + u.lastName);
             }
         };
 
@@ -547,22 +546,22 @@
                 u = $scope.group.users[u];
                 for (var t in u.timecards) {
                     t = u.timecards[t];
-                
+
                     var time = t.hours.split(":"); //[0] is hours, [1] is min 
 
-                    if(time.length == 3){
-                        var addedHours = Number(time[0])*60; //grab hours and make it minutes
+                    if (time.length == 3) {
+                        var addedHours = Number(time[0]) * 60; //grab hours and make it minutes
                         var addedMinutes = Number(time[1]); //get minutes
                         var addedSeconds = Number(time[2]); //get seconds 
-                        var totalTime = addedHours + addedMinutes + addedSeconds;  
-        
+                        var totalTime = addedHours + addedMinutes + addedSeconds;
+
                         hours += totalTime;
-    
+
                     }
                     else {
-                        var addedHours = Number(time[0])*60; //grab hours and make it minutes
+                        var addedHours = Number(time[0]) * 60; //grab hours and make it minutes
                         var addedMinutes = Number(time[1]); //get minutes
-                        var totalTime = addedHours + addedMinutes + addedSeconds;  
+                        var totalTime = addedHours + addedMinutes + addedSeconds;
                         hours += totalTime;
                     }
                 }
