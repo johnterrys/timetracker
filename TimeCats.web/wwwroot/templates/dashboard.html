@@ -1,25 +1,22 @@
 ﻿<div id="dashboard" ng-cloak>
-    <h3 class="mt-3">Dashboard</h3>
+    <h3 class="mt-3 dashboard-titles">Dashboard</h3>
     <div ng-if="groups.length === 0 && loaded">
         <h4 class="mt-5">You are not a member of any groups. Find a group through the <a href="/#!/courses">courses</a> page.</h4>
     </div>
-    <div class="panel panel-default border border-primary" ng-if="groups.length !== 0 && loaded">
-        <div class="panel-heading" style="background: #2D3E50; color: #45a59a">
-            <h4 style="padding: .5em">Groups</h4>
-        </div>
+    <div class="panel panel-default" ng-if="groups.length !== 0 && loaded">
         <div class="panel-body">
             <div class="row">
-                <div class="col-12 col-sm-6 col-md-4 mb-4" ng-repeat="g in groups | orderObjectBy :'groupName'">
-                    <div class="card">
-                        <div class="card-header group-name">
-                            <a href="/#!/group/{{g.groupID}}">{{g.groupName}}</a>
+                <div class="col-12 col-sm-6 col-md-4" ng-repeat="g in groups | orderObjectBy :'groupName'">
+                    <div class="box-part card text-left">
+                        <div class="card-header group-name title">
+                            Group: <a href="/#!/group/{{g.groupID}}">{{g.groupName}}</a>
                         </div>
-                        <div class="card-body">
-                            <span class="project-name"><a href="/#!/project/{{g.projectID}}">{{g.projectName}}</a></span>
+                        <div class="card-body text text-left">
+                            <span class="project-name">Project: <a href="/#!/project/{{g.projectID}}">{{g.projectName}}</a></span>
                             <br />
-                            <span class="course-name"><a href="/#!/course/{{g.courseID}}">{{g.courseName}}</a></span>
+                            <span class="course-name">Course: <a href="/#!/course/{{g.courseID}}">{{g.courseName}}</a></span>
                             <br />
-                            <span class="instructor-name">{{g.instructorName}}</span>
+                            <span class="instructor-name">Instructor: {{g.instructorName}}</span>
                         </div>
                     </div>
                 </div>
@@ -27,13 +24,13 @@
         </div>
     </div>
     <div class="panel panel-default border border-primary" ng-if="$parent.user.type === 'I' && loadInactivePanel && loaded" style="margin-top:1em">
-        <div class="panel-heading" style="background: #2D3E50; color: #45a59a">
+        <div class="panel-heading dashboard-titles">
             <h4 style="padding: .5em">Course join requests</h4>
         </div>
         <div class="panel-body">
             <div class="row">
                 <div class="col-12 col-sm-6 col-md-4 mb-4" ng-repeat="c in courses | orderObjectBy :'courseName'">
-                    <div class="card" ng-if="courseToInactiveUsers[c.courseID].length > 0">
+                    <div class="card box-part" ng-if="courseToInactiveUsers[c.courseID].length > 0">
                         <div class="card-header group-name">
                             <p>{{c.courseName}}</p>
                         </div>

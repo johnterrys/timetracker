@@ -16,21 +16,48 @@ nav a {
     text-decoration: none;
 }
 
-    /* Wrapping element */
-    /* Set some basic padding to keep content from hitting the edges */
-    .body-content {
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
     padding-left: 15px;
     padding-right: 15px;
 }
 
 .card-list-link {
     display: block;
-    
 }
 
-.card-list-link:hover {
-    background-color: whitesmoke;
+    .card-list-link:hover {
+        background-color: whitesmoke;
+    }
+
+/*User/Student Dashboard titles and course join requests*/
+.dashboard-titles {
+    border-bottom: 1px solid #cccccc;
+    color: black;
+    margin-bottom: 10px
 }
+
+/*User/Student Dashboard card*/
+.box-part {
+    background: white;
+    /*box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
+}
+
+    .box-part:hover {
+        background: #2D3E50
+    }
+
+        .box-part:hover .fa,
+        .box-part:hover .title,
+        .box-part:hover .text,
+        .box-part:hover a {
+            color: #FFF;
+            -webkit-transition: all 1s ease-out;
+            -moz-transition: all 1s ease-out;
+            -o-transition: all 1s ease-out;
+            transition: all 1s ease-out
+        }
 
 /* Carousel */
 .carousel-caption p {
@@ -50,7 +77,7 @@ nav a {
 
 /* lg+ */
 @media (min-width: 992px) {
-    .description-textarea{
+    .description-textarea {
         height: 25px;
     }
 
@@ -93,218 +120,217 @@ nav a {
     .header-checkbox {
         bottom: -13px;
     }
-
 }
 
 
-    .navbar-text-color {
-        color: #18BC9C;
-    }
+.navbar-text-color {
+    color: #18BC9C;
+}
 
-    .form-control:focus {
-        outline: 0;
-        box-shadow: none;
-        -webkit-box-shadow: none;
-    }
+.form-control:focus {
+    outline: 0;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
 
-    .big-button {
-        font-size: 30px;
-        cursor: pointer;
-        color: #2d3d50;
-    }
+.big-button {
+    font-size: 30px;
+    cursor: pointer;
+    color: #2d3d50;
+}
 
-    .small-button {
-        font-size: 30px;
-        cursor: pointer;
-        color: #2d3d50;
-        position: absolute;
-        right: -8px;
-        top: 0;
-    }
+.small-button {
+    font-size: 30px;
+    cursor: pointer;
+    color: #2d3d50;
+    position: absolute;
+    right: -8px;
+    top: 0;
+}
 
-    .card-button {
-        font-size: 30px;
-        cursor: pointer;
-        color: #2d3d50;
-        position: absolute;
-        right: 3px;
-        top: 1px;
-    }
+.card-button {
+    font-size: 30px;
+    cursor: pointer;
+    color: #2d3d50;
+    position: absolute;
+    right: 3px;
+    top: 1px;
+}
 
-    .input-header {
-        border: none;
-        width: 100%;
-    }
+.input-header {
+    border: none;
+    width: 100%;
+}
 
-    .input-header-admin {
-        border: 1px #d0d0d0 solid;
-        border-radius: 4px;
-    }
+.input-header-admin {
+    border: 1px #d0d0d0 solid;
+    border-radius: 4px;
+}
 
-    .top-right-checkbox {
-        position: absolute;
-        bottom: 3px;
-        right: -27px;
-    }
+.top-right-checkbox {
+    position: absolute;
+    bottom: 3px;
+    right: -27px;
+}
 
-    .header-checkbox {
-        position: absolute;
-        right: -15px;
-    }
+.header-checkbox {
+    position: absolute;
+    right: -15px;
+}
 
-    .top-right-buttons {
-        position: absolute;
-        bottom: 0;
-        right: 10px;
-    }
+.top-right-buttons {
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+}
 
-    .timeslot-input {
-        width: 33%;
-    }
+.timeslot-input {
+    width: 33%;
+}
 
-    .full-width {
-        width: 100%;
-    }
+.full-width {
+    width: 100%;
+}
 
-    .is-edited {
-        color: #fd7e14 !important;
-    }
+.is-edited {
+    color: #fd7e14 !important;
+}
 
-    .group-name {
-        font-size: 1.2em;
-    }
+.group-name {
+    font-size: 1.2em;
+}
 
-    .project-name {
-        font-size: 1em;
-    }
+.project-name {
+    font-size: 1em;
+}
 
-    .course-name {
-        font-size: 1em;
-    }
+.course-name {
+    font-size: 1em;
+}
 
-    .instructor-name {
-        font-size: 1em;
-    }
+.instructor-name {
+    font-size: 1em;
+}
 
-    .navbar-icon {
-        color: #18BC9C;
-        font-size: 25px;
-        vertical-align: middle;
-    }
+.navbar-icon {
+    color: #18BC9C;
+    font-size: 25px;
+    vertical-align: middle;
+}
 
-    .notification-menu {
-        display: inline-block
-    }
+.notification-menu {
+    display: inline-block
+}
 
-    .notification-menu-button {
-        background: none;
-    }
+.notification-menu-button {
+    background: none;
+}
 
-    .notification-text {
-        text-align: center;
-        height: 30px;
-    }
+.notification-text {
+    text-align: center;
+    height: 30px;
+}
 
-    .notification-badge {
-        position: absolute !important;
-        right: 0px;
-        top: 25px !important;
-    }
+.notification-badge {
+    position: absolute !important;
+    right: 0px;
+    top: 25px !important;
+}
 
-    .dropdown-menu-right {
-        right: 0;
-        left: auto;
-        min-width: 300px;
-    }
+.dropdown-menu-right {
+    right: 0;
+    left: auto;
+    min-width: 300px;
+}
 
-    .clickable {
-        cursor: pointer;
-    }
+.clickable {
+    cursor: pointer;
+}
 
-    .inactive-user {
-        background-color: whitesmoke;
-    }
+.inactive-user {
+    background-color: whitesmoke;
+}
 
-    .date-text {
-        font-size: .9em;
-    }
+.date-text {
+    font-size: .9em;
+}
 
-    .bottom-right-search {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-    }
+.bottom-right-search {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
 
-    .form-control {
-        color: black;
-    }
+.form-control {
+    color: black;
+}
 
-    .description-textarea {
-        padding: 0px 3px;
-    }
+.description-textarea {
+    padding: 0px 3px;
+}
 
-    .form-control:disabled, .form-control[readonly] {
-        background-color: #e8e8e8;
-        opacity: 1;
-    }
+.form-control:disabled, .form-control[readonly] {
+    background-color: #e8e8e8;
+    opacity: 1;
+}
 
-    .form-control:focus {
-        color: black;
-    }
+.form-control:focus {
+    color: black;
+}
 
-    .edited-icon {
-        position: absolute;
-        color: gray;
-    }
+.edited-icon {
+    position: absolute;
+    color: gray;
+}
 
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #f8f8f8;
-    }
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f8f8;
+}
 
-    .delete-user-button {
-        font-size: 20px;
-        position: absolute;
-        right: 50px;
-        top: 5px;
-        color: #E74C3C;
-    }
+.delete-user-button {
+    font-size: 20px;
+    position: absolute;
+    right: 50px;
+    top: 5px;
+    color: #E74C3C;
+}
 
-    .sticky-column {
-        position: sticky;
-        left: 0px;
-        background-color: whitesmoke;
-    }
+.sticky-column {
+    position: sticky;
+    left: 0px;
+    background-color: whitesmoke;
+}
 
-    .response-text {
-        height: 100px;
-        width: 100%;
-        line-height: 1.1;
-        border:none;
-    }
+.response-text {
+    height: 100px;
+    width: 100%;
+    line-height: 1.1;
+    border: none;
+}
 
-    .response-select {
-        height: 70px;
-        width: 100%;
-        border: none;
-    }
+.response-select {
+    height: 70px;
+    width: 100%;
+    border: none;
+}
 
-    .select-placeholder {
-        color: whitesmoke;
-    }
+.select-placeholder {
+    color: whitesmoke;
+}
 
-    pretty .state .check-label label:after, .pretty .state .check-label label:before {
-        top: 0px !important;    
-    }
+pretty .state .check-label label:after, .pretty .state .check-label label:before {
+    top: 0px !important;
+}
 
-    .input-group-text {
-        color: black;
-    }
+.input-group-text {
+    color: black;
+}
 
-    .custom-select {
-        color: black;
-    }
+.custom-select {
+    color: black;
+}
 
-    .noDataFound {
-        margin-top: -100%;
-        margin-left: -7%;
-    }
+.noDataFound {
+    margin-top: -100%;
+    margin-left: -7%;
+}
