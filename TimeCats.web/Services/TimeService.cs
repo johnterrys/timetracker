@@ -27,14 +27,26 @@ namespace TimeCats.Services
             DateTimeOffset after = DateTimeOffset.Parse(time.createdOn.ToString());
             DateTimeOffset before = after.AddDays(-7);
 
-            // Get the current date.
-            //DateTime dateForButton = DateTime.Now.AddDays(-1);
+            // Get the current date. Minus 2 weeks ago.
             DateTime cutOffDay = DateTime.Today.AddDays(-14);
             int cutOffResult = DateTime.Compare(cutOffDay, timecard.timeIn);
 
 
-            Console.WriteLine("Save time is being called.");
-
+            if (cutOffResult > 0)
+            {
+                //DialogResult res = MessageBox.Show("Are you sure you want to Delete", "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                //if (res == DialogResult.OK)
+                //{
+                //    MessageBox.Show("You have clicked Ok Button");
+                //    //Some task…  
+                //}
+                //if (res == DialogResult.Cancel)
+                //{
+                //    MessageBox.Show("You have clicked Cancel Button");
+                //    //Some task…  
+                //}
+                return false;
+            }
 
             if (after < before)
             {
@@ -130,3 +142,4 @@ namespace TimeCats.Services
 
     }
 }
+
