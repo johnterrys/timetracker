@@ -56,8 +56,7 @@ The following steps assume you:
 ### Simple Startup Guide
 1. run dotnet tool install --global dotnet-ef --version 3.0.0
 2. install docker https://docs.docker.com/docker-for-windows/install/
-3. copy .env-default in timetracker and rename to .env, change to your docker account info
-4. edit appsettings.Development.json ConnectionStrings line with docker account info
+3. copy .env-default in timetracker and rename to .env
 5. run dotnet ef database update from TimeCats.web folder
 6. run docker-compose up from timetracker folder
 
