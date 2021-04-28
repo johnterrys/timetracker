@@ -8,6 +8,7 @@
     $scope.evaluation.templateQuestions = {};
     $scope.evaluation.categories = {};
     $scope.evaluation.responses = [];
+    $scope.total = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
     $scope.responsecounter = 1;
 
@@ -118,6 +119,11 @@
                 }
             });
 
+        $scope.updateTotAvg = function (value, id) {
+            var num = parseInt(value);
+            $scope.total[id] = $scope.total[id] + num;
+        }
+
         $scope.getResponse = function (evalTemplateQuestionID, userID) {
             for (responseID in $scope.evaluation.responses) {
                 if ($scope.evaluation.responses[responseID].userID === userID &&
@@ -149,6 +155,10 @@
                 // Do nothing!
             }
         };
+
+        $scope.updateTotal = function () {
+
+        }
 
         $scope.loaded = true;
     };

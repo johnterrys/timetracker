@@ -588,15 +588,15 @@ namespace TimeCats.Services
                 {
                     //SQL and Parameters
                     cmd.CommandText =
-                        "SELECT e.*, CONCAT(u.firstName, ' ', u.lastName) AS usersName, g.groupName, p.projectID, p.projectName, " +
-                        "c.courseID, c.courseName, et.templateName, c.instructorId, CONCAT(ui.firstName, ' ', ui.lastName) AS instructorName " +
-                        "FROM Evals e " +
-                        "LEFT JOIN Groups g on e.groupID = g.groupID " +
-                        "LEFT JOIN Users u on e.userID = u.userID " +
-                        "LEFT JOIN Projects p on g.projectID = p.projectID " +
-                        "LEFT JOIN Courses c on p.courseID = c.courseID " +
-                        "LEFT JOIN EvalTemplates et on e.evalTemplateID = et.evalTemplateID " +
-                        "LEFT JOIN Users ui on c.instructorId = ui.userID";
+                        "\"SELECT e.*, CONCAT(u.firstName, ' ', u.lastName) AS usersName, g.groupName, p.projectID, p.projectName, \"" +
+                        "\"c.courseID, c.courseName, et.templateName, c.instructorId, CONCAT(ui.firstName, ' ', ui.lastName) AS instructorName \"" +
+                        "\"FROM Evals e \"" +
+                        "\"LEFT JOIN Groups g on e.groupID = g.groupID \"" +
+                        "\"LEFT JOIN Users u on e.userID = u.userID \"" +
+                        "\"LEFT JOIN Projects p on g.projectID = p.projectID \"" +
+                        "\"LEFT JOIN Courses c on p.courseID = c.courseID \"" +
+                        "\"LEFT JOIN EvalTemplates et on e.evalTemplateID = et.evalTemplateID \"" +
+                        "\"LEFT JOIN Users ui on c.instructorId = ui.userID\"";
 
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -639,9 +639,9 @@ namespace TimeCats.Services
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText =
-                        "SELECT er.*, u.\"firstName\", e.\"number\" AS evalNumber, etq.\"number\" AS \"questionNumber\", " +
-                        "u.\"lastName\", etq.\"questionText\", etq.\"evalTemplateID\", etq.\"questionType\", etq.\"evalTemplateQuestionCategoryID\", " +
-                        "etqc.\"categoryName\", etqc.\"number\" AS categoryNumber " +
+                        "SELECT er.*, u.\"firstName\" AS fName, e.\"number\" AS evalNumber, etq.\"number\" AS \"questionNumber\", " +
+                        "u.\"lastName\" AS lName, etq.\"questionText\" AS qText, etq.\"evalTemplateID\", etq.\"questionType\", etq.\"evalTemplateQuestionCategoryID\", " +
+                        "etqc.\"categoryName\" AS catName, etqc.\"number\" AS categoryNumber " +
                         "FROM \"EvalResponses\" er " +
                         "  INNER JOIN \"Evals\" e ON er.\"evalID\" = e.\"evalID\" " +
                         "  INNER JOIN \"Users\" u ON u.\"userID\" = e.\"userID\" " +
@@ -674,8 +674,8 @@ namespace TimeCats.Services
                                     eval.evals.Add(new EvalColumn
                                     {
                                         evalID = (int) reader["evalID"],
-                                        firstName = (string) reader["firstName"], //Name is Team Member for anonymity
-                                        lastName = (string) reader["lastName"]
+                                        firstName = (string) reader["fName"], //Name is Team Member for anonymity
+                                        lastName = (string) reader["lName"]
                                     });
 
                                 //Adding Template Questions
@@ -690,7 +690,7 @@ namespace TimeCats.Services
                                 if (!foundTemplateQuestion)
                                     eval.templateQuestions.Add(new EvalTemplateQuestion
                                     {
-                                        questionText = (string) reader["questionText"],
+                                        questionText = (string) reader["qText"],
                                         evalTemplateQuestionID = (int) reader["evalTemplateQuestionID"],
                                         questionType = (string) reader["questionType"],
                                         evalTemplateQuestionCategoryID = (int) reader["evalTemplateQuestionCategoryID"],
@@ -712,7 +712,7 @@ namespace TimeCats.Services
                                         eval.categories.Add(new EvalTemplateQuestionCategory
                                         {
                                             evalTemplateQuestionCategoryID = (int) reader["evalTemplateQuestionCategoryID"],
-                                            categoryName = (string) reader["categoryName"],
+                                            categoryName = (string) reader["catName"],
                                             number = (int) reader["categoryNumber"]
                                         });
                                 }
@@ -736,20 +736,21 @@ namespace TimeCats.Services
                                 eval.groupID = groupID;
                                 eval.number = (int) reader["evalNumber"];
 
+                                //changed to fName due to duplicate name in SQL statement
                                 //Adding evalColumn
                                 eval.evals = new List<EvalColumn>();
                                 eval.evals.Add(new EvalColumn
                                 {
                                     evalID = (int) reader["evalID"],
-                                    firstName = (string) reader["firstName"], //Name is Team Member for anonymity ??? no idea what this comment is about
-                                    lastName = (string) reader["lastName"]
+                                    firstName = (string)reader["fName"],
+                                    lastName = (string)reader["lName"]
                                 });
 
                                 //Adding templateQuestion
                                 eval.templateQuestions = new List<EvalTemplateQuestion>();
                                 eval.templateQuestions.Add(new EvalTemplateQuestion
                                 {
-                                    questionText = (string) reader["questionText"],
+                                    questionText = (string) reader["qText"],
                                     evalTemplateQuestionID = (int) reader["evalTemplateQuestionID"],
                                     questionType = (string) reader["questionType"],
                                     evalTemplateQuestionCategoryID = (int) reader["evalTemplateQuestionCategoryID"],
@@ -761,9 +762,9 @@ namespace TimeCats.Services
                                 if (!reader.IsDBNull(13)) //column 13 = categoryName
                                     eval.categories.Add(new EvalTemplateQuestionCategory
                                     {
-                                        evalTemplateQuestionCategoryID = (int) reader["evalTemplateQuestionCategoryID"],
-                                        categoryName = (string) reader["categoryName"],
-                                        number = (int) reader["categoryNumber"]
+                                        evalTemplateQuestionCategoryID = 0, //(int) reader["evalTemplateQuestionCategoryID"],
+                                        categoryName = "No Category", //(string) reader["catName"],
+                                        number = 0 //(int) reader["categoryNumber"]
                                     });
 
                                 //Adding Response
@@ -964,26 +965,26 @@ namespace TimeCats.Services
                     foreach (var r in e.responses)
                     {
                         conn.Open();
-                        //  Get avg score student gave for the specific eval
+                        //  Get avg score student gave for the specific eval  /*AVG(er.response)\" AS avg " +
                         using (var cmd = conn.CreateCommand())
                         {
                             cmd.CommandText =
-                                "SELECT u.userID, u.firstName, u.lastName, AVG(er.response) AS avg " +
-                                "FROM EvalResponses er INNER JOIN Evals e ON er.evalID = e.evalID " +
-                                "INNER JOIN Users u ON u.userID = e.userID " +
-                                "INNER JOIN EvalTemplateQuestions etq ON etq.evalTemplateQuestionID = er.evalTemplateQuestionID " +
-                                "LEFT JOIN EvalTemplateQuestionCategories etqc ON etqc.evalTemplateQuestionCategoryID = etq.evalTemplateQuestionCategoryID " +
-                                "WHERE groupID = @groupID " +
-                                "AND e.evalID = @evalID " +
-                                "GROUP BY u.userID;";
+                                "SELECT u.\"userID\", u.\"firstName\", u.\"lastName\" "+
+                                "FROM \"EvalResponses\" er INNER JOIN \"Evals\" e ON er.\"evalID\" = e.\"evalID\" " +
+                                "INNER JOIN \"Users\" u ON u.\"userID\" = e.\"userID\" " +
+                                "INNER JOIN \"EvalTemplateQuestions\" etq ON etq.\"evalTemplateQuestionID\" = er.\"evalTemplateQuestionID\" " +
+                                "LEFT JOIN \"EvalTemplateQuestionCategories\" etqc ON etqc.\"evalTemplateQuestionCategoryID\" = etq.\"evalTemplateQuestionCategoryID\" " +
+                                "WHERE \"groupID\" = @groupID " +
+                                "AND e.\"evalID\" = @evalID " +
+                                "GROUP BY u.\"userID\";";
 
                             cmd.Parameters.AddWithValue("@evalID", r.evalID);
                             cmd.Parameters.AddWithValue("@groupID", e.groupID);
 
-                            using (var reader = cmd.ExecuteReader())
-                            {
-                                while (reader.Read()) r.userAvgerage = (double) reader["avg"];
-                            }
+                            //using (var reader = cmd.ExecuteReader())
+                            //{
+                            //    while (reader.Read()) r.userAvgerage = (double) reader["avg"];
+                            //}
                         }
 
                         conn.Close();

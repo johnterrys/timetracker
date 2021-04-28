@@ -57,7 +57,7 @@
                             $scope.group.evaluations[eval.number].evals[evalColumn.evalID] = evalColumn;
                             /****Jamison Edit******/
                             $scope.group.evaluations[eval.number].evals[evalColumn.evalID].totalValue = 0;
-                            $scope.group.evaluations[eval.number].evals[evalColumn.evalID].userAvgerage = 0;
+                            //$scope.group.evaluations[eval.number].evals[evalColumn.evalID].userAvgerage = 0;
                             /**End Edit**/
                         });
                         $.each(eval.categories, function (index, category) {
@@ -341,23 +341,23 @@
         };
 
         //  Get user average score per eval
-        $scope.getUserAvg = function (number, evalID) {
-            return $scope.group.evaluations[number].evals[evalID].userAvgerage;
-        };
+        $scope.getUserAvg = 1; //function (number, evalID) {
+            //return $scope.group.evaluations[number].evals[evalID].userAvgerage;
+        //};
 
         //  Get Difference
-        $scope.getDiff = function (number, evalID) {
-            return $scope.group.evaluations[number].evals[evalID].totalValue - $scope.group.evaluations[number].evals[evalID].userAvgerage;
-        };
+        $scope.getDiff = 1;//function (number, evalID) {
+        //    return $scope.group.evaluations[number].evals[evalID].totalValue - $scope.group.evaluations[number].evals[evalID].userAvgerage;
+        //};
 
         $scope.calculateCategoryTotal = function (categoryID, evalID) {
             return '';
         };
 
         /**Jamison Edit**/
-        $scope.getTotal = function (number, evalID) {
-            return $scope.group.evaluations[number].evals[evalID].totalValue;
-        };
+        $scope.getTotal = 11; //function (number, evalID) {
+            //return $scope.group.evaluations[number].evals[evalID].totalValue;
+        //};
         /**End Edit**/
 
 

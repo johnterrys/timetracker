@@ -15,10 +15,10 @@
                     <td class="sticky-column">{{tq.questionText}}</td>
                     <td class="p-0 align-middle border-right" ng-repeat="u in users" ng-if="u.userID === $parent.user.userID">
                         <textarea ng-if="tq.questionType === 'R'" class="response-text" ng-model="getResponse(tq.evalTemplateQuestionID, u.userID).response"></textarea>
-                        <select class="response-select" ng-if="tq.questionType === 'N'" ng-model="getResponse(tq.evalTemplateQuestionID, u.userID).response">
+                        <select class="response-select" ng-if="tq.questionType === 'N'" ng-model="getResponse(tq.evalTemplateQuestionID, u.userID).response" ng-change="updateTotAvg(getResponse(tq.evalTemplateQuestionID, u.userID).response, u.userID)">
                             <option value="">Select One</option>
                             <option value="0">0 - Strongly Disagree</option>
-                           <option value="1">1 - Disagree</option>
+                            <option value="1">1 - Disagree</option>
                             <option value="2">2 - Neutral</option>
                             <option value="3">3 - Agree</option>
                             <option value="4">4 - Strongly Agree</option>
@@ -27,7 +27,7 @@
                     </td>
                     <td class="p-0 align-middle border-right" ng-repeat="u in users" ng-if="u.userID !== $parent.user.userID">
                         <textarea ng-if="tq.questionType === 'R'" class="response-text" ng-model="getResponse(tq.evalTemplateQuestionID, u.userID).response"></textarea>
-                        <select class="response-select" ng-if="tq.questionType === 'N'" ng-model="getResponse(tq.evalTemplateQuestionID, u.userID).response">
+                        <select class="response-select" ng-if="tq.questionType === 'N'" ng-model="getResponse(tq.evalTemplateQuestionID, u.userID).response" ng-change="updateTotAvg(getResponse(tq.evalTemplateQuestionID, u.userID).response, u.userID)">
                             <option value="">Select One</option>
                             <option value="0">0 - Strongly Disagree</option>
                             <option value="1">1 - Disagree</option>
@@ -48,7 +48,7 @@
                     <td class="pl-3 sticky-column">{{tq.questionText}}</td>
                     <td class="p-0 align-middle border-right" ng-repeat="u in users" ng-if="u.userID === $parent.user.userID">
                         <textarea ng-if="tq.questionType === 'R'" class="response-text" ng-model="getResponse(tq.evalTemplateQuestionID, u.userID).response"></textarea>
-                        <select class="response-select" ng-if="tq.questionType === 'N'" ng-model="getResponse(tq.evalTemplateQuestionID, u.userID).response">
+                        <select class="response-select" ng-if="tq.questionType === 'N'" ng-model="getResponse(tq.evalTemplateQuestionID, u.userID).response" ng-change="updateTotAvg(getResponse(tq.evalTemplateQuestionID, u.userID).response, u.userID)">
                             <option value="">Select One</option>
                             <option value="0">0 - Strongly Disagree</option>
                             <option value="1">1 - Disagree</option>
@@ -60,7 +60,7 @@
                     </td>
                     <td class="p-0 align-middle border-right" ng-repeat="u in users" ng-if="u.userID !== $parent.user.userID">
                         <textarea ng-if="tq.questionType === 'R'" class="response-text" ng-model="getResponse(tq.evalTemplateQuestionID, u.userID).response"></textarea>
-                        <select class="response-select" ng-if="tq.questionType === 'N'" ng-model="getResponse(tq.evalTemplateQuestionID, u.userID).response">
+                        <select class="response-select" ng-if="tq.questionType === 'N'" ng-model="getResponse(tq.evalTemplateQuestionID, u.userID).response" ng-change="updateTotAvg(getResponse(tq.evalTemplateQuestionID, u.userID).response, u.userID)">
                             <option value="">Select One</option>
                             <option value="0">0 - Strongly Disagree</option>
                             <option value="1">1 - Disagree</option>
@@ -72,6 +72,12 @@
                     </td>
                 </tr>
             </tbody>
+            <tr>
+                <th class="pl-3 sticky-column">Total</th>
+                <td class="p-0 align-middle border-right" ng-repeat="u in users">
+                    <textarea class="response-text">{{ total[u.userID] }}</textarea>
+                </td>
+            </tr>
         </table>
     </div>
     <div class="w-100">

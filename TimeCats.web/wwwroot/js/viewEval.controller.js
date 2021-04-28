@@ -7,6 +7,7 @@
     $scope.evaluation.templateQuestions = {};
     $scope.evaluation.categories = {};
     $scope.evaluation.responses = {};
+    $scope.total = 0;
 
     $scope.load = function () {
         $scope.evalID = $routeParams.ID;
@@ -115,6 +116,11 @@
                     return $scope.evaluation.responses[responseID];
             }
         };
+
+        $scope.updateTotAvg = function (value) {
+            $scope.total = $scope.total + value;
+        }
+
 
         $scope.completeEvaluation = function () {
             if (confirm('Are you sure you want to submit this evaluation?')) {

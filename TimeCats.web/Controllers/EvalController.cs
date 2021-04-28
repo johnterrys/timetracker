@@ -321,7 +321,7 @@ namespace TimeCats.Controllers
                 return Ok(_evalService.RandomizeEvaluations(group.groupID, group.userID));
             }
 
-            if (IsAdmin() || IsInstructorForCourse(course.courseID))
+            if (IsAdmin() || IsInstructor())
             {
                 //Get passed userID if they are an Admin/Instructor
                 return Ok(_evalService.EvalResponsesA(group.groupID, group.userID));
